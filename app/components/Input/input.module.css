@@ -1,0 +1,79 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  color: #756f86;
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.input-wrapper {
+  position: absolute;
+  width: 400px;
+  height: 52px;
+}
+
+.input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 400px;
+  height: 52px;
+  border-radius: 6px;
+  border: 1px solid #dbe2ea;
+  background: #fff;
+  box-shadow: 0px 4px 8px 0px rgba(44, 39, 56, 0.04);
+  padding: 16px;
+  color: #2c2738;
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.input:focus {
+  border-color: #0880ae;
+}
+
+.input::placeholder {
+  color: #7c9cbf;
+  font-weight: 400;
+}
+
+.description {
+  color: #756f86;
+  font-family: IBM Plex Sans;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+}
+
+.file-input-text {
+  color: #756f86;
+  font-weight: 400;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.file-input-icon {
+  position: absolute;
+  top: 54px;
+  right: 16px;
+}
+
+.hide {
+  display: none;
+}
