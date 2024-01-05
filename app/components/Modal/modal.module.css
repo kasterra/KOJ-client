@@ -1,0 +1,50 @@
+.dialog {
+  width: 460px;
+  background: none;
+  border: none;
+}
+
+.backdrop {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background: rgba(217, 217, 217, 0.9);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+  position: relative;
+  width: 460px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0px 32px 64px 0px rgba(44, 39, 56, 0.04),
+    0px 12px 24px 0px rgba(44, 39, 56, 0.02);
+  padding: 40px 30px 110px 30px;
+}
+
+.close-button {
+  all: unset;
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.big-wrapper {
+  position: absolute;
+  width: 892px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0px 32px 64px 0px rgba(44, 39, 56, 0.04),
+    0px 12px 24px 0px rgba(44, 39, 56, 0.02);
+  padding: 40px, 30px, 110px, 30px;
+}
