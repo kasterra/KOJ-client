@@ -8,6 +8,7 @@ interface Props {
   description?: string;
   onFileUpload: (fileList: FileList) => Promise<void>;
   fileValidator?: (file: File) => boolean;
+  placeholder?: string;
 }
 
 function filesNamesToDisplay(files: FileList | null) {
@@ -31,6 +32,7 @@ const MultipleFileInput = ({
   description,
   onFileUpload,
   fileValidator,
+  placeholder = "파일 업로드 (여러개 가능)",
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<HTMLLabelElement>(null);
@@ -148,7 +150,7 @@ const MultipleFileInput = ({
         <div className={styles["file-input-text"]}>
           {fileListUploaded
             ? filesNamesToDisplay(fileListUploaded)
-            : "파일 업로드 (여러개 가능)"}
+            : placeholder}
         </div>
         <div className={styles["file-input-icon"]}>
           <img src={fileSVG} alt="file icon" className={styles.icon} />

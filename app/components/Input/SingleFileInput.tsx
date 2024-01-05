@@ -8,6 +8,7 @@ interface Props {
   description?: string;
   onFileUpload: (file: File) => Promise<void>;
   fileValidator?: (file: File) => boolean;
+  placeholder?: string;
 }
 
 const SingleFileInput = ({
@@ -16,6 +17,7 @@ const SingleFileInput = ({
   description,
   onFileUpload,
   fileValidator,
+  placeholder = "단일 파일 업로드",
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<HTMLLabelElement>(null);
@@ -128,7 +130,7 @@ const SingleFileInput = ({
           onChange={handleInputChange}
         />
         <p className={styles["file-input-text"]}>
-          {fileUploaded ? fileUploaded.name : "단일 파일 업로드"}
+          {fileUploaded ? fileUploaded.name : placeholder}
         </p>
         <div className={styles["file-input-icon"]}>
           <img src={fileSVG} alt="file icon" className={styles.icon} />
