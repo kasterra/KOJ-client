@@ -1,0 +1,29 @@
+.dropdown-container {
+  position: absolute;
+  top: calc(100% - 8px);
+  padding: 12px 0;
+  width: 360px;
+  border-radius: 6px;
+  border: 1px solid #dbe2ea;
+  background: #fff;
+  box-shadow: 0px 20px 20px 0px rgba(44, 39, 56, 0.04),
+    0px 4px 8px 0px rgba(44, 39, 56, 0.04);
+}
+
+.dropdown-container a {
+  all: unset;
+  text-decoration: none;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  color: #756f86;
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.dropdown-item:hover {
+  background-color: #ebf4f8;
+}
