@@ -6,7 +6,7 @@ interface Props {
   title: string;
   name: string;
   description?: string;
-  onFileUpload: (file: File) => Promise<void>;
+  onFileUpload: (file: File) => void;
   fileValidator?: (file: File) => boolean;
   placeholder?: string;
 }
