@@ -27,7 +27,11 @@ const Modal = ({
         onClose();
       }}
     >
-      <dialog className={modalStyles.dialog} open={isOpen}>
+      <dialog
+        className={modalStyles.dialog}
+        open={isOpen}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={modalStyles.wrapper}>
           <div className={formStyles["title-area"]}>
             <h1 className={formStyles.title}>{title}</h1>
