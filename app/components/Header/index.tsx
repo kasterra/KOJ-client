@@ -24,13 +24,10 @@ const Header = () => {
       if (isContextLoading) {
         return;
       }
-      const {
-        status,
-        message,
-        data: { name, role, is_admin },
-      } = await getUserInfo(userId, token);
+      const { status, message, ...data } = await getUserInfo(userId, token);
 
-      console.log(status, name, message, role);
+      const { name, role, is_admin } = data.data;
+
       if (status === 200) {
         if (is_admin) {
           setIsAdmin(true);

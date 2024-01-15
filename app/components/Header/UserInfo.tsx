@@ -2,9 +2,10 @@ import { useState } from "react";
 import styles from "./header.module.css";
 import formStyles from "~/components/common/form.module.css";
 import { changePassword } from "~/API/user";
-import { Link } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 import Modal from "../Modal";
 import PWInput from "../Input/PWInput";
+import { useAuthDispatch } from "~/contexts/AuthContext";
 
 interface Props {
   userId: string;
@@ -29,6 +30,8 @@ const userClassToText = (userClass: string) => {
 
 const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
   const [isPWChangeModalOpen, setIsPWChangeModalOpen] = useState(false);
+  const authDispatch = useAuthDispatch();
+  const navigate = useNavigate();
 
   async function onPWChangeModalSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,13 +61,20 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
     }
   }
 
+  async function logout() {
+    authDispatch({ type: "DELETE_DATA" });
+    navigate("/");
+  }
+
   return (
     <div className={styles.userinfo}>
       <span>
         {userClassToText(userClass) + " "}
         <span className={styles.bold}>{userName}</span> 님
       </span>
-      <div className={styles["logout-button"]}>로그아웃</div>
+      <div className={styles["logout-button"]} onClick={logout}>
+        로그아웃
+      </div>
       <div
         className={styles["normal-button"]}
         onClick={() => setIsPWChangeModalOpen(true)}

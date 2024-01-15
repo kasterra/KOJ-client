@@ -13,7 +13,9 @@ type AuthType = {
 
 const AuthContext = createContext<AuthType | undefined>(undefined);
 
-type AuthActionType = { type: "UPDATE_DATA"; payload: AuthType };
+type AuthActionType =
+  | { type: "UPDATE_DATA"; payload: AuthType }
+  | { type: "DELETE_DATA" };
 
 const AuthDispatchContext = createContext<
   React.Dispatch<AuthActionType> | undefined
@@ -26,8 +28,12 @@ const AuthReducer = (state: AuthType, action: AuthActionType): AuthType => {
         ...state,
         ...action.payload,
       };
+    case "DELETE_DATA":
+      return { userId: "deleted", token: "deleted" };
     default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+      throw new Error(
+        `Unhandled action type: ${(action as AuthActionType).type}`
+      );
   }
 };
 
