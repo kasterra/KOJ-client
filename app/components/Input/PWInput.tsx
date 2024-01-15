@@ -5,15 +5,8 @@ interface Props {
   name: string;
   placeholder?: string;
   description?: string;
-  required?: boolean;
 }
-const TextInput = ({
-  name,
-  title,
-  placeholder,
-  description,
-  required = false,
-}: Props) => {
+const PWInput = ({ name, title, placeholder, description }: Props) => {
   return (
     <div className={styles.wrapper}>
       <label className={styles.title} htmlFor={name}>
@@ -21,11 +14,11 @@ const TextInput = ({
       </label>
       <input
         className={styles.input}
-        type="text"
+        type="password"
         name={name}
         id={name}
         placeholder={placeholder}
-        required={required}
+        required
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>
@@ -34,4 +27,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default PWInput;
