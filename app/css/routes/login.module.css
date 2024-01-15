@@ -1,0 +1,23 @@
+.bg {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 120px;
+}
+
+.logo {
+  width: 138px;
+  height: 77px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}

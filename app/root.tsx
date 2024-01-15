@@ -10,7 +10,10 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
+import { AuthProvider } from "./contexts/AuthContext";
+import Header from "./components/Header";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: normailzeCSS },
@@ -20,6 +23,7 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+  const location = useLocation();
   return (
     <html lang="ko">
       <head>
@@ -29,7 +33,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <AuthProvider>
+          {location.pathname !== "/" ? <Header /> : null}
+          <Outlet />
+        </AuthProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

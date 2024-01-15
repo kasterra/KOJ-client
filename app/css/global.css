@@ -2,3 +2,8 @@
   box-sizing: border-box;
   font-family: "IBMPlexSans", sans-serif;
 }
+
+body {
+  display: flex;
+  flex-direction: column;
+}
