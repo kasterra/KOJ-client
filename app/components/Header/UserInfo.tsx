@@ -14,6 +14,19 @@ interface Props {
   isAdmin: boolean;
 }
 
+const userClassToText = (userClass: string) => {
+  switch (userClass) {
+    case "admin":
+      return "관리자";
+    case "professor":
+      return "교수";
+    case "student":
+      return "학생";
+    default:
+      return "알 수 없음";
+  }
+};
+
 const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
   const [isPWChangeModalOpen, setIsPWChangeModalOpen] = useState(false);
 
@@ -48,7 +61,8 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
   return (
     <div className={styles.userinfo}>
       <span>
-        {userClass} <span className={styles.bold}>{userName}</span> 님
+        {userClassToText(userClass) + " "}
+        <span className={styles.bold}>{userName}</span> 님
       </span>
       <div className={styles["logout-button"]}>로그아웃</div>
       <div
