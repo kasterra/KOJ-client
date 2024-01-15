@@ -1,18 +1,19 @@
 import { Outlet, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
 
-const NoAuthOnlyRoute = () => {
+const ProctedRoute = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (
       sessionStorage.getItem("authToken") &&
-      sessionStorage.getItem("authToken")!.length > 8
+      sessionStorage.getItem("authToken")!.length < 10
     ) {
-      navigate("/lectures");
+      alert("로그인을 하고 접속하십시오");
+      navigate("/");
     }
-  });
+  }, []);
 
   return <Outlet />;
 };
 
-export default NoAuthOnlyRoute;
+export default ProctedRoute;

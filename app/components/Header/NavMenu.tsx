@@ -22,7 +22,7 @@ const NavMenu = ({ userClass }: Props) => {
   return (
     <div className={styles.navmenu}>
       {menuElements[userClass as keyof typeof menuElements].map((element) => (
-        <NavLink to={element.to} className={styles.bold}>
+        <NavLink key={element.to} to={element.to} className={styles.bold}>
           {element.name}
         </NavLink>
       ))}
