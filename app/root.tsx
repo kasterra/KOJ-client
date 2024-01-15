@@ -34,7 +34,6 @@ export default function App() {
       </head>
       <body>
         <AuthProvider>
-          {location.pathname !== "/" ? <Header /> : null}
           <Outlet />
         </AuthProvider>
         <ScrollRestoration />

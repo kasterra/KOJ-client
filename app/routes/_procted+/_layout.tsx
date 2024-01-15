@@ -1,8 +1,16 @@
 import { Outlet, useNavigate } from "@remix-run/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Header from "~/components/Header";
+import { useAuth } from "~/contexts/AuthContext";
 
 const ProctedRoute = () => {
+  const auth = useAuth();
   const navigate = useNavigate();
+
+  const [contextIsLoading, setContextIsLoading] = useState(
+    auth.token === "" && auth.userId === ""
+  );
+
   useEffect(() => {
     if (
       sessionStorage.getItem("authToken") &&
@@ -13,7 +21,17 @@ const ProctedRoute = () => {
     }
   }, []);
 
-  return <Outlet />;
+  useEffect(() => {
+    if (contextIsLoading)
+      setContextIsLoading(auth.token === "" && auth.userId === "");
+  });
+
+  return contextIsLoading ? null : (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  );
 };
 
 export default ProctedRoute;

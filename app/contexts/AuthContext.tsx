@@ -29,7 +29,7 @@ const AuthReducer = (state: AuthType, action: AuthActionType): AuthType => {
         ...action.payload,
       };
     case "DELETE_DATA":
-      return { userId: "deleted", token: "deleted" };
+      return { userId: "", token: "" };
     default:
       throw new Error(
         `Unhandled action type: ${(action as AuthActionType).type}`
@@ -63,9 +63,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         },
       });
     }
-    sessionStorage.setItem("authToken", JSON.stringify(state.token));
-    sessionStorage.setItem("userId", JSON.stringify(state.userId));
-    console.log(state);
+    if (state.token && state.userId) {
+      sessionStorage.setItem("authToken", JSON.stringify(state.token));
+      sessionStorage.setItem("userId", JSON.stringify(state.userId));
+    }
   }, [state.token, state.userId]);
 
   return (

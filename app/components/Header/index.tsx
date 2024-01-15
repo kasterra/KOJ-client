@@ -21,9 +21,6 @@ const Header = () => {
 
   useEffect(() => {
     const getUserInfoFromServer = async () => {
-      if (isContextLoading) {
-        return;
-      }
       const { status, message, ...data } = await getUserInfo(userId, token);
 
       const { name, role, is_admin } = data.data;
