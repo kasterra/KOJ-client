@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserInfo } from "~/API/user";
 import styles from "./header.module.css";
-import { useNavigate } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 import { useAuth } from "~/contexts/AuthContext";
 import LogoSVG from "~/assets/logo.svg";
 import NavMenu from "./NavMenu";
@@ -46,7 +46,9 @@ const Header = () => {
   return isLoading || userId === "" || token === "" ? null : (
     <header className={styles.container}>
       <div className={styles["navmenu-container"]}>
-        <img src={LogoSVG} alt="KOJ logo" className={styles.logo} />
+        <Link to="/lectures">
+          <img src={LogoSVG} alt="KOJ logo" className={styles.logo} />
+        </Link>
         <NavMenu userClass={userClass} />
       </div>
       <div className={styles["userinfo-container"]}>
