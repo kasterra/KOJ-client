@@ -1,3 +1,7 @@
+import { ReactNode } from "react";
+
+export type TableRow = Map<string, ReactNode>;
+
 export interface Lecture {
   name: string;
   code: string;
