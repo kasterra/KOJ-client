@@ -53,20 +53,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       state.token.length === 0 &&
       sessionStorage.getItem("authToken") !== null &&
       sessionStorage.getItem("userId") !== null &&
-      JSON.parse(sessionStorage.getItem("authToken")!).length !== 0 &&
-      JSON.parse(sessionStorage.getItem("userId")!).length !== 0
+      sessionStorage.getItem("authToken")!.length !== 0 &&
+      sessionStorage.getItem("userId")!.length !== 0
     ) {
       dispatch({
         type: "UPDATE_DATA",
         payload: {
-          token: JSON.parse(sessionStorage.getItem("authToken")!),
-          userId: JSON.parse(sessionStorage.getItem("userId")!),
+          token: sessionStorage.getItem("authToken")!,
+          userId: sessionStorage.getItem("userId")!,
         },
       });
     }
     if (state.token && state.userId) {
-      sessionStorage.setItem("authToken", JSON.stringify(state.token));
-      sessionStorage.setItem("userId", JSON.stringify(state.userId));
+      sessionStorage.setItem("authToken", state.token);
+      sessionStorage.setItem("userId", state.userId);
     }
   }, [state.token, state.userId]);
 
