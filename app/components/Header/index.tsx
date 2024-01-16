@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserInfo } from "~/API/user";
 import styles from "./header.module.css";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, useNavigate, useLocation } from "@remix-run/react";
 import { useAuth } from "~/contexts/AuthContext";
 import LogoSVG from "~/assets/logo.svg";
 import NavMenu from "./NavMenu";
@@ -12,6 +12,7 @@ export async function loader() {}
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userId, token } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [userClass, setUserClass] = useState("");
@@ -27,10 +28,13 @@ const Header = () => {
       const { name, role, is_admin } = data.data;
 
       if (status === 200) {
+        setUserClass(role);
         if (is_admin) {
           setIsAdmin(true);
+          if (location.pathname.includes("admin")) {
+            setUserClass("admin");
+          }
         }
-        setUserClass(role);
         setUserName(name);
       } else if (status === 401) {
         toast.error(

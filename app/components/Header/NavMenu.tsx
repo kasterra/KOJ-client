@@ -16,6 +16,10 @@ const menuElements = {
     { name: "실습 관리", to: "/lectures" },
     { name: "성적 관리", to: "/grade" },
   ],
+  admin: [
+    { name: "사용자 관리", to: "/admin/users" },
+    { name: "연구 기능", to: "/admin/research" },
+  ],
 };
 
 const NavMenu = ({ userClass }: Props) => {

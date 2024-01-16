@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./header.module.css";
 import formStyles from "~/components/common/form.module.css";
 import { changePassword } from "~/API/user";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, useNavigate, useLocation } from "@remix-run/react";
 import Modal from "../Modal";
 import PWInput from "../Input/PWInput";
 import { useAuthDispatch } from "~/contexts/AuthContext";
@@ -33,6 +33,7 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
   const [isPWChangeModalOpen, setIsPWChangeModalOpen] = useState(false);
   const authDispatch = useAuthDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function onPWChangeModalSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -83,9 +84,15 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
         비밀번호 변경
       </div>
       {isAdmin ? (
-        <Link to="/admin" className={styles["normal-button"]}>
-          관리자 페이지
-        </Link>
+        location.pathname.includes("/admin") ? (
+          <Link to="/lectures" className={styles["normal-button"]}>
+            돌아가기
+          </Link>
+        ) : (
+          <Link to="/admin/users" className={styles["normal-button"]}>
+            관리자 페이지
+          </Link>
+        )
       ) : null}
       <Modal
         title="비밀번호 재설정"

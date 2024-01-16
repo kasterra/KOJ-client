@@ -1,0 +1,19 @@
+.container {
+  margin-top: 20px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
+.table-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
