@@ -6,6 +6,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import LogoSVG from "~/assets/logo.svg";
 import NavMenu from "./NavMenu";
 import UserInfo from "./UserInfo";
+import toast from "react-hot-toast";
 
 export async function loader() {}
 
@@ -32,10 +33,12 @@ const Header = () => {
         setUserClass(role);
         setUserName(name);
       } else if (status === 401) {
-        alert("권한이 없거나 토큰이 만료되었습니다. 다시 로그인 해주세요");
+        toast.error(
+          "권한이 없거나 토큰이 만료되었습니다. 다시 로그인 해주세요"
+        );
         navigate("/");
       } else if (status === 404) {
-        alert("사용자 ID가 변조되었습니다. 다시 로그인 해주세요");
+        toast.error("사용자 ID가 변조되었습니다. 다시 로그인 해주세요");
         navigate("/");
       }
       setIsLoading(false);

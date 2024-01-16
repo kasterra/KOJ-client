@@ -52,7 +52,6 @@ const SingleFileInput = ({
   };
 
   const handleDropReact = (e: React.DragEvent<HTMLLabelElement>): void => {
-    alert("sdfasdf");
     e.preventDefault();
     e.stopPropagation();
     processFileFromEvent(e.dataTransfer, null);

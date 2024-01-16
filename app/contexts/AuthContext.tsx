@@ -29,6 +29,7 @@ const AuthReducer = (state: AuthType, action: AuthActionType): AuthType => {
         ...action.payload,
       };
     case "DELETE_DATA":
+      sessionStorage.clear();
       return { userId: "", token: "" };
     default:
       throw new Error(

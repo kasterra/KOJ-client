@@ -13,7 +13,7 @@ import {
   useLocation,
 } from "@remix-run/react";
 import { AuthProvider } from "./contexts/AuthContext";
-import Header from "./components/Header";
+import { Toaster } from "react-hot-toast";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: normailzeCSS },
@@ -34,6 +34,7 @@ export default function App() {
       </head>
       <body>
         <AuthProvider>
+          <Toaster />
           <Outlet />
         </AuthProvider>
         <ScrollRestoration />

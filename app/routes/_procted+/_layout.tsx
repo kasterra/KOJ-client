@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Header from "~/components/Header";
 import { useAuth } from "~/contexts/AuthContext";
 
@@ -13,10 +14,10 @@ const ProctedRoute = () => {
 
   useEffect(() => {
     if (
-      sessionStorage.getItem("authToken") &&
+      !sessionStorage.getItem("authToken") ||
       sessionStorage.getItem("authToken")!.length < 10
     ) {
-      alert("로그인을 하고 접속하십시오");
+      toast.error("로그인을 하고 접속하십시오");
       navigate("/");
     }
   }, []);

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "@remix-run/react";
 import Modal from "../Modal";
 import PWInput from "../Input/PWInput";
 import { useAuthDispatch } from "~/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 interface Props {
   userId: string;
@@ -42,7 +43,7 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
     const new_password2 = formData.get("newPW2")! as string;
 
     if (new_password !== new_password2) {
-      alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      toast.error("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
       return;
     }
 
@@ -54,10 +55,10 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
     );
 
     if (status === 200) {
-      alert("성공적으로 변경되었습니다!");
+      toast.success("성공적으로 변경되었습니다!");
       setIsPWChangeModalOpen(false);
     } else {
-      alert(message);
+      toast(message, { icon: "⚠️" });
     }
   }
 

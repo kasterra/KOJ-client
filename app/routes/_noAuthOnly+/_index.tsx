@@ -7,6 +7,7 @@ import LogoSVG from "~/assets/logo.svg";
 import TextInput from "~/components/Input/TextInput";
 import PWInput from "~/components/Input/PWInput";
 import { login } from "~/API/user";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Login = () => {
     const id = formData.get("id") as string;
     const password = formData.get("password") as string;
     if (!id || !password) {
-      alert("ID와 비밀번호를 입력하십시오!");
+      toast.error("ID와 비밀번호를 입력하십시오!");
       return;
     }
     const response = await login(id, password);
@@ -27,8 +28,9 @@ const Login = () => {
         type: "UPDATE_DATA",
         payload: { token: response.data.token, userId: id },
       });
+      toast.success("성공적으로 로그인 하였습니다!");
       navigate("/lectures");
-    } else alert(response.message);
+    } else toast(response.message, { icon: "⚠️" });
   }
 
   return (
