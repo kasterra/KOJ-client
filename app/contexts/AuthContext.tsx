@@ -5,17 +5,36 @@ import React, {
   useReducer,
   useEffect,
 } from "react";
+import { getUserInfo } from "~/API/user";
 
 type AuthType = {
   userId: string;
   token: string;
+  role: "student" | "professor";
+  isAdmin: boolean;
+  isRoleFetching: boolean;
+  userName: string;
 };
 
 const AuthContext = createContext<AuthType | undefined>(undefined);
 
 type AuthActionType =
-  | { type: "UPDATE_DATA"; payload: AuthType }
-  | { type: "DELETE_DATA" };
+  | {
+      type: "UPDATE_DATA";
+      payload: {
+        userId: string;
+        token: string;
+      };
+    }
+  | { type: "DELETE_DATA" }
+  | {
+      type: "__internal_fetch_complete";
+      payload: {
+        role: "student" | "professor";
+        isAdmin: boolean;
+        userName: string;
+      };
+    };
 
 const AuthDispatchContext = createContext<
   React.Dispatch<AuthActionType> | undefined
@@ -27,10 +46,20 @@ const AuthReducer = (state: AuthType, action: AuthActionType): AuthType => {
       return {
         ...state,
         ...action.payload,
+        isRoleFetching: true,
       };
     case "DELETE_DATA":
       sessionStorage.clear();
-      return { userId: "", token: "" };
+      return {
+        userId: "",
+        token: "",
+        role: "student",
+        userName: "",
+        isRoleFetching: false,
+        isAdmin: false,
+      };
+    case "__internal_fetch_complete":
+      return { ...state, ...action.payload, isRoleFetching: false };
     default:
       throw new Error(
         `Unhandled action type: ${(action as AuthActionType).type}`
@@ -46,6 +75,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [state, dispatch] = useReducer(AuthReducer, {
     token: "",
     userId: "",
+    role: "student",
+    isRoleFetching: false,
+    isAdmin: false,
+    userName: "",
   });
 
   useEffect(() => {
@@ -69,6 +102,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       sessionStorage.setItem("userId", state.userId);
     }
   }, [state.token, state.userId]);
+
+  useEffect(() => {
+    async function fetchRole() {
+      const response = await getUserInfo(state.userId, state.token);
+      if (response.status === 200) {
+        dispatch({
+          type: "__internal_fetch_complete",
+          payload: {
+            role: response.data.role as "student" | "professor",
+            isAdmin: response.data.is_admin,
+            userName: response.data.name,
+          },
+        });
+      }
+    }
+    if (state.token) fetchRole();
+  }, [state.token]);
 
   return (
     <AuthDispatchContext.Provider value={dispatch}>

@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 interface loginResponse {
@@ -24,6 +26,16 @@ interface changePasswordResponse {
   message: string;
 }
 
+function handleStatus(status: number) {
+  switch (status) {
+    case 500:
+      toast.error("500 : 관리자에게 문의해 주세요");
+      return;
+    default:
+      break;
+  }
+}
+
 export async function login(
   id: string,
   password: string
@@ -35,7 +47,7 @@ export async function login(
     },
     body: JSON.stringify({ id, password }),
   });
-
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
 
@@ -50,7 +62,7 @@ export async function getUserInfo(
       Authorization: `Bearer ${token}`,
     },
   });
-
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
 
@@ -68,7 +80,7 @@ export async function changePassword(
     },
     body: JSON.stringify({ old_password, new_password }),
   });
-
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
 
@@ -84,7 +96,7 @@ export async function resetPassword(
     },
     body: JSON.stringify({ new_password: "password" }),
   });
-
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
 
@@ -96,6 +108,7 @@ export async function deleteUser(user_id: string, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
 
@@ -114,5 +127,6 @@ export async function addUser(
     },
     body: JSON.stringify({ id, is_admin, name, role }),
   });
+  handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
