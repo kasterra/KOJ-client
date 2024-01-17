@@ -1,0 +1,79 @@
+.wrapper {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  border-radius: 8px;
+  border: 1px solid rgba(117, 111, 134, 0.2);
+  padding: 40px;
+}
+
+.lectures-section {
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+}
+
+.title {
+  color: #2c2738;
+  font-size: 34px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.cells {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell {
+  text-decoration: none;
+  border-radius: 8px 8px 0px 0px;
+  border-bottom: 1px solid #6a7895;
+  background: #f0f2f5;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 900px;
+  height: 80px;
+  cursor: pointer;
+}
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-title {
+  color: #101828;
+  font-family: IBM Plex Sans;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 28px;
+  display: flex;
+  gap: 8px;
+}
+
+.cell-subtitle {
+  color: #101828;
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 175% */
+}
+
+.icons-section {
+  display: flex;
+  gap: 4px;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+}

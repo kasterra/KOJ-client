@@ -5,6 +5,14 @@ export interface UserEntity {
   role: string;
 }
 
+export interface LectureEntity {
+  code: string;
+  id: number;
+  language: string;
+  semester: number;
+  title: string;
+}
+
 export interface SuccessUserSearchResponse {
   status: 200;
   message: string;
