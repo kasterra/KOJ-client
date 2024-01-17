@@ -7,6 +7,7 @@ interface Props {
   valueList: string[];
   textList: string[];
   description?: string;
+  defaultValue?: string;
 }
 
 const RadioGroup = ({
@@ -15,6 +16,7 @@ const RadioGroup = ({
   valueList,
   textList,
   description,
+  defaultValue,
 }: Props) => {
   return (
     <div className={styles.wrapper}>
@@ -25,7 +27,11 @@ const RadioGroup = ({
             key={idx}
             name={name}
             value={value}
-            defaultChecked={idx === 0}
+            defaultChecked={
+              valueList.some((val) => val === defaultValue)
+                ? defaultValue === valueList[idx]
+                : idx === 0
+            }
             text={textList[idx]}
           />
         ))}
