@@ -1,4 +1,4 @@
-.dropdown-container {
+.dropdown-item-container {
   position: absolute;
   top: calc(100% - 8px);
   padding: 12px 0;
@@ -10,7 +10,7 @@
     0px 4px 8px 0px rgba(44, 39, 56, 0.04);
 }
 
-.dropdown-container a {
+.dropdown-item-container a {
   all: unset;
   text-decoration: none;
 }

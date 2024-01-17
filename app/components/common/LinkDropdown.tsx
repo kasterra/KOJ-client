@@ -8,7 +8,7 @@ interface Props {
 
 const LinkDropdown = ({ submenuTitles, submenuLinks }: Props) => {
   return (
-    <div className={styles["dropdown-container"]}>
+    <div className={styles["dropdown-item-container"]}>
       {submenuLinks.map((submenuLink, index) => (
         <Link to={submenuLink} key={submenuLink}>
           <div className={styles["dropdown-item"]}>{submenuTitles[index]}</div>
