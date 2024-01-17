@@ -77,3 +77,26 @@
   width: 30px;
   height: 30px;
 }
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.semester-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.semeseter-row {
+  display: flex;
+  gap: 12px;
+}

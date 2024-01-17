@@ -10,15 +10,16 @@ import {
 import { useAuth } from "~/contexts/AuthContext";
 import { Link } from "@remix-run/react";
 import LectureAddModal from "./LectureAddModal";
+import LectureEditModal from "./LectureEditModal";
 
 function semesterToString(semester: number) {
   switch (semester) {
     case 0:
-      return 1;
+      return "1";
     case 1:
       return "S";
     case 2:
-      return 2;
+      return "2";
     case 3:
       return "W";
     default:
@@ -60,6 +61,7 @@ const Lectures = () => {
       setCurrentSemeseterLectures(lectures[0].data);
       setPreviousSemesterLectures(lectures[1].data);
       setIsLoading(false);
+      setEditingLectureInfo(lectures[0].data[0]);
     };
     getLectures();
   }, []);
@@ -99,7 +101,9 @@ const Lectures = () => {
                         alt="edit icon"
                         className={styles.icon}
                         onClick={(e) => {
+                          console.log(lecture);
                           setEditingLectureInfo(lecture);
+                          console.log(editingLectureInfo);
                           setIsLectureEditModalOpen(true);
                         }}
                       />
@@ -157,7 +161,9 @@ const Lectures = () => {
                         alt="edit icon"
                         className={styles.icon}
                         onClick={(e) => {
+                          console.log(lecture);
                           setEditingLectureInfo(lecture);
+                          console.log(editingLectureInfo);
                           setIsLectureEditModalOpen(true);
                         }}
                       />
@@ -175,13 +181,27 @@ const Lectures = () => {
                 </Link>
               ))}
             </div>
+            <LectureAddModal
+              isOpen={isLectureAddModalOpen}
+              onClose={() => setIsLectureAddModalOpen(false)}
+              currentYear={2024}
+            />
+            {isLectureEditModalOpen ? (
+              <LectureEditModal
+                isOpen={isLectureEditModalOpen}
+                onClose={() => setIsLectureEditModalOpen(false)}
+                lectureName={editingLectureInfo!.title}
+                lectureCode={editingLectureInfo!.code}
+                lectureLanguage={editingLectureInfo!.language}
+                lectureYear={(editingLectureInfo!.semester / 10).toFixed(0)}
+                lectureSemester={semesterToString(
+                  editingLectureInfo!.semester % 10
+                )}
+              />
+            ) : null}
           </div>
         )}
       </main>
-      <LectureAddModal
-        isOpen={isLectureAddModalOpen}
-        onClose={() => setIsLectureAddModalOpen(false)}
-      />
     </div>
   );
 };
