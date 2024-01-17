@@ -27,8 +27,8 @@ const LectureEditModal = ({
 }: Props) => {
   return (
     <Modal
-      title="강의 추가"
-      subtitle="KOJ에 강의 정보를 등록합니다"
+      title="강의 수정"
+      subtitle="KOJ에 등록된 강의를 수정합니다"
       isOpen={isOpen}
       onClose={onClose}
     >
