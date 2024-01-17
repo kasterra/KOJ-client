@@ -116,6 +116,7 @@
 
 .dropdown-item-container {
   position: absolute;
+  z-index: 2;
   top: calc(100% + 8px);
   padding: 12px 0;
   width: 360px;

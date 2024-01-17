@@ -1,7 +1,12 @@
 .dialog {
-  width: 460px;
   background: none;
   border: none;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.dialog::-webkit-scrollbar {
+  display: none;
 }
 
 .backdrop {
