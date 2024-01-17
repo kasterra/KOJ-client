@@ -5,11 +5,12 @@ import inputStyles from "./input.module.css";
 interface Props {
   name: string;
   submenus: string[];
+  defaultVal?: string;
 }
 
-const DropDown = ({ submenus, name }: Props) => {
+const DropDown = ({ submenus, name, defaultVal = "" }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(defaultVal);
 
   return (
     <div
@@ -19,7 +20,7 @@ const DropDown = ({ submenus, name }: Props) => {
         setIsOpen(!isOpen);
       }}
     >
-      <span>{inputRef.current?.value}</span>
+      <span>{value}</span>
       {isOpen ? (
         <div className={inputStyles["dropdown-item-container"]}>
           {submenus.map((submenu, idx) => (
@@ -27,16 +28,16 @@ const DropDown = ({ submenus, name }: Props) => {
               <div
                 className={styles["dropdown-item"]}
                 onClick={() => {
-                  inputRef.current!.value = submenu;
+                  setValue(submenu);
                 }}
               >
                 {submenu}
               </div>
             </div>
           ))}
-          <input name={name} ref={inputRef} style={{ display: "none" }} />
         </div>
       ) : null}
+      <input name={name} style={{ display: "none" }} value={value} readOnly />
     </div>
   );
 };
