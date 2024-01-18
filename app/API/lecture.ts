@@ -65,3 +65,22 @@ export async function getPreviousSemesterLectures(token: string) {
     ],
   };
 }
+
+export async function postNewLecture(
+  code: string,
+  language: string,
+  semester: number,
+  title: string,
+  token: string
+) {
+  const response = await fetch(`${API_SERVER_URL}/lecture`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ code, language, semester, title }),
+  });
+
+  return { ...(await response.json()), status: response.status };
+}

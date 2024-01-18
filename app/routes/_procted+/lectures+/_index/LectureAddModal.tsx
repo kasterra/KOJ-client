@@ -5,6 +5,9 @@ import DropDown from "~/components/Input/Dropdown";
 import Modal from "~/components/Modal";
 import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
+import { postNewLecture } from "~/API/lecture";
+import { semesterStringToNumber } from "~/util";
+import { useAuth } from "~/contexts/AuthContext";
 
 interface Props {
   isOpen: boolean;
@@ -21,6 +24,7 @@ function createYearList(currentYear: number): string[] {
 }
 
 const LectureAddModal = ({ isOpen, onClose, currentYear }: Props) => {
+  const { token } = useAuth();
   const currentSemester = "겨울";
   return (
     <Modal
@@ -31,16 +35,23 @@ const LectureAddModal = ({ isOpen, onClose, currentYear }: Props) => {
     >
       <form
         className={styles["modal-body"]}
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
-          const name = formData.get("name");
-          const code = formData.get("code");
-          const year = formData.get("year");
-          const semester = formData.get("semester");
-          const language = formData.get("language");
+          const name = formData.get("name") as string;
+          const code = formData.get("code") as string;
+          const yearStr = formData.get("year") as string;
+          const semesterStr = formData.get("semester") as string;
+          const language = formData.get("language") as string;
 
-          console.log({ name, code, year, semester, language });
+          await postNewLecture(
+            code,
+            language,
+            semesterStringToNumber(yearStr, semesterStr),
+            name,
+            token
+          );
+          onClose();
         }}
       >
         <div className={styles.inputs}>
@@ -80,7 +91,7 @@ const LectureAddModal = ({ isOpen, onClose, currentYear }: Props) => {
           <RadioGroup
             title="프로그래밍 언어"
             name="language"
-            valueList={["C", "java", "python"]}
+            valueList={["C", "Java", "Python"]}
             textList={["C", "Java", "Python"]}
           />
         </div>
