@@ -130,3 +130,18 @@ export async function addUser(
   handleStatus(response.status);
   return { ...(await response.json()), status: response.status };
 }
+
+export async function searchUser(searchString: string, token: string) {
+  const response = await fetch(
+    `${API_SERVER_URL}/user?search=${searchString}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  handleStatus(response.status);
+  return { ...(await response.json()), status: response.status };
+}
