@@ -5,6 +5,7 @@ import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import { addUser } from "~/API/user";
 import { useAuth } from "~/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 interface Props {
   isOpen: boolean;
@@ -27,7 +28,28 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
           const name = formData.get("name") as string;
           const id = formData.get("id") as string;
           const role = formData.get("role") as string;
-          await addUser(id, false, name, role, auth.token);
+          const response = await addUser(id, false, name, role, auth.token);
+          switch (response.status) {
+            case 201:
+              toast.success("성공적으로 추가하였습니다");
+              break;
+            case 400:
+              toast.error("입력값이 잘못되었습니다");
+              break;
+            case 401:
+              toast.error("해당 작업은 관리자 계정으로만 가능합니다");
+              break;
+            case 409:
+              toast.error("추가하려는 사용자가 이미 존재합니다. (학번 중복)");
+              break;
+            case 500:
+              toast.error(
+                "서버에서 알 수 없는 에러가 발생했습니다. 관리자에게 문의하세요"
+              );
+              break;
+            default:
+              break;
+          }
           onClose();
         }}
       >

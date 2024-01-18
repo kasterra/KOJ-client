@@ -8,6 +8,7 @@ import RadioGroup from "~/components/Radio/RadioGroup";
 import { postNewLecture } from "~/API/lecture";
 import { semesterStringToNumber } from "~/util";
 import { useAuth } from "~/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 interface Props {
   isOpen: boolean;
@@ -44,13 +45,36 @@ const LectureAddModal = ({ isOpen, onClose, currentYear }: Props) => {
           const semesterStr = formData.get("semester") as string;
           const language = formData.get("language") as string;
 
-          await postNewLecture(
+          const response = await postNewLecture(
             code,
             language,
             semesterStringToNumber(yearStr, semesterStr),
             name,
             token
           );
+          switch (response.status) {
+            case 201:
+              toast.success("성공적으로 등록되었습니다");
+              break;
+            case 400:
+              toast.error("입력이 잘못되었습니다!");
+              break;
+            case 401:
+              toast.error("권한이 없습니다");
+              break;
+            case 409:
+              toast.error("이미 존재하는 강의입니다");
+              break;
+            case 500:
+              toast.error(
+                "서버에서 알 수 없는 에러가 발생했습니다. 관리자에게 문의하세요"
+              );
+              break;
+            default:
+              toast.error("알 수 없는 에러입니다. 관리자에게 문의하세요");
+              break;
+          }
+
           onClose();
         }}
       >
