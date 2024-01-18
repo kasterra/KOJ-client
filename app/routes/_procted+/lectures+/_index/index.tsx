@@ -11,27 +11,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import { Link } from "@remix-run/react";
 import LectureAddModal from "./LectureAddModal";
 import LectureEditModal from "./LectureEditModal";
-
-function semesterToString(semester: number) {
-  switch (semester) {
-    case 0:
-      return "1";
-    case 1:
-      return "S";
-    case 2:
-      return "2";
-    case 3:
-      return "W";
-    default:
-      throw new Error("Invalid semester");
-  }
-}
-
-function formatLectureInfo(title: string, semester: number) {
-  return `${title} (${(semester / 10).toFixed(0)}-${semesterToString(
-    semester % 10
-  )})`;
-}
+import { formatLectureInfo, semesterToString } from "~/util";
 
 const Lectures = () => {
   const [currentSemeseterLectures, setCurrentSemeseterLectures] = useState<

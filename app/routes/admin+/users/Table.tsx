@@ -12,15 +12,7 @@ import {
 } from "./TableRowDataContext";
 import { deleteUser, resetPassword } from "~/API/user";
 import { useAuth } from "~/contexts/AuthContext";
-
-function mapRoleToString(role: string) {
-  switch (role) {
-    case "student":
-      return "학생";
-    case "professor":
-      return "교수";
-  }
-}
+import { mapRoleToString } from "~/util";
 
 const TableHeader = () => {
   const dispatch = useTableRowDataDispatch();
