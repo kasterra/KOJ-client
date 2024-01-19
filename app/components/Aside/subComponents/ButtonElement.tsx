@@ -6,10 +6,10 @@ import {
   isLinkElement,
 } from "../AsideListTypes";
 import { SubLevelLinkElement } from "./LinkElement";
-import pencilSVG from "./icons/pencil.svg";
-import trashSVG from "./icons/trash.svg";
-import chevronDownSVG from "./icons/chevronDown.svg";
-import chevronUpSVG from "./icons/chevronUp.svg";
+import pencilSVG from "~/assets/pencil.svg";
+import trashSVG from "~/assets/trash.svg";
+import chevronDownSVG from "~/assets/chevronDown.svg";
+import chevronUpSVG from "~/assets/chevronUp.svg";
 
 interface ButtonProps {
   title: string;

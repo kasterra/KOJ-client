@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import LinkDropdown from "~/components/common/LinkDropdown";
 import styles from "./element.module.css";
-import chevronDownSVG from "./icons/chevronDown.svg";
-import chevronUpSVG from "./icons/chevronUp.svg";
+import chevronDownSVG from "~/assets/chevronDown.svg";
+import chevronUpSVG from "~/assets/chevronUp.svg";
 
 interface Props {
   title: string;
