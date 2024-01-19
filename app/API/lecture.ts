@@ -84,3 +84,31 @@ export async function postNewLecture(
 
   return { ...(await response.json()), status: response.status };
 }
+
+export async function getLectureWithLectureId(
+  lectureId: string,
+  token: string
+) {
+  return {
+    message: "success",
+    data: {
+      id: 1,
+      title: "후로구라밍구 베이직",
+      language: "C",
+      code: "comp123-456",
+      semeseter: 20241,
+      practices: [
+        {
+          id: 2,
+          title: "실습이름",
+          problems: [
+            {
+              id: 6,
+              title: "problem1",
+            },
+          ],
+        },
+      ],
+    },
+  };
+}

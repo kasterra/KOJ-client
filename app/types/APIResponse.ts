@@ -1,3 +1,5 @@
+import { Lecture } from ".";
+
 export interface UserEntity {
   id: string;
   is_admin: boolean;
@@ -28,6 +30,17 @@ export interface SuccessUserResponse {
 interface FailedResponse {
   status: number;
   message: string;
+}
+
+export interface SimpleLectureDetail extends Lecture {
+  practices: {
+    id: number;
+    title: string;
+    problems: {
+      id: number;
+      title: string;
+    }[];
+  }[];
 }
 
 export type UserResponse = SuccessUserResponse | FailedResponse;
