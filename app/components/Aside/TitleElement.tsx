@@ -11,6 +11,7 @@ interface Props {
 interface PropsWithSubmenus extends Props {
   submenuTitles: string[];
   submenuLinks: string[];
+  submenuClickListenerList?: (() => void)[];
 }
 
 export const PlainTitle = ({ title }: Props) => {
@@ -25,6 +26,7 @@ export const TitleWithSubmenus = ({
   title,
   submenuTitles,
   submenuLinks,
+  submenuClickListenerList,
 }: PropsWithSubmenus) => {
   const containerRef = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -62,6 +64,7 @@ export const TitleWithSubmenus = ({
         <LinkDropdown
           submenuLinks={submenuLinks}
           submenuTitles={submenuTitles}
+          onClickList={submenuClickListenerList}
         />
       )}
     </button>

@@ -4,7 +4,7 @@ import {
   AsideElementType,
   isButtonElement,
   isLinkElement,
-} from "../AsideListTypes";
+} from "./AsideListTypes";
 import { SubLevelLinkElement } from "./LinkElement";
 import pencilSVG from "~/assets/pencil.svg";
 import trashSVG from "~/assets/trash.svg";
