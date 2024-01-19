@@ -9,7 +9,7 @@ import plusSVG from "~/components/Table/icons/plus.svg";
 import {
   useTableRowData,
   useTableRowDataDispatch,
-} from "./TableRowDataContext";
+} from "~/contexts/TableRowDataContext";
 import { deleteUser, resetPassword, searchUser } from "~/API/user";
 import { useAuth } from "~/contexts/AuthContext";
 import { mapRoleToString } from "~/util";

@@ -1,6 +1,6 @@
 import styles from "./users.module.css";
 import Table from "./Table";
-import { TableRowDataProvider } from "./TableRowDataContext";
+import { TableRowDataProvider } from "~/contexts/TableRowDataContext";
 
 const Users = () => {
   return (
