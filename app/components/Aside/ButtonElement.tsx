@@ -142,14 +142,15 @@ export const SubLevelButtonElement = ({
     <div onClick={onButtonClick} className={styles["subelement-block"]}>
       <h4 className={styles["subelement-title-span"]}>{title}</h4>
       {icon && (
-        <div
+        <img
           onClick={(e) => {
             e.stopPropagation();
             onIconClick && onIconClick();
           }}
-        >
-          <img className={styles["subelement-icon"]} src={icon} alt="" />
-        </div>
+          className={styles["subelement-icon"]}
+          src={icon}
+          alt=""
+        />
       )}
     </div>
   );
