@@ -19,13 +19,17 @@ const Header = () => {
     userName,
   } = useAuth();
 
+  const location = useLocation();
+
+  const isAdminPage = location.pathname.includes("admin");
+
   return isLoading || userId === "" || token === "" ? null : (
     <header className={styles.container}>
       <div className={styles["navmenu-container"]}>
         <Link to="/lectures">
           <img src={LogoSVG} alt="KOJ logo" className={styles.logo} />
         </Link>
-        <NavMenu userClass={userClass!} />
+        <NavMenu userClass={isAdminPage ? "admin" : userClass!} />
       </div>
       <div className={styles["userinfo-container"]}>
         <UserInfo
