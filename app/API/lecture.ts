@@ -96,8 +96,22 @@ export async function getLectureWithLectureId(
       title: "후로구라밍구 베이직",
       language: "C",
       code: "comp123-456",
-      semeseter: 20241,
+      semester: 20241,
       practices: [
+        {
+          id: 2,
+          title: "실습이름",
+          problems: [
+            {
+              id: 6,
+              title: "problem1",
+            },
+            {
+              id: 6,
+              title: "problem3",
+            },
+          ],
+        },
         {
           id: 2,
           title: "실습이름",
