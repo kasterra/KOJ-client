@@ -1,0 +1,38 @@
+.container {
+  padding: 8px 16px;
+  width: 310px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0px 8px 24px 0px rgba(66, 74, 83, 0.12);
+}
+
+.section {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 32px;
+  padding: 8px 0px;
+}
+
+.section-btn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.chevron-img {
+  width: 12px;
+  height: 12px;
+}
+
+.leading-img {
+  width: 16px;
+  height: 16px;
+}
+
+.selected {
+  border: 2px solid #0969da;
+  border-radius: 6px;
+}
