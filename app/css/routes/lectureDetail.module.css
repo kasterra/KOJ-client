@@ -1,0 +1,12 @@
+.container {
+  margin-top: 30px;
+  margin-left: 70px;
+  width: 100%;
+  display: flex;
+}
+
+.aside {
+  width: 335px;
+  display: flex;
+  flex-direction: column;
+}
