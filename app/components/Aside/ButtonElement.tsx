@@ -1,11 +1,5 @@
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import styles from "./element.module.css";
-import {
-  AsideElementType,
-  isButtonElement,
-  isLinkElement,
-} from "./AsideListTypes";
-import { SubLevelLinkElement } from "./LinkElement";
 import pencilSVG from "~/assets/pencil.svg";
 import trashSVG from "~/assets/trash.svg";
 import chevronDownSVG from "~/assets/chevronDown.svg";
@@ -14,28 +8,62 @@ import chevronUpSVG from "~/assets/chevronUp.svg";
 interface ButtonProps {
   title: string;
   onButtonClick: () => void;
-  icon?: string;
-  onIconClick?: () => void;
+  onTextClick?: () => void;
+  showIcons?: boolean;
+  iconSrcList?: string[];
+  onIconClickList?: (() => void)[];
+  level?: number;
 }
 
 export const ButtonElement = ({
   title,
   onButtonClick,
-  icon,
-  onIconClick,
+  onTextClick,
+  showIcons = true,
+  iconSrcList = [],
+  onIconClickList = [],
+  level,
 }: ButtonProps) => {
   return (
     <div className={styles["element-block"]}>
-      <div className={styles["element-title-block"]} onClick={onButtonClick}>
-        <h3 className={styles["element-title-span"]}>{title}</h3>
-        {icon && (
-          <img
-            className={styles["element-icon"]}
-            src={icon}
-            alt=""
-            onClick={onIconClick}
-          />
-        )}
+      <div
+        style={{ paddingLeft: level ? level * 12 : undefined }}
+        className={styles["element-title-block"]}
+        onClick={onButtonClick}
+      >
+        <h3
+          className={styles["element-title-span"]}
+          onClick={
+            onTextClick
+              ? (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onTextClick();
+                }
+              : () => {}
+          }
+        >
+          {title}
+        </h3>
+        {showIcons ? (
+          <div className={styles["element-edit-icons-block"]}>
+            {iconSrcList?.map((iconSrc, idx) => (
+              <img
+                key={idx}
+                className={styles["element-icon"]}
+                src={iconSrc}
+                onClick={
+                  onIconClickList[idx]
+                    ? (e) => {
+                        e.stopPropagation();
+                        onIconClickList[idx]();
+                      }
+                    : () => {}
+                }
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -46,8 +74,9 @@ interface FoldableProps {
   isEditable: boolean;
   onEditClick: () => void;
   onDeleteClick: () => void;
-  subelements: AsideElementType[];
+  onTextClick?: () => void;
   onIconClick?: () => void;
+  level?: number;
 }
 
 export const FoldableSuperButtonElement = ({
@@ -55,17 +84,35 @@ export const FoldableSuperButtonElement = ({
   isEditable,
   onEditClick,
   onDeleteClick,
-  subelements,
-}: FoldableProps) => {
+  onTextClick,
+  level,
+  children,
+}: PropsWithChildren<FoldableProps>) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
   };
   return (
     <div className={styles["element-block"]}>
-      <div className={styles["element-title-block"]} onClick={toggleOpen}>
+      <div
+        style={{ paddingLeft: level ? level * 12 : undefined }}
+        className={styles["element-title-block"]}
+        onClick={toggleOpen}
+      >
         <div className={styles["element-title-section"]}>
-          <h3 className={styles["element-title-span"]}>{title}</h3>
+          <h3
+            className={styles["element-title-span"]}
+            onClick={
+              onTextClick
+                ? (e) => {
+                    e.stopPropagation();
+                    onTextClick();
+                  }
+                : () => {}
+            }
+          >
+            {title}
+          </h3>
           <img
             src={isOpen ? chevronUpSVG : chevronDownSVG}
             alt={isOpen ? "submenu close icon" : "submenu open icon"}
@@ -103,53 +150,7 @@ export const FoldableSuperButtonElement = ({
           </div>
         )}
       </div>
-      {isOpen &&
-        subelements.map((subelement) => {
-          if (isButtonElement(subelement)) {
-            return (
-              <SubLevelButtonElement
-                key={subelement.title}
-                title={subelement.title}
-                onButtonClick={subelement.onButtonClick}
-                icon={subelement.icon}
-                onIconClick={subelement.onIconClick}
-              />
-            );
-          } else if (isLinkElement(subelement)) {
-            return (
-              <SubLevelLinkElement
-                key={subelement.title}
-                title={subelement.title}
-                link={subelement.link}
-              />
-            );
-          }
-        })}
-    </div>
-  );
-};
-
-export const SubLevelButtonElement = ({
-  title,
-  onButtonClick,
-  icon,
-  onIconClick,
-}: ButtonProps) => {
-  onIconClick && onIconClick();
-  return (
-    <div onClick={onButtonClick} className={styles["subelement-block"]}>
-      <h4 className={styles["subelement-title-span"]}>{title}</h4>
-      {icon && (
-        <img
-          onClick={(e) => {
-            e.stopPropagation();
-            onIconClick && onIconClick();
-          }}
-          className={styles["subelement-icon"]}
-          src={icon}
-          alt=""
-        />
-      )}
+      {isOpen ? children : null}
     </div>
   );
 };

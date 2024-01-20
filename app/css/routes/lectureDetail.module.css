@@ -3,6 +3,7 @@
   margin-left: 70px;
   width: 100%;
   display: flex;
+  gap: 150px;
 }
 
 .aside {

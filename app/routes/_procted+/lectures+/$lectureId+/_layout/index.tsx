@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useParams } from "@remix-run/react";
+import { Outlet, useNavigate, useParams } from "@remix-run/react";
 import styles from "~/css/routes/lectureDetail.module.css";
 import { LectureEntity, SimpleLectureDetail } from "~/types/APIResponse";
 import {
@@ -19,17 +19,23 @@ import {
 } from "~/components/Aside/ButtonElement";
 import plusSVG from "~/assets/plus-k.svg";
 import downloadSVG from "~/assets/download.svg";
+import pencilSVG from "~/assets/pencil.svg";
+import trashSVG from "~/assets/trash.svg";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
   const [currentLecture, setCurrentLecture] = useState<SimpleLectureDetail>();
 
-  const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
+  const [isProblemEditModalOpen, setIsProblemEditModalOpen] = useState(false);
+  const [editingProblemId, setEditingProblemId] = useState(-1);
+  const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isNewPracticeModalOpen, setIsNewPracticeModalOpen] = useState(false);
   const [isImportPracticeModalOpen, setIsImportPracticeModalOpen] =
     useState(false);
+  const [isTestCaseEditModalOpen, setTestCaseEditModalOpen] = useState(false);
+  const [editingTestCaseId, setEditingTestCaseId] = useState(-1);
 
   const {
     isContextLoading,
@@ -38,6 +44,7 @@ const LectureDetail = () => {
   const lectureDataDispatch = useLectureDataDispatch();
   const auth = useAuth();
   const params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getData() {
@@ -95,32 +102,68 @@ const LectureDetail = () => {
                 console.log("삭제!!!");
               }
             }}
-            subelements={[
-              ...practice.problems.map((problem) => ({
-                type: "link" as "link",
-                title: problem.title,
-                link: `/lectures/${currentLecture!.id}/problems/${problem.id}`,
-              })),
-              {
-                type: "button",
-                title: "문제 추가하기",
-                onButtonClick: () => {
-                  setIsProblemAddModalOpen(true);
-                },
-                icon: plusSVG,
-              },
-            ]}
-          />
+          >
+            {practice.problems.map((problem) => (
+              <FoldableSuperButtonElement
+                key={problem.id}
+                onTextClick={() =>
+                  navigate(`/lectures/${params.lectureId}/${problem.id}`)
+                }
+                level={1}
+                title={problem.title}
+                isEditable={auth.role === "professor"}
+                onEditClick={() => {
+                  setEditingProblemId(problem.id);
+                  setIsProblemEditModalOpen(true);
+                }}
+                onDeleteClick={() => {
+                  if (
+                    confirm(`정말로 ${problem.title} 문제을 삭제 하시겠습니까?`)
+                  ) {
+                    console.log("삭제!!!");
+                  }
+                }}
+              >
+                {problem.testcases.map((testcase) => (
+                  <ButtonElement
+                    key={testcase.id}
+                    title={testcase.title}
+                    showIcons={auth.role === "professor"}
+                    iconSrcList={[pencilSVG, trashSVG]}
+                    onIconClickList={[
+                      () => {
+                        setEditingTestCaseId(testcase.id);
+                        setTestCaseEditModalOpen(true);
+                      },
+                      () => {
+                        if (
+                          confirm(
+                            `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
+                          )
+                        ) {
+                          console.log("삭제!!!");
+                        }
+                      },
+                    ]}
+                    onButtonClick={() => {
+                      setEditingTestCaseId(testcase.id);
+                      setTestCaseEditModalOpen(true);
+                    }}
+                  />
+                ))}
+              </FoldableSuperButtonElement>
+            ))}
+          </FoldableSuperButtonElement>
         ))}
         <ButtonElement
           title="실습 새로 추가하기"
           onButtonClick={() => setIsNewPracticeModalOpen(true)}
-          icon={plusSVG}
+          iconSrcList={[plusSVG]}
         />
         <ButtonElement
           title="실습 가져오기"
           onButtonClick={() => setIsImportPracticeModalOpen(true)}
-          icon={downloadSVG}
+          iconSrcList={[downloadSVG]}
         />
       </aside>
       <Outlet />
