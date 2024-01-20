@@ -26,18 +26,16 @@ export const ButtonElement = ({
 }: ButtonProps) => {
   return (
     <div className={styles["element-block"]}>
-      <div className={styles["element-title-block"]}>
-        <div onClick={onButtonClick}>
-          <h3 className={styles["element-title-span"]}>{title}</h3>
-          {icon && (
-            <img
-              className={styles["element-icon"]}
-              src={icon}
-              alt=""
-              onClick={onIconClick}
-            />
-          )}
-        </div>
+      <div className={styles["element-title-block"]} onClick={onButtonClick}>
+        <h3 className={styles["element-title-span"]}>{title}</h3>
+        {icon && (
+          <img
+            className={styles["element-icon"]}
+            src={icon}
+            alt=""
+            onClick={onIconClick}
+          />
+        )}
       </div>
     </div>
   );
