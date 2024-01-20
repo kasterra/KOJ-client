@@ -12,6 +12,7 @@ import { Link } from "@remix-run/react";
 import LectureAddModal from "./LectureAddModal";
 import LectureEditModal from "./LectureEditModal";
 import { formatLectureInfo, semesterToString } from "~/util";
+import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
 
 const Lectures = () => {
   const [currentSemeseterLectures, setCurrentSemeseterLectures] = useState<
@@ -31,6 +32,7 @@ const Lectures = () => {
     >();
 
   const { token, role } = useAuth();
+  const lectureDataDispatch = useLectureDataDispatch();
   const isProfessor = role === "professor";
   useEffect(() => {
     const getLectures = async () => {
@@ -56,6 +58,15 @@ const Lectures = () => {
             <div className={styles.cells}>
               {currentSemeseterLectures.map((lecture) => (
                 <Link
+                  onClick={() => {
+                    lectureDataDispatch({
+                      type: "UPDATE_DATA",
+                      payload: {
+                        isCurrentSemester: true,
+                        lectureName: lecture.title,
+                      },
+                    });
+                  }}
                   to={lecture.id + ""}
                   key={lecture.id}
                   className={styles.cell}
@@ -81,9 +92,7 @@ const Lectures = () => {
                         alt="edit icon"
                         className={styles.icon}
                         onClick={(e) => {
-                          console.log(lecture);
                           setEditingLectureInfo(lecture);
-                          console.log(editingLectureInfo);
                           setIsLectureEditModalOpen(true);
                         }}
                       />
@@ -116,6 +125,15 @@ const Lectures = () => {
             <div className={styles.cells}>
               {previousSemesterLectures.map((lecture) => (
                 <Link
+                  onClick={() => {
+                    lectureDataDispatch({
+                      type: "UPDATE_DATA",
+                      payload: {
+                        isCurrentSemester: false,
+                        lectureName: lecture.title,
+                      },
+                    });
+                  }}
                   to={lecture.id + ""}
                   key={lecture.id}
                   className={styles.cell}

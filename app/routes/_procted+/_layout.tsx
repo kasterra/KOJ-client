@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Header from "~/components/Header";
 import { useAuth } from "~/contexts/AuthContext";
+import { LectureDataProvider } from "~/contexts/LectureDataContext";
 
 const ProctedRoute = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [contextIsLoading, setContextIsLoading] = useState(
+  const [authContextIsLoading, setAuthContextIsLoading] = useState(
     auth.token === "" && auth.userId === ""
   );
 
@@ -23,15 +24,15 @@ const ProctedRoute = () => {
   }, []);
 
   useEffect(() => {
-    if (contextIsLoading)
-      setContextIsLoading(auth.token === "" && auth.userId === "");
+    if (authContextIsLoading)
+      setAuthContextIsLoading(auth.token === "" && auth.userId === "");
   });
 
-  return contextIsLoading ? null : (
-    <>
+  return authContextIsLoading ? null : (
+    <LectureDataProvider>
       <Header />
       <Outlet />
-    </>
+    </LectureDataProvider>
   );
 };
 
