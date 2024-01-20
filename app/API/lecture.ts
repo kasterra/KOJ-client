@@ -107,14 +107,14 @@ export async function getLectureWithLectureId(
               title: "problem1",
             },
             {
-              id: 6,
+              id: 7,
               title: "problem3",
             },
           ],
         },
         {
-          id: 2,
-          title: "실습이름",
+          id: 3,
+          title: "실습이름2",
           problems: [
             {
               id: 6,
