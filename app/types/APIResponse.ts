@@ -39,6 +39,7 @@ export interface SimpleLectureDetail extends Lecture {
     problems: {
       id: number;
       title: string;
+      testcases: { id: number; title: string }[];
     }[];
   }[];
 }

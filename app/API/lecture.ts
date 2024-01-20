@@ -105,10 +105,12 @@ export async function getLectureWithLectureId(
             {
               id: 6,
               title: "problem1",
+              testcases: [{ id: 1, title: "TC1" }],
             },
             {
               id: 7,
               title: "problem3",
+              testcases: [{ id: 2, title: "TC1" }],
             },
           ],
         },
@@ -119,6 +121,7 @@ export async function getLectureWithLectureId(
             {
               id: 6,
               title: "problem1",
+              testcases: [{ id: 3, title: "TC1" }],
             },
           ],
         },
