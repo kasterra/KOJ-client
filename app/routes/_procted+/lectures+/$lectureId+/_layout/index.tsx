@@ -21,6 +21,8 @@ import plusSVG from "~/assets/plus-k.svg";
 import downloadSVG from "~/assets/download.svg";
 import pencilSVG from "~/assets/pencil.svg";
 import trashSVG from "~/assets/trash.svg";
+import NewPracticeModal from "./NewPracticeModal";
+import ImportPracticeModal from "./ImportPracticeModal";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +36,7 @@ const LectureDetail = () => {
   const [isNewPracticeModalOpen, setIsNewPracticeModalOpen] = useState(false);
   const [isImportPracticeModalOpen, setIsImportPracticeModalOpen] =
     useState(false);
+  const [isTestCaseAddModalOpen, setTestCaseAddModalOpen] = useState(false);
   const [isTestCaseEditModalOpen, setTestCaseEditModalOpen] = useState(false);
   const [editingTestCaseId, setEditingTestCaseId] = useState(-1);
 
@@ -151,8 +154,22 @@ const LectureDetail = () => {
                     }}
                   />
                 ))}
+                <ButtonElement
+                  title="테스트 케이스 추가하기"
+                  onButtonClick={() => {
+                    setTestCaseAddModalOpen(true);
+                  }}
+                  iconSrcList={[plusSVG]}
+                />
               </FoldableSuperButtonElement>
             ))}
+            <ButtonElement
+              title="문제 추가하기"
+              onButtonClick={() => {
+                setIsProblemAddModalOpen(true);
+              }}
+              iconSrcList={[plusSVG]}
+            />
           </FoldableSuperButtonElement>
         ))}
         <ButtonElement
@@ -166,6 +183,14 @@ const LectureDetail = () => {
           iconSrcList={[downloadSVG]}
         />
       </aside>
+      <NewPracticeModal
+        isOpen={isNewPracticeModalOpen}
+        onClose={() => setIsNewPracticeModalOpen(false)}
+      />
+      <ImportPracticeModal
+        isOpen={isImportPracticeModalOpen}
+        onClose={() => setIsImportPracticeModalOpen(false)}
+      />
       <Outlet />
     </div>
   );
