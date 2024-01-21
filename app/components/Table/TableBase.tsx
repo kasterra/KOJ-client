@@ -8,6 +8,7 @@ interface Props {
   dataRows: TableRow[];
   gridTemplateColumns: string;
   usesCheckbox?: boolean;
+  onCheckboxClick?: (idx: number) => void;
 }
 
 const TableBase = ({
@@ -16,11 +17,8 @@ const TableBase = ({
   dataRows,
   gridTemplateColumns,
   usesCheckbox = false,
+  onCheckboxClick,
 }: Props) => {
-  const [checkedList, setCheckedList] = useState(
-    new Array(dataRows.length).fill(false)
-  );
-
   return (
     <>
       <div className={styles.container}>
@@ -51,14 +49,9 @@ const TableBase = ({
               <div className={styles.cell}>
                 <input
                   type="checkbox"
-                  value={checkedList[idx]}
-                  onChange={() => {
-                    setCheckedList(
-                      checkedList.map((_, i) =>
-                        i === idx ? !checkedList[idx] : _
-                      )
-                    );
-                  }}
+                  onClick={() =>
+                    onCheckboxClick ? onCheckboxClick(idx) : () => {}
+                  }
                 />
               </div>
             ) : null}
