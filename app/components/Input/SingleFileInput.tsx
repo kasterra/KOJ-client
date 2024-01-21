@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./input.module.css";
 import fileSVG from "./icons/file.svg";
+import toast from "react-hot-toast";
 
 interface Props {
   title: string;
@@ -40,7 +41,8 @@ const SingleFileInput = ({
         throw new Error("Invalid Argument in processFileFromEvent");
       }
       if (!validateFileExtension(file)) {
-        throw new Error("지원하지 않는 파일 형식을 업로드 하였습니다");
+        toast.error("지원하지 않는 파일 형식을 업로드 하였습니다");
+        return;
       }
       onFileUpload(file);
       setFileUploaded(file);
