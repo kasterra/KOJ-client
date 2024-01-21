@@ -5,8 +5,15 @@ interface Props {
   name: string;
   description?: string;
   required?: boolean;
+  defaultValue?: string;
 }
-const DateInput = ({ name, title, description, required }: Props) => {
+const DateInput = ({
+  name,
+  title,
+  description,
+  required,
+  defaultValue,
+}: Props) => {
   return (
     <div className={styles.wrapper}>
       <label className={styles.title} htmlFor={name}>
@@ -18,6 +25,7 @@ const DateInput = ({ name, title, description, required }: Props) => {
         name={name}
         id={name}
         required={required}
+        defaultValue={defaultValue}
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>
