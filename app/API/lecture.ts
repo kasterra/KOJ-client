@@ -129,3 +129,29 @@ export async function getLectureWithLectureId(
     },
   };
 }
+
+export async function getAllPractices(token: string, userId: string) {
+  return {
+    message: "success",
+    data: [
+      {
+        semester: 20241,
+        lectures: [
+          {
+            id: 1,
+            title: "후로구라밍구 베이직",
+            language: "C",
+            code: "comp123-456",
+            semester: 20241,
+            practices: [
+              {
+                id: 2,
+                title: "실습이름",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+}

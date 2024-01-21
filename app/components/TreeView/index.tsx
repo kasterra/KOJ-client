@@ -6,7 +6,7 @@ import fileSVG from "./icons/file.svg";
 import folderSVG from "./icons/folder.svg";
 import openFolderSVG from "./icons/openFolder.svg";
 
-interface node {
+export interface node {
   title: string;
   id?: string;
   isTerminal?: true;

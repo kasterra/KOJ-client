@@ -44,6 +44,21 @@ export interface SimpleLectureDetail extends Lecture {
   }[];
 }
 
+export interface SemesterLecturePracticeDetail {
+  semester: number;
+  lectures: {
+    id: number;
+    title: string;
+    language: string;
+    code: string;
+    semester: number;
+    practices: {
+      id: number;
+      title: string;
+    }[];
+  }[];
+}
+
 export type UserResponse = SuccessUserResponse | FailedResponse;
 
 export type UserSearchRespnse = SuccessUserSearchResponse | FailedResponse;
