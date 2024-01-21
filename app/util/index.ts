@@ -13,10 +13,14 @@ export function semesterToString(semester: number) {
   }
 }
 
+export function semesterNumberToString(yearSemester: number) {
+  return `${(yearSemester / 10).toFixed(0)}-${semesterToString(
+    yearSemester % 10
+  )}`;
+}
+
 export function formatLectureInfo(title: string, semester: number) {
-  return `${title} (${(semester / 10).toFixed(0)}-${semesterToString(
-    semester % 10
-  )})`;
+  return `${title} ${semesterNumberToString(semester)}`;
 }
 
 export function mapRoleToString(role: string) {
