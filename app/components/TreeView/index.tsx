@@ -22,8 +22,9 @@ const TreeView = ({ nodes, name }: Props) => {
   const [value, setValue] = useState("");
   return (
     <div className={styles.container}>
-      {nodes.map((node) => (
+      {nodes.map((node, idx) => (
         <TreeNode
+          key={idx}
           nodeElement={node}
           depth={0}
           value={value}
@@ -97,8 +98,9 @@ const TreeNode = ({
         )}
       </div>
       {isOpen && children
-        ? children.map((child) => (
+        ? children.map((child, idx) => (
             <TreeNode
+              key={idx}
               nodeElement={child}
               depth={depth + 1}
               value={value}
