@@ -77,6 +77,7 @@ interface FoldableProps {
   onTextClick?: () => void;
   onIconClick?: () => void;
   level?: number;
+  isFoldable?: boolean;
 }
 
 export const FoldableSuperButtonElement = ({
@@ -86,6 +87,7 @@ export const FoldableSuperButtonElement = ({
   onDeleteClick,
   onTextClick,
   level,
+  isFoldable = true,
   children,
 }: PropsWithChildren<FoldableProps>) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -113,10 +115,12 @@ export const FoldableSuperButtonElement = ({
           >
             {title}
           </h3>
-          <img
-            src={isOpen ? chevronUpSVG : chevronDownSVG}
-            alt={isOpen ? "submenu close icon" : "submenu open icon"}
-          />
+          {isFoldable ? (
+            <img
+              src={isOpen ? chevronUpSVG : chevronDownSVG}
+              alt={isOpen ? "submenu close icon" : "submenu open icon"}
+            />
+          ) : null}
         </div>
 
         {isEditable && (
@@ -150,7 +154,7 @@ export const FoldableSuperButtonElement = ({
           </div>
         )}
       </div>
-      {isOpen ? children : null}
+      {isFoldable && isOpen ? children : null}
     </div>
   );
 };
