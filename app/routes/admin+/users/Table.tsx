@@ -5,7 +5,7 @@ import TableBase from "~/components/Table/TableBase";
 import { UserEntity } from "~/types/APIResponse";
 import UserAddModal from "./UserAddModal";
 import SearchInput from "~/components/Input/SearchInput";
-import plusSVG from "~/components/Table/icons/plus.svg";
+import plusSVG from "~/assets/plus-w.svg";
 import {
   useTableRowData,
   useTableRowDataDispatch,
