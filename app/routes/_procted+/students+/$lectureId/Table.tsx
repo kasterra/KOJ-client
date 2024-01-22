@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "@remix-run/react";
-import { useTableRowDataDispatch } from "~/contexts/TableRowDataContext";
 import TableBase from "~/components/Table/TableBase";
 import styles from "./index.module.css";
 import dropdownStyles from "~/components/common/dropdown.module.css";
@@ -16,6 +15,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import userMinusSVG from "~/assets/userMinus.svg";
 import plusW from "~/assets/plus-w.svg";
 import UserAddModal from "./UserAddModal";
+import { UserEntity } from "~/types/APIResponse";
 
 const TableHeader = () => {
   const navigate = useNavigate();
@@ -121,9 +121,9 @@ const TableHeader = () => {
 
 const Table = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState<UserEntity[]>([]);
   const params = useParams();
-  const lectureId = params.lectureId;
-  const tableRowDataDispatch = useTableRowDataDispatch();
+  const lectureId = params.lectureId!;
 
   useEffect(() => {}, []);
 

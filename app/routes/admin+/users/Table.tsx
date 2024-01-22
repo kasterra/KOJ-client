@@ -7,9 +7,9 @@ import UserAddModal from "./UserAddModal";
 import SearchInput from "~/components/Input/SearchInput";
 import plusSVG from "~/assets/plus-w.svg";
 import {
-  useTableRowData,
-  useTableRowDataDispatch,
-} from "~/contexts/TableRowDataContext";
+  useAdminTableRowData,
+  useAdminTableRowDataDispatch,
+} from "./AdminTableRowDataContext";
 import { deleteUser, resetPassword, searchUser } from "~/API/user";
 import { useAuth } from "~/contexts/AuthContext";
 import { mapRoleToString } from "~/util";
@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 
 const TableHeader = () => {
   const auth = useAuth();
-  const dispatch = useTableRowDataDispatch();
+  const dispatch = useAdminTableRowDataDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalOnClose = () => setIsModalOpen(false);
   return (
@@ -70,7 +70,7 @@ const TableHeader = () => {
 
 const Table = () => {
   const auth = useAuth();
-  const { data } = useTableRowData();
+  const { data } = useAdminTableRowData();
   function responseDataToMap(res: UserEntity[]) {
     const ret: Map<string, ReactNode>[] = [];
     if (res.length === 0) return ret;
