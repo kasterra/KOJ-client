@@ -15,3 +15,9 @@ export interface Lecture {
   code: string;
   semester: number;
 }
+
+export interface studentRow {
+  userId: string;
+  isTutor: boolean;
+  userName: string;
+}

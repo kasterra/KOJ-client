@@ -13,6 +13,7 @@ export interface LectureEntity {
   language: string;
   semester: number;
   title: string;
+  professor_name: string;
 }
 
 export interface SuccessUserSearchResponse {
@@ -27,7 +28,13 @@ export interface SuccessUserResponse {
   data: UserEntity;
 }
 
-interface FailedResponse {
+export interface SuccessLecturesResponse {
+  status: 200;
+  message: string;
+  data: LectureEntity[];
+}
+
+export interface FailedResponse {
   status: number;
   message: string;
 }
@@ -74,10 +81,15 @@ export interface SemesterLecturePracticeDetail {
 
 export type UserResponse = SuccessUserResponse | FailedResponse;
 
-export type UserSearchRespnse = SuccessUserSearchResponse | FailedResponse;
+export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
 
-export function isUserResponseSuccess(
-  response: UserResponse
-): response is SuccessUserResponse {
-  return response.status === 200;
+export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
+
+export function isSuccessResponse(
+  response: UserResponse | UserSearchResponse | LecturesResponse
+): response is
+  | SuccessUserResponse
+  | SuccessUserSearchResponse
+  | SuccessLecturesResponse {
+  return response.status < 300;
 }
