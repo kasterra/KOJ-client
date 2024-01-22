@@ -6,6 +6,7 @@ import {
   SimpleLectureDetail,
   SimplePracticeDetail,
   SimpleProblemDetail,
+  isSuccessResponse,
 } from "~/types/APIResponse";
 import {
   useBlockingLectureData,
@@ -41,7 +42,7 @@ const LectureDetail = () => {
 
   const {
     isContextLoading,
-    context: { isCurrentSemester, lectureName },
+    context: { semester: isCurrentSemester, lectureName },
   } = useBlockingLectureData();
   const lectureDataDispatch = useLectureDataDispatch();
   const auth = useAuth();
@@ -52,17 +53,20 @@ const LectureDetail = () => {
     async function getData() {
       if (isCurrentSemester) {
         const responses = await Promise.all([
-          getCurrentSemesterLectures(auth.token),
+          getCurrentSemesterLectures(auth.userId, auth.token),
           getLectureWithLectureId(params.lectureId!, auth.token),
         ]);
-        setLectures(responses[0].data);
+        if (isSuccessResponse(responses[0])) {
+          setLectures(responses[0].data as LectureEntity[]);
+        }
         setCurrentLecture(responses[1].data);
       } else {
         const responses = await Promise.all([
-          getPreviousSemesterLectures(auth.token),
+          getPreviousSemesterLectures(auth.userId, auth.token),
           getLectureWithLectureId(params.lectureId!, auth.token),
         ]);
-        setLectures(responses[0].data);
+        if (isSuccessResponse(responses[0]))
+          setLectures(responses[0].data as LectureEntity[]);
         setCurrentLecture(responses[1].data);
       }
       setIsLoading(false);
@@ -83,7 +87,7 @@ const LectureDetail = () => {
             lectureDataDispatch({
               type: "UPDATE_DATA",
               payload: {
-                isCurrentSemester: isCurrentSemester,
+                semester: isCurrentSemester,
                 lectureName: lecture.title,
               },
             });

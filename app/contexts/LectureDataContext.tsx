@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 type LectureDataType = {
-  isCurrentSemester: boolean | undefined;
+  semester: "past" | "present" | "future" | undefined;
   lectureName: string;
 };
 
@@ -44,13 +44,13 @@ type LectureDataProviderProps = {
 
 export const LectureDataProvider = ({ children }: LectureDataProviderProps) => {
   const [state, dispatch] = useReducer(LectureDataReducer, {
-    isCurrentSemester: undefined,
+    semester: undefined,
     lectureName: "",
   });
 
   useEffect(() => {
     if (
-      state.isCurrentSemester === undefined &&
+      state.semester === undefined &&
       sessionStorage.getItem("isCurrentSemester") !== null &&
       state.lectureName === "" &&
       sessionStorage.getItem("lectureName") !== null
@@ -58,18 +58,16 @@ export const LectureDataProvider = ({ children }: LectureDataProviderProps) => {
       dispatch({
         type: "UPDATE_DATA",
         payload: {
-          isCurrentSemester: JSON.parse(
-            sessionStorage.getItem("isCurrentSemester")!
-          ),
+          semester: JSON.parse(sessionStorage.getItem("isCurrentSemester")!),
           lectureName: sessionStorage.getItem("lectureName")!,
         },
       });
     }
 
-    if (state.isCurrentSemester !== undefined && state.lectureName !== "") {
+    if (state.semester !== undefined && state.lectureName !== "") {
       sessionStorage.setItem(
         "isCurrentSemester",
-        JSON.stringify(state.isCurrentSemester)
+        JSON.stringify(state.semester)
       );
       sessionStorage.setItem("lectureName", state.lectureName);
     }
@@ -109,8 +107,7 @@ export const useBlockingLectureData = () => {
     throw new Error("useLectureData must be used within a LectureDataProvider");
   }
   useEffect(() => {
-    if (isContextLoading)
-      setIsContextLoading(context.isCurrentSemester === undefined);
+    if (isContextLoading) setIsContextLoading(context.semester === undefined);
   });
   return { isContextLoading, context };
 };

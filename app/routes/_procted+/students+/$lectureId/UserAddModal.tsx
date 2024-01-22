@@ -6,13 +6,21 @@ import formStyles from "~/components/common/form.module.css";
 import fileDownloadSVG from "~/assets/fileDownload.svg";
 import SingleFileInput from "~/components/Input/SingleFileInput";
 import TextInput from "~/components/Input/TextInput";
-
+import { parseXlsx } from "~/util/xlsx";
+import { addUserInLecture, addUsersInLecture } from "~/API/lecture";
+import { useAuth } from "~/contexts/AuthContext";
+import toast from "react-hot-toast";
+import { useParams } from "@remix-run/react";
+import RadioGroup from "~/components/Radio/RadioGroup";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
 const UserAddModal = ({ isOpen, onClose }: Props) => {
+  const auth = useAuth();
+  const params = useParams();
+  const lectureId = parseInt(params.lectureId!, 10);
   const [tabIndex, setTabIndex] = useState(0);
   return (
     <Modal
@@ -21,7 +29,39 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <form className={styles["modal-body"]}>
+      <form
+        className={styles["modal-body"]}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          if (tabIndex === 0) {
+            const file = formData.get("file") as File;
+            const response = await addUsersInLecture(
+              lectureId,
+              await parseXlsx(file),
+              auth.token
+            );
+            if (response.status === 201) {
+              toast.success("성공적으로 추가하였습니다");
+              onClose();
+            }
+          } else {
+            const name = formData.get("name") as string;
+            const id = formData.get("id") as string;
+            const role = formData.get("role") as string;
+
+            const response = await addUserInLecture(
+              lectureId,
+              { userId: id, isTutor: role === "tutor", userName: name },
+              auth.token
+            );
+            if (response.status === 201) {
+              toast.success("성공적으로 추가하였습니다");
+              onClose();
+            }
+          }
+        }}
+      >
         <Tab
           titleList={["엑셀로 등록하기", "직접 입력하기"]}
           selectedIdx={tabIndex}
@@ -54,6 +94,13 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
               title="학번"
               placeholder="2020123456"
               required
+            />
+            <RadioGroup
+              title="권한"
+              name="role"
+              defaultValue="student"
+              valueList={["student", "tutor"]}
+              textList={["학생", "튜터"]}
             />
           </>
         )}

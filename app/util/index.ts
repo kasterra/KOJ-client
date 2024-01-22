@@ -9,7 +9,7 @@ export function semesterToString(semester: number) {
     case 3:
       return "W";
     default:
-      throw new Error("Invalid semester");
+      throw new Error(`Invalid semester ${semester}`);
   }
 }
 
@@ -27,6 +27,8 @@ export function mapRoleToString(role: string) {
   switch (role) {
     case "student":
       return "학생";
+    case "tutor":
+      return "튜터";
     case "professor":
       return "교수";
   }
@@ -48,7 +50,7 @@ export function semesterStringToNumber(yearStr: string, semesterStr: string) {
       semesterNumber = 3;
       break;
     default:
-      throw new Error("Invalid semester string");
+      throw new Error(`Invalid semester string "${semesterStr}"`);
   }
   return parseInt(yearStr) * 10 + semesterNumber;
 }
