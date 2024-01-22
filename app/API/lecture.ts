@@ -89,6 +89,7 @@ export async function getLectureWithLectureId(
   lectureId: string,
   token: string
 ) {
+  console.log("getLectureWithLectureId");
   return {
     message: "success",
     data: {
@@ -101,31 +102,51 @@ export async function getLectureWithLectureId(
         {
           id: 2,
           title: "실습이름",
-          problems: [
-            {
-              id: 6,
-              title: "problem1",
-              testcases: [{ id: 1, title: "TC1" }],
-            },
-            {
-              id: 7,
-              title: "problem3",
-              testcases: [{ id: 2, title: "TC1" }],
-            },
-          ],
         },
         {
           id: 3,
           title: "실습이름2",
-          problems: [
-            {
-              id: 6,
-              title: "problem1",
-              testcases: [{ id: 3, title: "TC1" }],
-            },
-          ],
         },
       ],
+    },
+  };
+}
+
+export async function getPracticeWithPracticeId(
+  practiceId: string,
+  token: string
+) {
+  console.log("getPracticeWithPracticeId");
+  return {
+    message: "success",
+    data: {
+      id: 2,
+      title: "실습이름",
+      problems: [
+        {
+          id: 6,
+          title: "problem1",
+        },
+        {
+          id: 7,
+          title: "problem3",
+        },
+      ],
+    },
+  };
+}
+
+export async function getProblemWithProblemId(
+  problemId: string,
+  token: string
+) {
+  console.log("getProblemWithProblemId");
+  return {
+    message: "success",
+    data: {
+      id: 6,
+      title: "problem1",
+      testcases: [{ id: 1, title: "TC1" }],
     },
   };
 }

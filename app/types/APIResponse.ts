@@ -36,11 +36,24 @@ export interface SimpleLectureDetail extends Lecture {
   practices: {
     id: number;
     title: string;
-    problems: {
-      id: number;
-      title: string;
-      testcases: { id: number; title: string }[];
-    }[];
+  }[];
+}
+
+export interface SimplePracticeDetail {
+  id: number;
+  title: string;
+  problems: {
+    id: number;
+    title: string;
+  }[];
+}
+
+export interface SimpleProblemDetail {
+  id: number;
+  title: string;
+  testcases: {
+    id: number;
+    title: string;
   }[];
 }
 
