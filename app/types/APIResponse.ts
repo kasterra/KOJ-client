@@ -76,7 +76,7 @@ export type UserResponse = SuccessUserResponse | FailedResponse;
 
 export type UserSearchRespnse = SuccessUserSearchResponse | FailedResponse;
 
-export function isResponseSuccess(
+export function isUserResponseSuccess(
   response: UserResponse
 ): response is SuccessUserResponse {
   return response.status === 200;
