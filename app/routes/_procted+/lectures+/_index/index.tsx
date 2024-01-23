@@ -251,7 +251,11 @@ const Lectures = () => {
                         alt="trash icon"
                         className={styles.icon}
                         onClick={async (e) => {
-                          if (confirm("정말로 강의를 삭제하시겠습니까")) {
+                          if (
+                            confirm(
+                              "정말로 강의를 삭제하시겠습니까? 강의에 소속된 실습 등도 모두 삭제됩니다!"
+                            )
+                          ) {
                             const response = await deleteLecture(
                               lecture.id,
                               token
