@@ -41,7 +41,7 @@ const Login = () => {
           <div className={formStyles["title-area"]}>
             <h2 className={formStyles.title}>로그인</h2>
             <h3 className={formStyles.subtitle}>
-              KOJ 사용을 위해서 로그인이 필요합니까?
+              KOJ 사용을 위해서 로그인이 필요합니다
             </h3>
           </div>
 
