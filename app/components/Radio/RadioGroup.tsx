@@ -8,6 +8,7 @@ interface Props {
   textList: string[];
   description?: string;
   defaultValue?: string;
+  onChange?: (value: string) => void;
 }
 
 const RadioGroup = ({
@@ -17,6 +18,7 @@ const RadioGroup = ({
   textList,
   description,
   defaultValue,
+  onChange,
 }: Props) => {
   return (
     <div className={styles.wrapper}>
@@ -33,6 +35,7 @@ const RadioGroup = ({
                 : idx === 0
             }
             text={textList[idx]}
+            onChange={onChange}
           />
         ))}
       </div>
