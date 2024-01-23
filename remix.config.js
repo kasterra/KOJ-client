@@ -3,7 +3,11 @@ import { flatRoutes } from "remix-flat-routes";
 /**
  * @type {import("@remix-run/dev").AppConfig}
  */
-export const ignoredRouteFiles = ["**/*"];
-export async function routes(defineRoutes) {
-  return flatRoutes("routes", defineRoutes);
-}
+export default {
+  // ignore all files in routes folder to prevent
+  // default remix convention from picking up routes
+  ignoredRouteFiles: ["**/*"],
+  routes: async (defineRoutes) => {
+    return flatRoutes("routes", defineRoutes);
+  },
+};
