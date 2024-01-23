@@ -1,5 +1,20 @@
+import { useState } from "react";
+import SubmitModal from "../_procted+/lectures+/$lectureId+/$labId/SubmitModal";
+
 const Research = () => {
-  return <h1>연구 기능 페이지</h1>;
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ height: 700 }}>
+      <SubmitModal isOpen={open} onClose={() => setOpen(false)} />
+      <button
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        open
+      </button>
+    </div>
+  );
 };
 
 export default Research;
