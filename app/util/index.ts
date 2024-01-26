@@ -54,3 +54,15 @@ export function semesterStringToNumber(yearStr: string, semesterStr: string) {
   }
   return parseInt(yearStr) * 10 + semesterNumber;
 }
+
+export function toLocalDateTimeString(date: Date) {
+  const ten = (i: number) => (i < 10 ? "0" : "") + i;
+
+  const YYYY = date.getFullYear();
+  const MM = ten(date.getMonth() + 1);
+  const DD = ten(date.getDate());
+  const HH = ten(date.getHours());
+  const mm = ten(date.getMinutes());
+
+  return `${YYYY}-${MM}-${DD}T${HH}:${mm}`;
+}

@@ -13,6 +13,7 @@ import {
   SuccessPracticeDetailResponse,
   isSuccessResponse,
 } from "~/types/APIResponse";
+import { toLocalDateTimeString } from "~/util";
 
 interface Props {
   isOpen: boolean;
@@ -93,13 +94,17 @@ const PracticeEditModal = ({ isOpen, onClose, practiceId }: Props) => {
             name="startTime"
             title="시작 시간"
             required
-            defaultValue={practiceData!.start_time.slice(0, 16)}
+            defaultValue={toLocalDateTimeString(
+              new Date(practiceData!.start_time)
+            )}
           />
           <DateInput
             name="endTime"
             title="종료 시간"
             required
-            defaultValue={practiceData!.end_time.slice(0, 16)}
+            defaultValue={toLocalDateTimeString(
+              new Date(practiceData!.end_time)
+            )}
           />
           <button className={formStyles["primary-button"]} type="submit">
             실습 수정
