@@ -98,3 +98,31 @@ export async function updatePractice(
   }
   return { status: response.status };
 }
+
+export async function deletePractice(
+  practiceId: number,
+  token: string
+): Promise<{ status: number }> {
+  const response = await fetch(`${API_SERVER_URL}/practice/${practiceId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  switch (response.status) {
+    case 401:
+      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      break;
+    case 403:
+      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      break;
+    case 404:
+      toast.error("강의 ID가 없거나 실습 ID 가 없습니다");
+      break;
+    case 500:
+      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      break;
+  }
+  return { status: response.status };
+}

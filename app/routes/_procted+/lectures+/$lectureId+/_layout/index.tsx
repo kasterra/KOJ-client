@@ -33,7 +33,7 @@ import trashSVG from "~/assets/trash.svg";
 import NewPracticeModal from "./NewPracticeModal";
 import ImportPracticeModal from "./ImportPracticeModal";
 import PracticeEditModal from "./PracticeEditModal";
-import { getPracticeWithPracticeId } from "~/API/practice";
+import { deletePractice, getPracticeWithPracticeId } from "~/API/practice";
 import toast from "react-hot-toast";
 
 const LectureDetail = () => {
@@ -168,9 +168,12 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
           setEditingPracticeId(id);
           setIsPracticeEditModalOpen(true);
         }}
-        onDeleteClick={() => {
+        onDeleteClick={async () => {
           if (confirm(`정말로 ${title} 실습을 삭제 하시겠습니까?`)) {
-            console.log("삭제!!!");
+            const response = await deletePractice(id, auth.token);
+            if (response.status === 204) {
+              toast.success("성공적으로 삭제되었습니다");
+            }
           }
         }}
       >
