@@ -102,7 +102,7 @@ const PracticeEditModal = ({ isOpen, onClose, practiceId }: Props) => {
             defaultValue={practiceData!.end_time.slice(0, 16)}
           />
           <button className={formStyles["primary-button"]} type="submit">
-            실습 생성
+            실습 수정
           </button>
         </form>
       )}
