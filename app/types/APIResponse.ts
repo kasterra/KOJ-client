@@ -34,6 +34,12 @@ export interface SuccessLecturesResponse {
   data: LectureEntity[];
 }
 
+export interface SuccessPracticeDetailResponse {
+  status: 200;
+  message: string;
+  data: SimplePracticeDetail;
+}
+
 export interface FailedResponse {
   status: number;
   message: string;
@@ -49,6 +55,8 @@ export interface SimpleLectureDetail extends Lecture {
 export interface SimplePracticeDetail {
   id: number;
   title: string;
+  start_time: string;
+  end_time: string;
   problems: {
     id: number;
     title: string;
@@ -85,11 +93,20 @@ export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
 
 export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
 
+export type PracticeDetailResponse =
+  | SuccessPracticeDetailResponse
+  | FailedResponse;
+
 export function isSuccessResponse(
-  response: UserResponse | UserSearchResponse | LecturesResponse
+  response:
+    | UserResponse
+    | UserSearchResponse
+    | LecturesResponse
+    | PracticeDetailResponse
 ): response is
   | SuccessUserResponse
   | SuccessUserSearchResponse
-  | SuccessLecturesResponse {
+  | SuccessLecturesResponse
+  | PracticeDetailResponse {
   return response.status < 300;
 }

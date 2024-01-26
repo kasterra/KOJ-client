@@ -6,6 +6,8 @@ import {
   SimpleLectureDetail,
   SimplePracticeDetail,
   SimpleProblemDetail,
+  SuccessLecturesResponse,
+  SuccessPracticeDetailResponse,
   isSuccessResponse,
 } from "~/types/APIResponse";
 import {
@@ -15,7 +17,6 @@ import {
 import {
   getCurrentSemesterLectures,
   getLectureWithLectureId,
-  getPracticeWithPracticeId,
   getPreviousSemesterLectures,
   getProblemWithProblemId,
 } from "~/API/lecture";
@@ -31,6 +32,9 @@ import pencilSVG from "~/assets/pencil.svg";
 import trashSVG from "~/assets/trash.svg";
 import NewPracticeModal from "./NewPracticeModal";
 import ImportPracticeModal from "./ImportPracticeModal";
+import PracticeEditModal from "./PracticeEditModal";
+import { getPracticeWithPracticeId } from "~/API/practice";
+import toast from "react-hot-toast";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +61,7 @@ const LectureDetail = () => {
           getLectureWithLectureId(params.lectureId!, auth.token),
         ]);
         if (isSuccessResponse(responses[0])) {
-          setLectures(responses[0].data as LectureEntity[]);
+          setLectures((responses[0] as SuccessLecturesResponse).data);
         }
         setCurrentLecture(responses[1].data);
       } else {
@@ -66,7 +70,7 @@ const LectureDetail = () => {
           getLectureWithLectureId(params.lectureId!, auth.token),
         ]);
         if (isSuccessResponse(responses[0]))
-          setLectures(responses[0].data as LectureEntity[]);
+          setLectures((responses[0] as SuccessLecturesResponse).data);
         setCurrentLecture(responses[1].data);
       }
       setIsLoading(false);
@@ -133,15 +137,21 @@ interface DetailProps {
 
 const PracticeDetail = ({ id, title }: DetailProps) => {
   const auth = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [practiceDetail, setPracticeDetail] = useState<SimplePracticeDetail>();
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [editingPracticeId, setEditingPracticeId] = useState(-1);
   useEffect(() => {
     async function getData() {
-      const response = await getPracticeWithPracticeId(id + "", auth.token);
-      setPracticeDetail(response.data);
-      setLoading(false);
+      const response = await getPracticeWithPracticeId(id, auth.token);
+      if (isSuccessResponse(response)) {
+        setPracticeDetail((response as SuccessPracticeDetailResponse).data);
+        setLoading(false);
+      } else {
+        toast.error("잘못된 접근입니다");
+        navigate("/");
+      }
     }
     getData();
   }, []);
@@ -172,6 +182,13 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
           />
         ))}
       </FoldableSuperButtonElement>
+      {isPracticeEditModalOpen ? (
+        <PracticeEditModal
+          isOpen={isPracticeEditModalOpen}
+          onClose={() => setIsPracticeEditModalOpen(false)}
+          practiceId={editingPracticeId}
+        />
+      ) : null}
     </>
   );
 };

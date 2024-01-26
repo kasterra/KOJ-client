@@ -356,30 +356,6 @@ export async function getLectureWithLectureId(
   return { ...(await response.json()), status: response.status };
 }
 
-export async function getPracticeWithPracticeId(
-  practiceId: string,
-  token: string
-) {
-  console.log("getPracticeWithPracticeId");
-  return {
-    message: "success",
-    data: {
-      id: 2,
-      title: "실습이름",
-      problems: [
-        {
-          id: 6,
-          title: "problem1",
-        },
-        {
-          id: 7,
-          title: "problem3",
-        },
-      ],
-    },
-  };
-}
-
 export async function getProblemWithProblemId(
   problemId: string,
   token: string
