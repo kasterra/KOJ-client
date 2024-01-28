@@ -169,10 +169,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
       let elements: parsedCodeElement[] = [
         {
           type: "hole",
-          content: parsedCodes[codesIdx].content.slice(
-            elementBasedIdx,
-            elementBasedIdx + hole.length
-          ),
+          content: "*".repeat(hole.length),
           className: "",
         },
       ];
@@ -237,7 +234,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
 
           replaceeElements.push({
             type: "hole",
-            content: holeContents,
+            content: "*".repeat(holeContents.length),
             className: "",
           });
 
@@ -261,7 +258,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
       }
       replaceeElements.push({
         type: "hole",
-        content: holeContents,
+        content: "*".repeat(holeContents.length),
         className: "",
       });
       codes.splice(spliceStartIdx, deleteCount, ...replaceeElements);
