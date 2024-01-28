@@ -40,6 +40,12 @@ export interface SuccessPracticeDetailResponse {
   data: SimplePracticeDetail;
 }
 
+export interface SuccessAllPracticesResponse {
+  status: 200;
+  message: string;
+  data: AllPracticeType[];
+}
+
 export interface FailedResponse {
   status: number;
   message: string;
@@ -87,11 +93,28 @@ export interface SemesterLecturePracticeDetail {
   }[];
 }
 
+export interface AllPracticeType {
+  semester: number;
+  lectures: {
+    id: number;
+    title: string;
+    language: string;
+    code: string;
+    semester: number;
+    practices: {
+      id: number;
+      title: string;
+    }[];
+  }[];
+}
+
 export type UserResponse = SuccessUserResponse | FailedResponse;
 
 export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
 
 export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
+
+export type AllPracticeRsponse = SuccessAllPracticesResponse | FailedResponse;
 
 export type PracticeDetailResponse =
   | SuccessPracticeDetailResponse
@@ -103,10 +126,12 @@ export function isSuccessResponse(
     | UserSearchResponse
     | LecturesResponse
     | PracticeDetailResponse
+    | AllPracticeRsponse
 ): response is
   | SuccessUserResponse
   | SuccessUserSearchResponse
   | SuccessLecturesResponse
-  | PracticeDetailResponse {
+  | PracticeDetailResponse
+  | SuccessAllPracticesResponse {
   return response.status < 300;
 }

@@ -10,6 +10,10 @@ import inputStyles from "~/components/Input/input.module.css";
 import formStyles from "~/components/common/form.module.css";
 import TextInput from "~/components/Input/TextInput";
 import DateInput from "~/components/Input/DateInput";
+import {
+  SuccessAllPracticesResponse,
+  isSuccessResponse,
+} from "~/types/APIResponse";
 
 interface Props {
   isOpen: boolean;
@@ -25,26 +29,30 @@ const ImportPracticeModal = ({ isOpen, onClose }: Props) => {
     async function getData() {
       try {
         const response = await getAllPractices(token, userId);
-        const res: TreeViewNode[] = [];
-        response.data.forEach((semester, idx) => {
-          res[idx] = {} as TreeViewNode;
-          res[idx].title = semesterNumberToString(semester.semester);
-          res[idx].id = semester.semester + "";
-          res[idx].children = semester.lectures.map((lecture) => {
-            return {
-              title: lecture.title,
-              id: lecture.id + "",
-              children: lecture.practices.map((practice) => {
+        if (isSuccessResponse(response)) {
+          const res: TreeViewNode[] = [];
+          (response as SuccessAllPracticesResponse).data.forEach(
+            (data, idx) => {
+              res[idx] = {} as TreeViewNode;
+              res[idx].title = semesterNumberToString(data.semester);
+              res[idx].id = data.semester + "";
+              res[idx].children = data.lectures.map((lecture) => {
                 return {
-                  title: practice.title,
-                  id: practice.id + "",
-                  children: null,
+                  title: lecture.title,
+                  id: lecture.id + "",
+                  children: lecture.practices.map((practice) => {
+                    return {
+                      title: practice.title,
+                      id: practice.id + "",
+                      children: null,
+                    };
+                  }) as TreeViewNode[],
                 };
-              }) as TreeViewNode[],
-            };
-          });
-        });
-        setData(res);
+              });
+            }
+          );
+          setData(res);
+        }
       } catch (error) {
         console.error(error);
       }
