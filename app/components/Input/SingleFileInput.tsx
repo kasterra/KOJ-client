@@ -7,9 +7,10 @@ interface Props {
   title: string;
   name: string;
   description?: string;
-  onFileUpload: (file: File) => void;
+  onFileUpload?: (file: File) => void;
   fileValidator?: (file: File) => boolean;
   placeholder?: string;
+  accept?: string;
 }
 
 const SingleFileInput = ({
@@ -19,6 +20,7 @@ const SingleFileInput = ({
   onFileUpload,
   fileValidator,
   placeholder = "단일 파일 업로드",
+  accept,
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<HTMLLabelElement>(null);
@@ -44,7 +46,7 @@ const SingleFileInput = ({
         toast.error("지원하지 않는 파일 형식을 업로드 하였습니다");
         return;
       }
-      onFileUpload(file);
+      onFileUpload && onFileUpload(file);
       setFileUploaded(file);
     },
     [onFileUpload]
@@ -129,6 +131,7 @@ const SingleFileInput = ({
           multiple={false}
           ref={fileInputRef}
           onChange={handleInputChange}
+          accept={accept}
         />
         <p className={styles["file-input-text"]}>
           {fileUploaded ? fileUploaded.name : placeholder}

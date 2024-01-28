@@ -6,9 +6,10 @@ interface Props {
   title: string;
   name: string;
   description?: string;
-  onFileUpload: (fileList: FileList) => Promise<void>;
+  onFileUpload?: (fileList: FileList) => Promise<void>;
   fileValidator?: (file: File) => boolean;
   placeholder?: string;
+  accept?: string;
 }
 
 function filesNamesToDisplay(files: FileList | null) {
@@ -33,6 +34,7 @@ const MultipleFileInput = ({
   onFileUpload,
   fileValidator,
   placeholder = "파일 업로드 (여러개 가능)",
+  accept,
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<HTMLLabelElement>(null);
@@ -61,7 +63,7 @@ const MultipleFileInput = ({
           throw new Error("지원하지 않는 파일 형식을 업로드 하였습니다");
         }
       });
-      onFileUpload(fileList);
+      onFileUpload && onFileUpload(fileList);
       setFileListUploaded(fileList);
     },
     [onFileUpload]
@@ -146,6 +148,7 @@ const MultipleFileInput = ({
           multiple={true}
           ref={fileInputRef}
           onChange={handleInputChange}
+          accept={accept}
         />
         <div className={styles["file-input-text"]}>
           {fileListUploaded
