@@ -1,6 +1,6 @@
 import PrismJS from "prismjs";
 
-interface parsedCodeElement {
+export interface parsedCodeElement {
   type: "span" | "hole";
   content: string;
   className: string;
@@ -38,6 +38,19 @@ function prismCode(code: string, language: string) {
       });
     }
   });
+
+  const regex = /^( *)/;
+
+  const result = code.match(regex);
+
+  if (result?.[1]) {
+    ret.splice(0, 0, {
+      type: "span",
+      content: result[1],
+      className: "",
+    });
+  }
+
   return ret;
 }
 
@@ -100,6 +113,13 @@ function commentBlockToHoleInfo(code: string, prevLineOpen = false) {
       closingMatch = closingBlockRegex.exec(code);
       if (!openingMatch) break;
     }
+  }
+  if (isBlockOpen) {
+    const elem: holeInfo = {
+      startIdx: openingIdx,
+      length: code.length - openingIdx - 2 * matchNum,
+    };
+    retList.push(elem);
   }
   return { holeList: retList, code: retCode, isEndedOpen: isBlockOpen };
 }
