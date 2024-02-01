@@ -10,16 +10,17 @@ interface Props {
 
 const CodeBlock = ({ language, height, readOnly, value, onChange }: Props) => {
   return (
-    <Editor
-      height={height}
-      language={language}
-      options={{
-        readOnly,
-        domReadOnly: readOnly,
-      }}
-      value={value}
-      onChange={(val) => onChange(val as string)}
-    />
+    <div style={{ height, border: "1px solid #dbe2ea", width: "100%" }}>
+      <Editor
+        language={language}
+        options={{
+          readOnly,
+          domReadOnly: readOnly,
+        }}
+        value={value}
+        onChange={(val) => onChange(val as string)}
+      />
+    </div>
   );
 };
 
