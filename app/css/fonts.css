@@ -49,7 +49,7 @@
 
 @font-face {
   font-family: "IBMPlexSans";
-  src: url("/fonts/IBMPlexSans-RegularItalic.ttf");
+  src: url("/fonts/IBMPlexSans-Italic.ttf");
   font-weight: 400;
   font-style: italic;
 }
@@ -147,7 +147,7 @@
 
 @font-face {
   font-family: "IBMPlexMono";
-  src: url("/fonts/IBMPlexMono-RegularItalic.ttf");
+  src: url("/fonts/IBMPlexMono-Italic.ttf");
   font-weight: 400;
   font-style: italic;
 }
