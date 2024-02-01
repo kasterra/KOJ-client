@@ -21,3 +21,11 @@ export interface studentRow {
   isTutor: boolean;
   userName: string;
 }
+
+export type lanugage =
+  | "plaintext"
+  | "python"
+  | "java"
+  | "javascript"
+  | "c"
+  | "cpp";

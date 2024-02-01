@@ -40,6 +40,7 @@ import ProblemAddModal from "./ProblemAddModal";
 import ProblemEditModal from "./ProblemEditModal";
 import TestCaseAddModal from "./TestCaseAddModal";
 import TestCaseEditModal from "./TestCaseEditModal";
+import { deleteProblem } from "~/API/problem";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -228,7 +229,7 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
 
   useEffect(() => {
     async function getData() {
-      const response = await getProblemWithProblemId(id + "", auth.token);
+      const response = await getProblemWithProblemId(id, auth.token);
       if (isSuccessResponse(response)) {
         setProblemDetail((response as SuccessProblemDetailResponse).data);
         setLoading(false);
@@ -240,72 +241,78 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
   return loading ? (
     <h3>loading...</h3>
   ) : (
-    <FoldableSuperButtonElement
-      key={id}
-      onTextClick={() => navigate(`/lectures/${params.lectureId}/${id}`)}
-      level={1}
-      title={title}
-      isEditable={auth.role === "professor"}
-      onEditClick={() => {
-        setIsProblemEditModalOpen(true);
-      }}
-      onDeleteClick={() => {
-        if (confirm(`정말로 ${title} 문제을 삭제 하시겠습니까?`)) {
-          console.log("삭제!!!");
-        }
-      }}
-      isFoldable={auth.role === "professor"}
-    >
-      {problemDetail!.testcases.map((testcase) => (
-        <ButtonElement
-          key={testcase.id}
-          title={testcase.title}
-          showIcons={auth.role === "professor"}
-          iconSrcList={[pencilSVG, trashSVG]}
-          onIconClickList={[
-            () => {
+    <>
+      <FoldableSuperButtonElement
+        key={id}
+        onTextClick={() => navigate(`/lectures/${params.lectureId}/${id}`)}
+        level={1}
+        title={title}
+        isEditable={auth.role === "professor"}
+        onEditClick={() => {
+          setIsProblemEditModalOpen(true);
+        }}
+        onDeleteClick={async () => {
+          if (confirm(`정말로 ${title} 문제을 삭제 하시겠습니까?`)) {
+            const response = await deleteProblem(id, auth.token);
+            if (response.status === 204) {
+              toast.success("성공적으로 삭제되었습니다");
+            }
+          }
+        }}
+        isFoldable={auth.role === "professor"}
+      >
+        {problemDetail!.testcases.map((testcase) => (
+          <ButtonElement
+            key={testcase.id}
+            title={testcase.title}
+            showIcons={auth.role === "professor"}
+            iconSrcList={[pencilSVG, trashSVG]}
+            onIconClickList={[
+              () => {
+                setEditingTestCaseId(testcase.id);
+                setIsTestCaseEditModalOpen(true);
+              },
+              () => {
+                if (
+                  confirm(
+                    `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
+                  )
+                ) {
+                  console.log("삭제!!!");
+                }
+              },
+            ]}
+            onButtonClick={() => {
               setEditingTestCaseId(testcase.id);
               setIsTestCaseEditModalOpen(true);
-            },
-            () => {
-              if (
-                confirm(
-                  `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
-                )
-              ) {
-                console.log("삭제!!!");
-              }
-            },
-          ]}
+            }}
+          />
+        ))}
+        <ButtonElement
+          title="테스트 케이스 추가하기"
           onButtonClick={() => {
-            setEditingTestCaseId(testcase.id);
-            setIsTestCaseEditModalOpen(true);
+            setIsTestCaseAddModalOpen(true);
           }}
+          iconSrcList={[plusSVG]}
         />
-      ))}
-      <ButtonElement
-        title="테스트 케이스 추가하기"
-        onButtonClick={() => {
-          setIsTestCaseAddModalOpen(true);
-        }}
-        iconSrcList={[plusSVG]}
-      />
+
+        <TestCaseAddModal
+          isOpen={isTestCaseAddModalOpen}
+          onClose={() => setIsTestCaseAddModalOpen(false)}
+        />
+        {isTestCaseEditModalOpen ? (
+          <TestCaseEditModal
+            isOpen={isTestCaseEditModalOpen}
+            onClose={() => setIsTestCaseEditModalOpen(false)}
+            testCaseId={editingTestCaseId}
+          />
+        ) : null}
+      </FoldableSuperButtonElement>
       <ProblemEditModal
         isOpen={isProblemEditModalOpen}
         onClose={() => setIsProblemEditModalOpen(false)}
         editingProblemId={id}
       />
-      <TestCaseAddModal
-        isOpen={isTestCaseAddModalOpen}
-        onClose={() => setIsTestCaseAddModalOpen(false)}
-      />
-      {isTestCaseEditModalOpen ? (
-        <TestCaseEditModal
-          isOpen={isTestCaseEditModalOpen}
-          onClose={() => setIsTestCaseEditModalOpen(false)}
-          testCaseId={editingTestCaseId}
-        />
-      ) : null}
-    </FoldableSuperButtonElement>
+    </>
   );
 };

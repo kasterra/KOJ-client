@@ -1,7 +1,8 @@
 import Editor, { useMonaco } from "@monaco-editor/react";
+import { lanugage } from "~/types";
 
 interface Props {
-  language: "c" | "java" | "javascript" | "python" | "plaintext";
+  language: lanugage;
   value: string;
   height: number | string;
   onChange: (arg: string) => void;

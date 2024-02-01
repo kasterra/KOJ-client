@@ -1,3 +1,10 @@
+import { lanugage } from "~/types";
+
+export interface codeHoles {
+  language: lanugage;
+  data: parsedCodeElement[][];
+}
+
 export interface parsedCodeElement {
   type: "span" | "hole";
   content: string;
@@ -168,7 +175,10 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
       let elements: parsedCodeElement[] = [
         {
           type: "hole",
-          content: "*".repeat(hole.length),
+          content: parsedCodes[codesIdx].content.slice(
+            elementBasedIdx,
+            elementBasedIdx + hole.length
+          ),
           className: "",
         },
       ];
@@ -295,4 +305,18 @@ export function codeHole(code: string, language: string) {
   }
 
   return filteredCodeList;
+}
+
+export function parsedCodesToString(parsedCodes: parsedCodeElement[][]) {
+  return parsedCodes
+    .map((parsedCode) =>
+      parsedCode
+        .map((parsedCodeElement) =>
+          parsedCodeElement.type === "span"
+            ? parsedCodeElement.content
+            : `/*${parsedCodeElement.content}*/`
+        )
+        .join("")
+    )
+    .join("\r\n");
 }

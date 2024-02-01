@@ -115,7 +115,7 @@ const LectureEditModal = ({
           <RadioGroup
             title="프로그래밍 언어"
             name="language"
-            valueList={["C", "Java", "Python"]}
+            valueList={["c", "java", "python"]}
             textList={["C", "Java", "Python"]}
             defaultValue={lectureLanguage}
           />

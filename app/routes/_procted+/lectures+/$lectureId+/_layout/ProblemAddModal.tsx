@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { postBlankProblem, postSolveProblem } from "~/API/problem";
 import { useAuth } from "~/contexts/AuthContext";
 import BlankPreviewModal from "./BlankPreviewModal";
+import { lanugage } from "~/types";
 
 interface Props {
   lectureName: string;
@@ -30,9 +31,7 @@ const ProblemAddModal = ({
   const [problemType, setProblemType] = useState<"blank" | "solving">(
     "solving"
   );
-  const [language, setLanguage] = useState<
-    "c" | "java" | "javascript" | "python" | "plaintext"
-  >("c");
+  const [language, setLanguage] = useState<lanugage>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const auth = useAuth();
@@ -67,6 +66,7 @@ const ProblemAddModal = ({
                 file,
                 memory,
                 holes,
+                language,
                 practiceId,
                 time,
                 name,
@@ -141,16 +141,7 @@ const ProblemAddModal = ({
                 <select
                   name="language"
                   id="language"
-                  onChange={(e) =>
-                    setLanguage(
-                      e.target.value as
-                        | "c"
-                        | "java"
-                        | "javascript"
-                        | "python"
-                        | "plaintext"
-                    )
-                  }
+                  onChange={(e) => setLanguage(e.target.value as lanugage)}
                 >
                   <option value="c">C</option>
                   <option value="java">Java</option>

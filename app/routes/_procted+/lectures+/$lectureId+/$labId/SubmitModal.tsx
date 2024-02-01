@@ -6,6 +6,7 @@ import inputStyle from "~/components/Input/input.module.css";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import CodeBlock from "~/components/CodeBlock";
 import MultipleFileInput from "~/components/Input/MultipleFileInput";
+import { lanugage } from "~/types";
 
 interface Props {
   isOpen: boolean;
@@ -15,9 +16,7 @@ interface Props {
 const SubmitModal = ({ isOpen, onClose }: Props) => {
   const [code, setCode] = useState("");
   const [fileList, setFileList] = useState<FileList | null>(null);
-  const [language, setLanguage] = useState<
-    "c" | "java" | "python" | "plaintext" | "javascript"
-  >("c");
+  const [language, setLanguage] = useState<lanugage>("c");
   return (
     <Modal
       title="정답 제출"
@@ -52,6 +51,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           onFileUpload={async (files) => {
             setFileList(files);
           }}
+          description="main이 있는 파일을 첫번째 파일로 제출해 주세요."
         />
         <button className={formStyles["primary-button"]} type="submit">
           제출
