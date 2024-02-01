@@ -15,7 +15,12 @@ import LectureAddModal from "./LectureAddModal";
 import LectureEditModal from "./LectureEditModal";
 import { formatLectureInfo, semesterToString } from "~/util";
 import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
-import { LectureEntity, isSuccessResponse } from "~/types/APIResponse";
+import {
+  LectureEntity,
+  LecturesResponse,
+  SuccessLecturesResponse,
+  isSuccessResponse,
+} from "~/types/APIResponse";
 
 const Lectures = () => {
   const [currentSemeseterLectures, setCurrentSemeseterLectures] = useState<
@@ -45,11 +50,17 @@ const Lectures = () => {
         getFutureSemesterLectures(userId, token),
       ]);
       if (isSuccessResponse(lectures[0]))
-        setCurrentSemeseterLectures(lectures[0].data as LectureEntity[]);
+        setCurrentSemeseterLectures(
+          (lectures[0] as SuccessLecturesResponse).data
+        );
       if (isSuccessResponse(lectures[1]))
-        setPreviousSemesterLectures(lectures[1].data as LectureEntity[]);
+        setPreviousSemesterLectures(
+          (lectures[1] as SuccessLecturesResponse).data
+        );
       if (isSuccessResponse(lectures[2]))
-        setFutureSemesterLectures(lectures[2].data as LectureEntity[]);
+        setFutureSemesterLectures(
+          (lectures[2] as SuccessLecturesResponse).data
+        );
       setIsLoading(false);
     };
     getLectures();

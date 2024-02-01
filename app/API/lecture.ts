@@ -1,7 +1,7 @@
 import {
-  AllPracticeRsponse,
+  AllPracticeResponse,
   LecturesResponse,
-  UserEntity,
+  ProblemDetailResponse,
   UserSearchResponse,
 } from "~/types/APIResponse";
 import toast from "react-hot-toast";
@@ -360,22 +360,35 @@ export async function getLectureWithLectureId(
 export async function getProblemWithProblemId(
   problemId: string,
   token: string
-) {
-  console.log("getProblemWithProblemId");
-  return {
-    message: "success",
-    data: {
-      id: 6,
-      title: "problem1",
-      testcases: [{ id: 1, title: "TC1" }],
+): Promise<ProblemDetailResponse> {
+  const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  };
+  });
+  switch (response.status) {
+    case 401:
+      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      break;
+    case 403:
+      toast.error("강의에 소속이 되어있지 않습니다. 다시 확인해 주세요");
+      break;
+    case 404:
+      toast.error("해당 강의 ID가 존재하지 않습니다");
+      break;
+    case 500:
+      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      break;
+  }
+  return { ...(await response.json()), status: response.status };
 }
 
 export async function getAllPractices(
   token: string,
   userId: string
-): Promise<AllPracticeRsponse> {
+): Promise<AllPracticeResponse> {
   const response = await fetch(`${API_SERVER_URL}/user/${userId}/practices`, {
     method: "GET",
     headers: {

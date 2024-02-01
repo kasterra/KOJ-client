@@ -1,3 +1,4 @@
+import { parsedCodeElement } from "~/util/codeHole";
 import { Lecture } from ".";
 
 export interface UserEntity {
@@ -46,6 +47,12 @@ export interface SuccessAllPracticesResponse {
   data: AllPracticeType[];
 }
 
+export interface SuccessProblemDetailResponse {
+  status: 200;
+  message: string;
+  data: SimpleProblemDetail;
+}
+
 export interface FailedResponse {
   status: number;
   message: string;
@@ -71,11 +78,16 @@ export interface SimplePracticeDetail {
 
 export interface SimpleProblemDetail {
   id: number;
+  file_path: string;
   title: string;
+  memory_limit: number;
+  parsed_code_elements: parsedCodeElement[][];
   testcases: {
     id: number;
     title: string;
   }[];
+  time_limit: number;
+  type: "solving" | "blank";
 }
 
 export interface SemesterLecturePracticeDetail {
@@ -114,8 +126,11 @@ export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
 
 export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
 
-export type AllPracticeRsponse = SuccessAllPracticesResponse | FailedResponse;
+export type AllPracticeResponse = SuccessAllPracticesResponse | FailedResponse;
 
+export type ProblemDetailResponse =
+  | SuccessProblemDetailResponse
+  | FailedResponse;
 export type PracticeDetailResponse =
   | SuccessPracticeDetailResponse
   | FailedResponse;
@@ -126,7 +141,7 @@ export function isSuccessResponse(
     | UserSearchResponse
     | LecturesResponse
     | PracticeDetailResponse
-    | AllPracticeRsponse
+    | AllPracticeResponse
 ): response is
   | SuccessUserResponse
   | SuccessUserSearchResponse

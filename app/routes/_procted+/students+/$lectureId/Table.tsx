@@ -23,6 +23,7 @@ import plusW from "~/assets/plus-w.svg";
 import UserAddModal from "./UserAddModal";
 import {
   SuccessLecturesResponse,
+  SuccessUserSearchResponse,
   UserEntity,
   isSuccessResponse,
 } from "~/types/APIResponse";
@@ -163,7 +164,7 @@ const Table = () => {
     async function getData() {
       const response = await getUsersInLecture(lectureId, auth.token);
       if (isSuccessResponse(response)) {
-        setUsers(response.data as UserEntity[]);
+        setUsers((response as SuccessUserSearchResponse).data);
       }
       setIsLoading(false);
     }
