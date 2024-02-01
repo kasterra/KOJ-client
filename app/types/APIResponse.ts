@@ -1,4 +1,4 @@
-import { parsedCodeElement } from "~/util/codeHole";
+import { codeHoles } from "~/util/codeHole";
 import { Lecture } from ".";
 
 export interface UserEntity {
@@ -53,6 +53,14 @@ export interface SuccessProblemDetailResponse {
   data: SimpleProblemDetail;
 }
 
+export interface SuccessUploadFileResponse {
+  status: 200;
+  message: string;
+  data: {
+    path: string;
+  };
+}
+
 export interface FailedResponse {
   status: number;
   message: string;
@@ -81,7 +89,7 @@ export interface SimpleProblemDetail {
   file_path: string;
   title: string;
   memory_limit: number;
-  parsed_code_elements: parsedCodeElement[][];
+  parsed_code_elements: codeHoles;
   testcases: {
     id: number;
     title: string;
@@ -127,6 +135,8 @@ export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
 export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
 
 export type AllPracticeResponse = SuccessAllPracticesResponse | FailedResponse;
+
+export type UploadFileResponse = SuccessUploadFileResponse | FailedResponse;
 
 export type ProblemDetailResponse =
   | SuccessProblemDetailResponse

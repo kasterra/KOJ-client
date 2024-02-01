@@ -358,7 +358,7 @@ export async function getLectureWithLectureId(
 }
 
 export async function getProblemWithProblemId(
-  problemId: string,
+  problemId: number,
   token: string
 ): Promise<ProblemDetailResponse> {
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {

@@ -1,5 +1,7 @@
 import { parsedCodeElement } from "~/util/codeHole";
 import toast from "react-hot-toast";
+import { uploadFile } from "./media";
+import { SuccessUploadFileResponse } from "~/types/APIResponse";
 
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
@@ -11,17 +13,11 @@ export async function postSolveProblem(
   title: string,
   token: string
 ) {
-  const fileUploadFormData = new FormData();
-  fileUploadFormData.append("documents", file);
-  const fileUploadResponse = await fetch(`${API_SERVER_URL}/media/upload`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: fileUploadFormData,
-  });
-  const fileUploadJSON = await fileUploadResponse.json();
-  const file_path = fileUploadJSON.data.path;
+  const fileUploadResponse = await uploadFile(file, token);
+  if (fileUploadResponse.status !== 201) {
+    return { status: fileUploadResponse.status };
+  }
+  const file_path = (fileUploadResponse as SuccessUploadFileResponse).data.path;
   const response = await fetch(`${API_SERVER_URL}/problem`, {
     method: "POST",
     headers: {
@@ -53,23 +49,18 @@ export async function postSolveProblem(
 export async function postBlankProblem(
   file: File,
   memory_limit: number,
-  parsed_code_elements: parsedCodeElement[][],
+  data: parsedCodeElement[][],
+  language: string,
   practice_id: number,
   time_limit: number,
   title: string,
   token: string
 ) {
-  const fileUploadFormData = new FormData();
-  fileUploadFormData.append("documents", file);
-  const fileUploadResponse = await fetch(`${API_SERVER_URL}/media/upload`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: fileUploadFormData,
-  });
-  const fileUploadJSON = await fileUploadResponse.json();
-  const file_path = fileUploadJSON.data.path;
+  const fileUploadResponse = await uploadFile(file, token);
+  if (fileUploadResponse.status !== 200) {
+    return { status: fileUploadResponse.status };
+  }
+  const file_path = (fileUploadResponse as SuccessUploadFileResponse).data.path;
   const response = await fetch(`${API_SERVER_URL}/problem`, {
     method: "POST",
     headers: {
@@ -79,7 +70,7 @@ export async function postBlankProblem(
     body: JSON.stringify({
       file_path,
       memory_limit,
-      parsed_code_elements,
+      parsed_code_elements: { data, language },
       practice_id,
       time_limit,
       title,
@@ -112,7 +103,7 @@ export async function updateProblem(
   if (problemType === "blank") {
     if (!parsed_code_elements) {
       toast.error("빈칸 문제에는 빈칸정보가 필요합니다");
-      return;
+      return { status: 400 };
     }
   }
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
@@ -150,7 +141,7 @@ export async function updateProblem(
   return { status: response.status };
 }
 
-export async function deleteProblem(problemId: string, token: string) {
+export async function deleteProblem(problemId: number, token: string) {
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
     method: "DELETE",
     headers: {
