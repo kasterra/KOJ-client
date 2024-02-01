@@ -1,5 +1,3 @@
-import PrismJS from "prismjs";
-
 export interface parsedCodeElement {
   type: "span" | "hole";
   content: string;
@@ -22,9 +20,10 @@ function parseCodeToArray(code: string) {
  * @returns {parsedCodeElement[]}
  */
 function prismCode(code: string, language: string) {
+  const Prism = window.Prism;
   const ret: parsedCodeElement[] = [];
   const domParser = new DOMParser();
-  const parsed = PrismJS.highlight(code, PrismJS.languages[language], language);
+  const parsed = Prism.highlight(code, Prism.languages[language], language);
   const parsedDom = domParser.parseFromString(parsed, "text/html");
   const body = parsedDom.querySelector("body");
   body!.childNodes.forEach((el) => {
