@@ -1,12 +1,15 @@
 import Modal from "~/components/Modal";
 import styles from "./modal.module.css";
+import { useState } from "react";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  editingProblemId: number;
 }
 
-const ProblemAddModal = ({ isOpen, onClose }: Props) => {
+const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
+  const [loading, setLoading] = useState(true);
   return (
     <Modal
       title="문제 수정 - 문제 해결"
@@ -19,4 +22,4 @@ const ProblemAddModal = ({ isOpen, onClose }: Props) => {
   );
 };
 
-export default ProblemAddModal;
+export default ProblemEditModal;

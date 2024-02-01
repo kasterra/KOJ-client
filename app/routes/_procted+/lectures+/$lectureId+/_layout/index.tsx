@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useParams } from "@remix-run/react";
+import { MetaFunction, Outlet, useNavigate, useParams } from "@remix-run/react";
 import styles from "~/css/routes/lectureDetail.module.css";
 import {
   LectureEntity,
@@ -8,6 +8,7 @@ import {
   SimpleProblemDetail,
   SuccessLecturesResponse,
   SuccessPracticeDetailResponse,
+  SuccessProblemDetailResponse,
   isSuccessResponse,
 } from "~/types/APIResponse";
 import {
@@ -35,6 +36,10 @@ import ImportPracticeModal from "./ImportPracticeModal";
 import PracticeEditModal from "./PracticeEditModal";
 import { deletePractice, getPracticeWithPracticeId } from "~/API/practice";
 import toast from "react-hot-toast";
+import ProblemAddModal from "./ProblemAddModal";
+import ProblemEditModal from "./ProblemEditModal";
+import TestCaseAddModal from "./TestCaseAddModal";
+import TestCaseEditModal from "./TestCaseEditModal";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -99,6 +104,7 @@ const LectureDetail = () => {
         />
         {currentLecture!.practices.map((practice) => (
           <PracticeDetail
+            lectureName={currentLecture!.title}
             key={practice.id}
             id={practice.id}
             title={practice.title}
@@ -131,17 +137,18 @@ const LectureDetail = () => {
 export default LectureDetail;
 
 interface DetailProps {
+  lectureName: string;
   id: number;
   title: string;
 }
 
-const PracticeDetail = ({ id, title }: DetailProps) => {
+const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [practiceDetail, setPracticeDetail] = useState<SimplePracticeDetail>();
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
-  const [editingPracticeId, setEditingPracticeId] = useState(-1);
+  const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
   useEffect(() => {
     async function getData() {
       const response = await getPracticeWithPracticeId(id, auth.token);
@@ -165,7 +172,6 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
         title={title}
         isEditable={auth.role === "professor"}
         onEditClick={() => {
-          setEditingPracticeId(id);
           setIsPracticeEditModalOpen(true);
         }}
         onDeleteClick={async () => {
@@ -179,19 +185,32 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
       >
         {practiceDetail!.problems.map((problem) => (
           <ProblemDetail
+            lectureName={lectureName}
             key={problem.id}
             id={problem.id}
             title={problem.title}
           />
         ))}
+        <ButtonElement
+          title="문제 추가하기"
+          onButtonClick={() => setIsProblemAddModalOpen(true)}
+          iconSrcList={[plusSVG]}
+        />
       </FoldableSuperButtonElement>
       {isPracticeEditModalOpen ? (
         <PracticeEditModal
           isOpen={isPracticeEditModalOpen}
           onClose={() => setIsPracticeEditModalOpen(false)}
-          practiceId={editingPracticeId}
+          practiceId={practiceDetail!.id}
         />
       ) : null}
+      <ProblemAddModal
+        isOpen={isProblemAddModalOpen}
+        onClose={() => setIsProblemAddModalOpen(false)}
+        lectureName={lectureName}
+        practiceName={title}
+        practiceId={practiceDetail!.id}
+      />
     </>
   );
 };
@@ -202,18 +221,18 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const [problemDetail, setProblemDetail] = useState<SimpleProblemDetail>();
-  const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
   const [isProblemEditModalOpen, setIsProblemEditModalOpen] = useState(false);
-  const [editingProblemId, setEditingProblemId] = useState(-1);
-  const [isTestCaseAddModalOpen, setTestCaseAddModalOpen] = useState(false);
-  const [isTestCaseEditModalOpen, setTestCaseEditModalOpen] = useState(false);
+  const [isTestCaseAddModalOpen, setIsTestCaseAddModalOpen] = useState(false);
+  const [isTestCaseEditModalOpen, setIsTestCaseEditModalOpen] = useState(false);
   const [editingTestCaseId, setEditingTestCaseId] = useState(-1);
 
   useEffect(() => {
     async function getData() {
       const response = await getProblemWithProblemId(id + "", auth.token);
-      setProblemDetail(response.data);
-      setLoading(false);
+      if (isSuccessResponse(response)) {
+        setProblemDetail((response as SuccessProblemDetailResponse).data);
+        setLoading(false);
+      }
     }
     getData();
   }, []);
@@ -228,7 +247,6 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
       title={title}
       isEditable={auth.role === "professor"}
       onEditClick={() => {
-        setEditingProblemId(id);
         setIsProblemEditModalOpen(true);
       }}
       onDeleteClick={() => {
@@ -247,7 +265,7 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
           onIconClickList={[
             () => {
               setEditingTestCaseId(testcase.id);
-              setTestCaseEditModalOpen(true);
+              setIsTestCaseEditModalOpen(true);
             },
             () => {
               if (
@@ -261,17 +279,33 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
           ]}
           onButtonClick={() => {
             setEditingTestCaseId(testcase.id);
-            setTestCaseEditModalOpen(true);
+            setIsTestCaseEditModalOpen(true);
           }}
         />
       ))}
       <ButtonElement
         title="테스트 케이스 추가하기"
         onButtonClick={() => {
-          setTestCaseAddModalOpen(true);
+          setIsTestCaseAddModalOpen(true);
         }}
         iconSrcList={[plusSVG]}
       />
+      <ProblemEditModal
+        isOpen={isProblemEditModalOpen}
+        onClose={() => setIsProblemEditModalOpen(false)}
+        editingProblemId={id}
+      />
+      <TestCaseAddModal
+        isOpen={isTestCaseAddModalOpen}
+        onClose={() => setIsTestCaseAddModalOpen(false)}
+      />
+      {isTestCaseEditModalOpen ? (
+        <TestCaseEditModal
+          isOpen={isTestCaseEditModalOpen}
+          onClose={() => setIsTestCaseEditModalOpen(false)}
+          testCaseId={editingTestCaseId}
+        />
+      ) : null}
     </FoldableSuperButtonElement>
   );
 };

@@ -4,9 +4,10 @@ import styles from "./modal.module.css";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  testCaseId: number;
 }
 
-const TestCaseEditModal = ({ isOpen, onClose }: Props) => {
+const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
   return (
     <Modal
       title="테스트 케이스 수정"

@@ -1,6 +1,19 @@
+.modal-section {
+  display: flex;
+  gap: 50px;
+}
+
 .modal-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 30px;
+}
+
+.blank-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 400px;
+  gap: 10px;
 }

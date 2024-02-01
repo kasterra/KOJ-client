@@ -36,3 +36,16 @@
   background-color: #0880ae;
   color: #ebf4f8;
 }
+
+.secondary-button {
+  border: none;
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  height: 45px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  background-color: #756f86;
+  color: #ebf4f8;
+}
