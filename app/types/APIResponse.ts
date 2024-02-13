@@ -61,6 +61,12 @@ export interface SuccessUploadFileResponse {
   };
 }
 
+export interface SuccessTestcaseResponse {
+  status: 200;
+  message: string;
+  data: TestcaseType;
+}
+
 export interface FailedResponse {
   status: number;
   message: string;
@@ -128,6 +134,18 @@ export interface AllPracticeType {
   }[];
 }
 
+export interface TestcaseType {
+  argv?: string;
+  file_inputs?: string[];
+  file_outputs?: string[];
+  id: number;
+  is_visible: boolean;
+  score: number;
+  stdin: string;
+  stdout: string;
+  title: string;
+}
+
 export type UserResponse = SuccessUserResponse | FailedResponse;
 
 export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
@@ -137,6 +155,8 @@ export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
 export type AllPracticeResponse = SuccessAllPracticesResponse | FailedResponse;
 
 export type UploadFileResponse = SuccessUploadFileResponse | FailedResponse;
+
+export type TestcaseResponse = SuccessTestcaseResponse | FailedResponse;
 
 export type ProblemDetailResponse =
   | SuccessProblemDetailResponse
@@ -152,11 +172,13 @@ export function isSuccessResponse(
     | LecturesResponse
     | PracticeDetailResponse
     | AllPracticeResponse
+    | TestcaseResponse
 ): response is
   | SuccessUserResponse
   | SuccessUserSearchResponse
   | SuccessLecturesResponse
   | PracticeDetailResponse
-  | SuccessAllPracticesResponse {
+  | SuccessAllPracticesResponse
+  | SuccessTestcaseResponse {
   return response.status < 300;
 }

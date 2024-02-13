@@ -41,6 +41,7 @@ import ProblemEditModal from "./ProblemEditModal";
 import TestCaseAddModal from "./TestCaseAddModal";
 import TestCaseEditModal from "./TestCaseEditModal";
 import { deleteProblem } from "~/API/problem";
+import { deleteTestcase } from "~/API/testCase";
 
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -272,13 +273,19 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
                 setEditingTestCaseId(testcase.id);
                 setIsTestCaseEditModalOpen(true);
               },
-              () => {
+              async () => {
                 if (
                   confirm(
                     `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
                   )
                 ) {
-                  console.log("삭제!!!");
+                  const response = await deleteTestcase(
+                    testcase.id,
+                    auth.token
+                  );
+                  if (response.status === 204) {
+                    toast.success("성공적으로 삭제되었습니다");
+                  }
                 }
               },
             ]}
@@ -299,6 +306,7 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
         <TestCaseAddModal
           isOpen={isTestCaseAddModalOpen}
           onClose={() => setIsTestCaseAddModalOpen(false)}
+          problemId={id}
         />
         {isTestCaseEditModalOpen ? (
           <TestCaseEditModal
