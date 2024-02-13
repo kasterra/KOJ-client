@@ -33,7 +33,10 @@ const TextArea = ({
         placeholder={placeholder}
         required={required}
         defaultValue={defaultValue}
-        style={width && height ? { width, height } : undefined}
+        style={{
+          width: width ? width : undefined,
+          height: height ? height : undefined,
+        }}
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>
