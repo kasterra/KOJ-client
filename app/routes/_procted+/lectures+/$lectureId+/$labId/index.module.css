@@ -3,3 +3,141 @@
   flex-direction: column;
   gap: 16px;
 }
+
+.aside {
+  display: flex;
+}
+
+.problem-meta {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdf-top {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-row {
+  display: flex;
+  color: #101828;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  border: 1px solid #eaecf0;
+}
+
+.table-row > div {
+  width: 140px;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-row > div:not(:last-child) {
+  border-right: 1px solid #eaecf0;
+}
+
+.table-title {
+  color: #101828;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.top-right {
+  display: flex;
+  gap: 40px;
+}
+
+.table-col {
+  color: #101828;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  border: 1px solid #eaecf0;
+}
+
+.table-col > div {
+  width: 200px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-col > div:not(:last-child) {
+  border-bottom: 1px solid #eaecf0;
+}
+
+.submit-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.submit-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 138px;
+  height: 68px;
+  color: #101828;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+  border: 1px solid #eaecf0;
+  background: none;
+}
+
+.problem-edit {
+  position: absolute;
+  display: flex;
+  gap: 20px;
+  right: 0;
+}
+
+.pdf {
+  width: 1130px;
+  height: 1460px;
+}
+
+.problem-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.delete-button {
+  width: 146px;
+  height: 45px;
+  background-color: #da1e28;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-button {
+  width: 146px;
+  height: 45px;
+  background-color: #0880ae;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+  gap: 50px;
+}

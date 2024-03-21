@@ -14,7 +14,7 @@ export async function postSolveProblem(
   token: string
 ) {
   const fileUploadResponse = await uploadFile(file, token);
-  if (fileUploadResponse.status !== 201) {
+  if (fileUploadResponse.status !== 200) {
     return { status: fileUploadResponse.status };
   }
   const file_path = (fileUploadResponse as SuccessUploadFileResponse).data.path;

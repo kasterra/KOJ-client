@@ -38,21 +38,26 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           textList={["C", "Java", "Python", "Text"]}
           onChange={setLanguage as (value: string) => void}
         />
-        <span className={inputStyle.title}>코드로 작성하여 제출</span>
-        <CodeBlock
-          height={500}
-          language={language}
-          value={code}
-          onChange={setCode}
-        />
-        <MultipleFileInput
-          title="파일로 제출"
-          name="files"
-          onFileUpload={async (files) => {
-            setFileList(files);
-          }}
-          description="main이 있는 파일을 첫번째 파일로 제출해 주세요."
-        />
+
+        <div className={styles.flex}>
+          <MultipleFileInput
+            title="파일로 제출"
+            name="files"
+            onFileUpload={async (files) => {
+              setFileList(files);
+            }}
+          />
+          <div>
+            <span className={inputStyle.title}>코드로 작성하여 제출</span>
+            <CodeBlock
+              height={500}
+              language={language}
+              value={code}
+              onChange={setCode}
+            />
+          </div>
+        </div>
+
         <button className={formStyles["primary-button"]} type="submit">
           제출
         </button>
