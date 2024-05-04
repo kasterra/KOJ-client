@@ -15,7 +15,7 @@
 
 .input-wrapper {
   position: relative;
-  width: 400px;
+  width: 100%;
   height: 52px;
   display: flex;
   gap: 50px;
