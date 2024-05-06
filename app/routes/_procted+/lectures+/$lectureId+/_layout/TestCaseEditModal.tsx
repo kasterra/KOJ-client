@@ -39,7 +39,6 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
     }
 
     getTestCaseFromServer();
-    setIsLoading(false);
   }, []);
   return (
     <Modal
