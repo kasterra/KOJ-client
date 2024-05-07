@@ -5,6 +5,7 @@ import styles from "./index.module.css";
 import { useAuth } from "~/contexts/AuthContext";
 import CodeBlock from "~/components/CodeBlock";
 import TextInput from "~/components/Input/TextInput";
+import TextArea from "~/components/Input/TextArea";
 
 interface Props {
   isOpen: boolean;
@@ -114,6 +115,18 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                     })()}
                   </div>
                   <TextInput
+                    title="소요 시간"
+                    disabled
+                    name=""
+                    defaultValue={result.used_time}
+                  />
+                  <TextInput
+                    title="사용 메모리"
+                    disabled
+                    name=""
+                    defaultValue={result.used_memory}
+                  />
+                  <TextInput
                     title="주어진 표준입력"
                     disabled
                     name=""
@@ -131,6 +144,21 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                     name=""
                     defaultValue={result.judge_answer}
                   />
+                  <TextInput
+                    title="exit code"
+                    disabled
+                    name=""
+                    defaultValue={result.exit_code}
+                  />
+                  {result.message && (
+                    <TextArea
+                      title="컴파일러 메세지"
+                      disabled
+                      name=""
+                      defaultValue={result.message}
+                      height={300}
+                    />
+                  )}
                 </div>
               );
             })}

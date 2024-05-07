@@ -101,3 +101,62 @@ export async function getSubmissionStatus(
   }
   return { ...(await response.json()), status: response.status };
 }
+
+export async function getLectureScoreBoard(
+  token: string,
+  lecture_id: string | number
+) {
+  const response = await fetch(
+    `${API_SERVER_URL}/lecture/${lecture_id}/score`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  switch (response.status) {
+    case 400:
+      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      break;
+    case 401:
+      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      break;
+    case 403:
+      toast.error("소속되지 않은 강의의 스코어보드 접근");
+      break;
+  }
+  return { ...(await response.json()), status: response.status };
+}
+
+export async function getPracticeScoreBoard(
+  token: string,
+  practice_id: number | string
+) {
+  const response = await fetch(
+    `${API_SERVER_URL}/practice/${practice_id}/score`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  switch (response.status) {
+    case 400:
+      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      break;
+    case 401:
+      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      break;
+    case 403:
+      toast.error("소속되지 않은 강의의 스코어보드 접근");
+      break;
+    case 404:
+      toast.error("존재하지 않는 강의");
+      break;
+  }
+  return { ...(await response.json()), status: response.status };
+}

@@ -39,6 +39,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           if (fileList) {
             [...fileList].forEach((file) => formData.append("codes", file));
           }
+          formData.append("code", code);
           await submit(auth.token, labId!, formData);
           navigate(`/students/${labId}/history`);
         }}

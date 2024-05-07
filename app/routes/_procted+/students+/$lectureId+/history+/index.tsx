@@ -143,7 +143,6 @@ const Table = () => {
       });
       if (JSON.stringify(response.data) !== JSON.stringify(prevData)) {
         setIsLoading(true);
-        console.log(response);
       }
       if (response.status === 200) {
         prevData = response.data;

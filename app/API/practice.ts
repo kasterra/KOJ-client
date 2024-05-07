@@ -4,7 +4,7 @@ import { PracticeDetailResponse } from "~/types/APIResponse";
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function getPracticeWithPracticeId(
-  practiceId: number,
+  practiceId: number | string,
   token: string
 ): Promise<PracticeDetailResponse> {
   const response = await fetch(`${API_SERVER_URL}/practice/${practiceId}`, {

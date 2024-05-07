@@ -9,6 +9,7 @@ interface Props {
   defaultValue?: string;
   width?: number;
   height?: number;
+  disabled?: boolean;
 }
 
 const TextArea = ({
@@ -20,6 +21,7 @@ const TextArea = ({
   defaultValue,
   width,
   height,
+  disabled = false,
 }: Props) => {
   return (
     <div className={styles.wrapper}>
@@ -33,6 +35,7 @@ const TextArea = ({
         placeholder={placeholder}
         required={required}
         defaultValue={defaultValue}
+        disabled={disabled}
         style={{
           width: width ? width : undefined,
           height: height ? height : undefined,
