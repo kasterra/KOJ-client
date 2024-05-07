@@ -51,7 +51,14 @@ const LabDetail = () => {
             <div>0/0</div>
           </div>
           <div className={styles["submit-buttons"]}>
-            <button className={styles["submit-button"]}>채점 기록</button>
+            <button
+              className={styles["submit-button"]}
+              onClick={() => {
+                navigate(`/students/${labId}/history`);
+              }}
+            >
+              채점 기록
+            </button>
             <button
               className={styles["submit-button"]}
               onClick={() => setIsSubmitModalOpen(true)}

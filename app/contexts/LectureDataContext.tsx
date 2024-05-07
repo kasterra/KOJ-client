@@ -51,24 +51,21 @@ export const LectureDataProvider = ({ children }: LectureDataProviderProps) => {
   useEffect(() => {
     if (
       state.semester === undefined &&
-      sessionStorage.getItem("isCurrentSemester") !== null &&
+      sessionStorage.getItem("semester") !== null &&
       state.lectureName === "" &&
       sessionStorage.getItem("lectureName") !== null
     ) {
       dispatch({
         type: "UPDATE_DATA",
         payload: {
-          semester: JSON.parse(sessionStorage.getItem("isCurrentSemester")!),
+          semester: JSON.parse(sessionStorage.getItem("semester")!),
           lectureName: sessionStorage.getItem("lectureName")!,
         },
       });
     }
 
     if (state.semester !== undefined && state.lectureName !== "") {
-      sessionStorage.setItem(
-        "isCurrentSemester",
-        JSON.stringify(state.semester)
-      );
+      sessionStorage.setItem("semester", JSON.stringify(state.semester));
       sessionStorage.setItem("lectureName", state.lectureName);
     }
   });

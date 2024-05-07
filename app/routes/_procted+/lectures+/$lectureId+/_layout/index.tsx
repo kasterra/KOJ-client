@@ -17,6 +17,7 @@ import {
 } from "~/contexts/LectureDataContext";
 import {
   getCurrentSemesterLectures,
+  getFutureSemesterLectures,
   getLectureWithLectureId,
   getPreviousSemesterLectures,
   getProblemWithProblemId,
@@ -53,7 +54,7 @@ const LectureDetail = () => {
 
   const {
     isContextLoading,
-    context: { semester: isCurrentSemester, lectureName },
+    context: { semester: semester, lectureName },
   } = useBlockingLectureData();
   const lectureDataDispatch = useLectureDataDispatch();
   const auth = useAuth();
@@ -62,7 +63,7 @@ const LectureDetail = () => {
 
   useEffect(() => {
     async function getData() {
-      if (isCurrentSemester) {
+      if (semester === "present") {
         const responses = await Promise.all([
           getCurrentSemesterLectures(auth.userId, auth.token),
           getLectureWithLectureId(params.lectureId!, auth.token),
@@ -71,9 +72,17 @@ const LectureDetail = () => {
           setLectures((responses[0] as SuccessLecturesResponse).data);
         }
         setCurrentLecture(responses[1].data);
-      } else {
+      } else if (semester === "past") {
         const responses = await Promise.all([
           getPreviousSemesterLectures(auth.userId, auth.token),
+          getLectureWithLectureId(params.lectureId!, auth.token),
+        ]);
+        if (isSuccessResponse(responses[0]))
+          setLectures((responses[0] as SuccessLecturesResponse).data);
+        setCurrentLecture(responses[1].data);
+      } else if (semester === "future") {
+        const responses = await Promise.all([
+          getFutureSemesterLectures(auth.userId, auth.token),
           getLectureWithLectureId(params.lectureId!, auth.token),
         ]);
         if (isSuccessResponse(responses[0]))
@@ -98,7 +107,7 @@ const LectureDetail = () => {
             lectureDataDispatch({
               type: "UPDATE_DATA",
               payload: {
-                semester: isCurrentSemester,
+                semester,
                 lectureName: lecture.title,
               },
             });
