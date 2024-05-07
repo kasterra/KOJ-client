@@ -19,6 +19,7 @@
   bottom: 0px;
   left: 0px;
   background: rgba(217, 217, 217, 0.9);
+  z-index: 999;
 }
 
 .wrapper {

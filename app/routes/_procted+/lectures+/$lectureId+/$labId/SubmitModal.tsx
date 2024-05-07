@@ -7,6 +7,9 @@ import RadioGroup from "~/components/Radio/RadioGroup";
 import CodeBlock from "~/components/CodeBlock";
 import MultipleFileInput from "~/components/Input/MultipleFileInput";
 import { lanugage } from "~/types";
+import { submit } from "~/API/submission";
+import { useAuth } from "~/contexts/AuthContext";
+import { useNavigate, useParams } from "@remix-run/react";
 
 interface Props {
   isOpen: boolean;
@@ -14,6 +17,9 @@ interface Props {
 }
 
 const SubmitModal = ({ isOpen, onClose }: Props) => {
+  const auth = useAuth();
+  const { labId } = useParams();
+  const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [fileList, setFileList] = useState<FileList | null>(null);
   const [language, setLanguage] = useState<lanugage>("c");
@@ -28,7 +34,13 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
         className={styles["modal-body"]}
         onSubmit={async (e) => {
           e.preventDefault();
-          console.log({ language, code, fileList });
+          const formData = new FormData(e.currentTarget);
+          formData.append("language", language);
+          if (fileList) {
+            [...fileList].forEach((file) => formData.append("codes", file));
+          }
+          await submit(auth.token, labId!, formData);
+          navigate(`/students/${labId}/history`);
         }}
       >
         <RadioGroup

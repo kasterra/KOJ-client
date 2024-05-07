@@ -7,6 +7,7 @@ interface Props {
   description?: string;
   required?: boolean;
   defaultValue?: string;
+  disabled?: boolean;
 }
 const TextInput = ({
   name,
@@ -15,6 +16,7 @@ const TextInput = ({
   description,
   required = false,
   defaultValue,
+  disabled = false,
 }: Props) => {
   return (
     <div className={styles.wrapper}>
@@ -29,6 +31,7 @@ const TextInput = ({
         placeholder={placeholder}
         required={required}
         defaultValue={defaultValue}
+        disabled={disabled}
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>
