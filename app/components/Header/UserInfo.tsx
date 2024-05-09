@@ -109,12 +109,12 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
           <PWInput
             title="새 비밀번호"
             name="newPW"
-            placeholder="새 비밀번호 입력"
+            placeholder="새 비밀번호 입력 (최소 8자 이상)"
           />
           <PWInput
             title="새 비밀번호 확인"
             name="newPW2"
-            placeholder="새 비밀번호 입력 확인"
+            placeholder="새 비밀번호 입력 확인 (최소 8자 이상)"
           />
           <button
             type="submit"

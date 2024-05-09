@@ -88,7 +88,8 @@ const LectureAddModal = ({ isOpen, onClose, currentYear }: Props) => {
           <TextInput
             name="code"
             title="강의 코드"
-            placeholder="COMP0000"
+            placeholder="COMP0000-000"
+            description="강의 코드는 COMP0000-000 형식이어야 합니다"
             required
           />
           <div className={styles["semester-block"]}>
