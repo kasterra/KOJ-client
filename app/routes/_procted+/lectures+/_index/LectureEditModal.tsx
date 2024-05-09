@@ -46,14 +46,13 @@ const LectureEditModal = ({
           const formData = new FormData(e.currentTarget);
           const name = formData.get("name") as string;
           const code = formData.get("code") as string;
-          const year = formData.get("year") as string;
           const language = formData.get("language") as string;
 
           const response = await UpdateLecture(
             lectureId,
             code,
             language,
-            semesterStringToNumber(year, lectureSemester),
+            semesterStringToNumber(lectureYear, lectureSemester),
             name,
             auth.token
           );
@@ -95,7 +94,8 @@ const LectureEditModal = ({
           <TextInput
             name="code"
             title="강의 코드"
-            placeholder="COMP0000"
+            placeholder="COMP0000-000"
+            description="강의 코드는 COMP0000-000 형식이어야 합니다"
             required
             defaultValue={lectureCode}
           />

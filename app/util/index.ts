@@ -41,12 +41,14 @@ export function semesterStringToNumber(yearStr: string, semesterStr: string) {
       semesterNumber = 0;
       break;
     case "여름":
+    case "S":
       semesterNumber = 1;
       break;
     case "2":
       semesterNumber = 2;
       break;
     case "겨울":
+    case "W":
       semesterNumber = 3;
       break;
     default:
