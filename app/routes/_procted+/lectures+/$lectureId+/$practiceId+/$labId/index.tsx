@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "@remix-run/react";
+import { Link, useNavigate, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { getProblemWithProblemId } from "~/API/lecture";
@@ -11,23 +11,32 @@ import {
 import { STATIC_SERVER_URL } from "~/util/constant";
 import styles from "./index.module.css";
 import SubmitModal from "./SubmitModal";
+import { getPracticeWithPracticeId } from "~/API/practice";
 
 const LabDetail = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-  const { labId } = useParams();
+  const { labId, practiceId } = useParams();
 
   const [problemDetail, setProblemDetail] = useState<SimpleProblemDetail>();
+  const [practiceDetail, setPracticeDetail] = useState<any>();
   const [loading, setLoading] = useState(true);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+
+  console.log(practiceDetail);
   useEffect(() => {
     async function getData() {
       const response = await getProblemWithProblemId(
         parseInt(labId!),
         auth.token
       );
-      if (isSuccessResponse(response)) {
+      const response2 = await getPracticeWithPracticeId(
+        practiceId!,
+        auth.token
+      );
+      if (isSuccessResponse(response) && response2.status === 200) {
         setProblemDetail((response as SuccessProblemDetailResponse).data);
+        setPracticeDetail((response2 as any).data);
         setLoading(false);
       } else {
         toast.error("잘못된 접근입니다");
@@ -36,29 +45,34 @@ const LabDetail = () => {
     }
     getData();
   }, []);
+
+  const rtf1 = new Intl.RelativeTimeFormat("ko", { style: "long" });
   return loading ? null : (
     <div>
       <div className={styles["problem-meta"]}>
         <div className={styles["table-row"]}>
           <div className={styles["table-title"]}>마감 시간</div>
-          <div>01/01 08:00</div>
+          <div>{new Date(practiceDetail!.end_time).toLocaleString()}</div>
           <div className={styles["table-title"]}>남은 시간</div>
-          <div>1일 8시간 30분</div>
+          <div>-</div>
         </div>
         <div className={styles["top-right"]}>
           <div className={styles["table-col"]}>
             <div className={styles["table-title"]}>문제 점수</div>
-            <div>0/0</div>
+            <div>-/-</div>
           </div>
           <div className={styles["submit-buttons"]}>
-            <button
-              className={styles["submit-button"]}
-              onClick={() => {
-                navigate(`/students/${labId}/history`);
-              }}
+            <Link
+              to={`/students/${labId}/history`}
+              style={{ textDecoration: "none" }}
             >
-              채점 기록
-            </button>
+              <button
+                style={{ textDecoration: "none" }}
+                className={styles["submit-button"]}
+              >
+                채점 기록
+              </button>
+            </Link>
             <button
               className={styles["submit-button"]}
               onClick={() => setIsSubmitModalOpen(true)}

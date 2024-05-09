@@ -149,6 +149,7 @@ export default LectureDetail;
 
 interface DetailProps {
   lectureName: string;
+  superId?: number;
   id: number;
   title: string;
 }
@@ -198,6 +199,7 @@ const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
           <ProblemDetail
             lectureName={lectureName}
             key={problem.id}
+            superId={id}
             id={problem.id}
             title={problem.title}
           />
@@ -215,18 +217,20 @@ const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
           practiceId={practiceDetail!.id}
         />
       ) : null}
-      <ProblemAddModal
-        isOpen={isProblemAddModalOpen}
-        onClose={() => setIsProblemAddModalOpen(false)}
-        lectureName={lectureName}
-        practiceName={title}
-        practiceId={practiceDetail!.id}
-      />
+      {isProblemAddModalOpen ? (
+        <ProblemAddModal
+          isOpen={isProblemAddModalOpen}
+          onClose={() => setIsProblemAddModalOpen(false)}
+          lectureName={lectureName}
+          practiceName={title}
+          practiceId={practiceDetail!.id}
+        />
+      ) : null}
     </>
   );
 };
 
-const ProblemDetail = ({ id, title }: DetailProps) => {
+const ProblemDetail = ({ superId, id, title }: DetailProps) => {
   const navigate = useNavigate();
   const auth = useAuth();
   const params = useParams();
@@ -254,7 +258,9 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
     <>
       <FoldableSuperButtonElement
         key={id}
-        onTextClick={() => navigate(`/lectures/${params.lectureId}/${id}`)}
+        onTextClick={() =>
+          navigate(`/lectures/${params.lectureId}/${superId}/${id}`)
+        }
         level={1}
         title={title}
         isEditable={auth.role === "professor"}
@@ -325,11 +331,13 @@ const ProblemDetail = ({ id, title }: DetailProps) => {
           />
         ) : null}
       </FoldableSuperButtonElement>
-      <ProblemEditModal
-        isOpen={isProblemEditModalOpen}
-        onClose={() => setIsProblemEditModalOpen(false)}
-        editingProblemId={id}
-      />
+      {isProblemEditModalOpen && (
+        <ProblemEditModal
+          isOpen={isProblemEditModalOpen}
+          onClose={() => setIsProblemEditModalOpen(false)}
+          editingProblemId={id}
+        />
+      )}
     </>
   );
 };

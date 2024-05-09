@@ -102,6 +102,8 @@ export interface SimpleProblemDetail {
   }[];
   time_limit: number;
   type: "solving" | "blank";
+  start_time: string;
+  end_time: string;
 }
 
 export interface SemesterLecturePracticeDetail {

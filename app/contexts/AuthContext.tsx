@@ -24,6 +24,7 @@ type AuthActionType =
       payload: {
         userId: string;
         token: string;
+        role?: "student" | "professor";
       };
     }
   | { type: "DELETE_DATA" }
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     token: "",
     userId: "",
     role: "student",
-    isRoleFetching: false,
+    isRoleFetching: true,
     isAdmin: false,
     userName: "",
   });
@@ -86,20 +87,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       state.token.length === 0 &&
       sessionStorage.getItem("authToken") !== null &&
       sessionStorage.getItem("userId") !== null &&
+      sessionStorage.getItem("role") !== null &&
       sessionStorage.getItem("authToken")!.length !== 0 &&
-      sessionStorage.getItem("userId")!.length !== 0
+      sessionStorage.getItem("userId")!.length !== 0 &&
+      sessionStorage.getItem("role")!.length !== 0
     ) {
       dispatch({
         type: "UPDATE_DATA",
         payload: {
           token: sessionStorage.getItem("authToken")!,
           userId: sessionStorage.getItem("userId")!,
+          role: sessionStorage.getItem("role") as "student" | "professor",
         },
       });
     }
-    if (state.token && state.userId) {
+    if (state.token && state.userId && state.role) {
       sessionStorage.setItem("authToken", state.token);
       sessionStorage.setItem("userId", state.userId);
+      sessionStorage.setItem("role", state.role);
     }
   }, [state.token, state.userId]);
 

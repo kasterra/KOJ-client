@@ -23,6 +23,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
   const [code, setCode] = useState("");
   const [fileList, setFileList] = useState<FileList | null>(null);
   const [language, setLanguage] = useState<lanugage>("c");
+  const [entryPoint, setEntryPoint] = useState("");
   return (
     <Modal
       title="정답 제출"
@@ -40,6 +41,9 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
             [...fileList].forEach((file) => formData.append("codes", file));
           }
           formData.append("code", code);
+          if (entryPoint) {
+            formData.append("entrypoint", entryPoint);
+          }
           await submit(auth.token, labId!, formData);
           navigate(`/students/${labId}/history`);
         }}
@@ -53,6 +57,15 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
         />
 
         <div className={styles.flex}>
+          {fileList && fileList.length > 1 ? (
+            <RadioGroup
+              title="엔트리 포인트 설정"
+              name="entry"
+              valueList={[...fileList].map((file) => file.name)}
+              textList={[...fileList].map((file) => file.name)}
+              onChange={setEntryPoint as (value: string) => void}
+            />
+          ) : null}
           <MultipleFileInput
             title="파일로 제출"
             name="files"

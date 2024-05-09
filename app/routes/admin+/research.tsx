@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SubmitModal from "../_procted+/lectures+/$lectureId+/$labId/SubmitModal";
+import SubmitModal from "../_procted+/lectures+/$lectureId+/$practiceId+/$labId/SubmitModal";
 
 const Research = () => {
   const [open, setOpen] = useState(false);
