@@ -52,10 +52,12 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
         const problemInfo = (response as SuccessProblemDetailResponse).data;
         setPrevProblemInfo(problemInfo);
         setProblemType(problemInfo.type);
-        setLanguage(problemInfo.parsed_code_elements.language);
-        setCodeString(
-          parsedCodesToString(problemInfo.parsed_code_elements.data)
-        );
+        if (problemInfo.parsed_code_elements) {
+          setLanguage(problemInfo.parsed_code_elements.language);
+          setCodeString(
+            parsedCodesToString(problemInfo.parsed_code_elements.data)
+          );
+        }
         setLoading(false);
       } else {
         toast.error("잘못된 접근입니다");
@@ -174,7 +176,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                 name="pdf"
                 placeholder="주의! 파일을 업로드 하면, 기존 파일은 삭제됩니다!"
                 fileValidator={(file) => {
-                  return file.name.endsWith(".pdf");
+                  return file && file.name.endsWith(".pdf");
                 }}
                 onFileUpload={() => {}}
                 accept="application/pdf"
