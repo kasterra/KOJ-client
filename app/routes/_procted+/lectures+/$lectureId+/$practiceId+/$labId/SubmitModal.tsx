@@ -18,7 +18,7 @@ interface Props {
 
 const SubmitModal = ({ isOpen, onClose }: Props) => {
   const auth = useAuth();
-  const { labId } = useParams();
+  const { labId, lectureId } = useParams();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [fileList, setFileList] = useState<FileList | null>(null);
@@ -45,7 +45,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
             formData.append("entrypoint", entryPoint);
           }
           await submit(auth.token, labId!, formData);
-          navigate(`/students/${labId}/history`);
+          navigate(`/students/${lectureId}/history`);
         }}
       >
         <RadioGroup
@@ -73,15 +73,17 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               setFileList(files);
             }}
           />
-          <div>
-            <span className={inputStyle.title}>코드로 작성하여 제출</span>
-            <CodeBlock
-              height={500}
-              language={language}
-              value={code}
-              onChange={setCode}
-            />
-          </div>
+          {!fileList || fileList.length === 0 ? (
+            <div>
+              <span className={inputStyle.title}>코드로 작성하여 제출</span>
+              <CodeBlock
+                height={500}
+                language={language}
+                value={code}
+                onChange={setCode}
+              />
+            </div>
+          ) : null}
         </div>
 
         <button className={formStyles["primary-button"]} type="submit">

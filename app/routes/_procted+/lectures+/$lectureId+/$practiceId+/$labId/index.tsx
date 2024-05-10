@@ -17,7 +17,7 @@ import { remainingTimeToString } from "~/util";
 const LabDetail = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-  const { labId, practiceId } = useParams();
+  const { labId, practiceId, lectureId } = useParams();
 
   const [problemDetail, setProblemDetail] = useState<SimpleProblemDetail>();
   const [practiceDetail, setPracticeDetail] = useState<any>();
@@ -69,7 +69,7 @@ const LabDetail = () => {
           </div>
           <div className={styles["submit-buttons"]}>
             <Link
-              to={`/students/${labId}/history`}
+              to={`/students/${lectureId}/history`}
               style={{ textDecoration: "none" }}
             >
               <button
