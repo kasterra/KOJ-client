@@ -6,11 +6,7 @@ interface Props {
 }
 
 const menuElements = {
-  student: [
-    { name: "내 수업", to: "/lectures" },
-    { name: "제출 기록", to: "/submission-record" },
-    { name: "내 성적", to: "/grade" },
-  ],
+  student: [{ name: "내 수업", to: "/lectures" }],
   professor: [
     { name: "수강생 관리", to: "/students" },
     { name: "실습 관리", to: "/lectures" },

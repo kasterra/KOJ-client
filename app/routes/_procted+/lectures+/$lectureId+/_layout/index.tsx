@@ -94,7 +94,7 @@ const LectureDetail = () => {
     if (!isContextLoading) {
       getData();
     }
-  }, [isContextLoading]);
+  }, [isContextLoading, isLoading]);
 
   return isLoading ? null : (
     <div className={styles.container}>
@@ -121,25 +121,37 @@ const LectureDetail = () => {
             title={practice.title}
           />
         ))}
-        <ButtonElement
-          title="실습 새로 추가하기"
-          onButtonClick={() => setIsNewPracticeModalOpen(true)}
-          iconSrcList={[plusSVG]}
-        />
-        <ButtonElement
-          title="실습 가져오기"
-          onButtonClick={() => setIsImportPracticeModalOpen(true)}
-          iconSrcList={[downloadSVG]}
-        />
+        {auth.role === "professor" ? (
+          <>
+            <ButtonElement
+              title="실습 새로 추가하기"
+              onButtonClick={() => setIsNewPracticeModalOpen(true)}
+              iconSrcList={[plusSVG]}
+            />
+            <ButtonElement
+              title="실습 가져오기"
+              onButtonClick={() => setIsImportPracticeModalOpen(true)}
+              iconSrcList={[downloadSVG]}
+            />
+          </>
+        ) : null}
       </aside>
-      <NewPracticeModal
-        isOpen={isNewPracticeModalOpen}
-        onClose={() => setIsNewPracticeModalOpen(false)}
-      />
-      <ImportPracticeModal
-        isOpen={isImportPracticeModalOpen}
-        onClose={() => setIsImportPracticeModalOpen(false)}
-      />
+      {isNewPracticeModalOpen ? (
+        <NewPracticeModal
+          isOpen={isNewPracticeModalOpen}
+          onClose={() => {
+            setIsNewPracticeModalOpen(false);
+            setIsLoading(true);
+          }}
+        />
+      ) : null}
+
+      {isImportPracticeModalOpen ? (
+        <ImportPracticeModal
+          isOpen={isImportPracticeModalOpen}
+          onClose={() => setIsImportPracticeModalOpen(false)}
+        />
+      ) : null}
       <Outlet />
     </div>
   );
@@ -154,7 +166,7 @@ interface DetailProps {
   title: string;
 }
 
-const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
+const PracticeDetail = ({ id, title }: DetailProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -173,7 +185,7 @@ const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
       }
     }
     getData();
-  }, []);
+  }, [isPracticeEditModalOpen, isProblemAddModalOpen, loading]);
 
   return loading ? (
     <h3>loading...</h3>
@@ -181,48 +193,63 @@ const PracticeDetail = ({ id, title, lectureName }: DetailProps) => {
     <>
       <FoldableSuperButtonElement
         key={id}
-        title={title}
+        title={practiceDetail!.title}
         isEditable={auth.role === "professor"}
         onEditClick={() => {
           setIsPracticeEditModalOpen(true);
         }}
         onDeleteClick={async () => {
-          if (confirm(`정말로 ${title} 실습을 삭제 하시겠습니까?`)) {
+          if (
+            confirm(`정말로 ${practiceDetail!.title} 실습을 삭제 하시겠습니까?`)
+          ) {
             const response = await deletePractice(id, auth.token);
             if (response.status === 204) {
               toast.success("성공적으로 삭제되었습니다");
+              setLoading(true);
             }
           }
         }}
       >
         {practiceDetail!.problems.map((problem) => (
           <ProblemDetail
-            lectureName={lectureName}
+            lectureName={practiceDetail!.title}
             key={problem.id}
             superId={id}
             id={problem.id}
             title={problem.title}
           />
         ))}
-        <ButtonElement
-          title="문제 추가하기"
-          onButtonClick={() => setIsProblemAddModalOpen(true)}
-          iconSrcList={[plusSVG]}
-        />
+        {auth.role === "professor" ? (
+          <>
+            <ButtonElement
+              title="문제 추가하기"
+              onButtonClick={() => {
+                setIsProblemAddModalOpen(true);
+              }}
+              iconSrcList={[plusSVG]}
+            />
+          </>
+        ) : null}
       </FoldableSuperButtonElement>
       {isPracticeEditModalOpen ? (
         <PracticeEditModal
           isOpen={isPracticeEditModalOpen}
-          onClose={() => setIsPracticeEditModalOpen(false)}
+          onClose={() => {
+            setIsPracticeEditModalOpen(false);
+            setLoading(true);
+          }}
           practiceId={practiceDetail!.id}
         />
       ) : null}
       {isProblemAddModalOpen ? (
         <ProblemAddModal
           isOpen={isProblemAddModalOpen}
-          onClose={() => setIsProblemAddModalOpen(false)}
-          lectureName={lectureName}
-          practiceName={title}
+          onClose={() => {
+            setIsProblemAddModalOpen(false);
+            setLoading(true);
+          }}
+          lectureName={practiceDetail!.title}
+          practiceName={practiceDetail!.title}
           practiceId={practiceDetail!.id}
         />
       ) : null}
@@ -248,9 +275,10 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
         setProblemDetail((response as SuccessProblemDetailResponse).data);
         setLoading(false);
       }
+      console.log(problemDetail);
     }
     getData();
-  }, []);
+  }, [isProblemEditModalOpen, isTestCaseAddModalOpen, isTestCaseEditModalOpen]);
 
   return loading ? (
     <h3>loading...</h3>
@@ -262,13 +290,15 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
           navigate(`/lectures/${params.lectureId}/${superId}/${id}`)
         }
         level={1}
-        title={title}
+        title={problemDetail!.title}
         isEditable={auth.role === "professor"}
         onEditClick={() => {
           setIsProblemEditModalOpen(true);
         }}
         onDeleteClick={async () => {
-          if (confirm(`정말로 ${title} 문제을 삭제 하시겠습니까?`)) {
+          if (
+            confirm(`정말로 ${problemDetail!.title} 문제을 삭제 하시겠습니까?`)
+          ) {
             const response = await deleteProblem(id, auth.token);
             if (response.status === 204) {
               toast.success("성공적으로 삭제되었습니다");
@@ -277,56 +307,66 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
         }}
         isFoldable={auth.role === "professor"}
       >
-        {problemDetail!.testcases.map((testcase) => (
-          <ButtonElement
-            key={testcase.id}
-            title={testcase.title}
-            showIcons={auth.role === "professor"}
-            iconSrcList={[pencilSVG, trashSVG]}
-            onIconClickList={[
-              () => {
-                setEditingTestCaseId(testcase.id);
-                setIsTestCaseEditModalOpen(true);
-              },
-              async () => {
-                if (
-                  confirm(
-                    `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
-                  )
-                ) {
-                  const response = await deleteTestcase(
-                    testcase.id,
-                    auth.token
-                  );
-                  if (response.status === 204) {
-                    toast.success("성공적으로 삭제되었습니다");
-                  }
-                }
-              },
-            ]}
-            onButtonClick={() => {
-              setEditingTestCaseId(testcase.id);
-              setIsTestCaseEditModalOpen(true);
-            }}
-          />
-        ))}
-        <ButtonElement
-          title="테스트 케이스 추가하기"
-          onButtonClick={() => {
-            setIsTestCaseAddModalOpen(true);
-          }}
-          iconSrcList={[plusSVG]}
-        />
+        {auth.role === "professor" ? (
+          <>
+            {problemDetail!.testcases.map((testcase) => (
+              <ButtonElement
+                key={testcase.id}
+                title={testcase.title}
+                showIcons={auth.role === "professor"}
+                iconSrcList={[pencilSVG, trashSVG]}
+                onIconClickList={[
+                  () => {
+                    setEditingTestCaseId(testcase.id);
+                    setIsTestCaseEditModalOpen(true);
+                  },
+                  async () => {
+                    if (
+                      confirm(
+                        `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
+                      )
+                    ) {
+                      const response = await deleteTestcase(
+                        testcase.id,
+                        auth.token
+                      );
+                      if (response.status === 204) {
+                        toast.success("성공적으로 삭제되었습니다");
+                      }
+                    }
+                  },
+                ]}
+                onButtonClick={() => {
+                  setEditingTestCaseId(testcase.id);
+                  setIsTestCaseEditModalOpen(true);
+                }}
+              />
+            ))}
+            <ButtonElement
+              title="테스트 케이스 추가하기"
+              onButtonClick={() => {
+                setIsTestCaseAddModalOpen(true);
+              }}
+              iconSrcList={[plusSVG]}
+            />
+          </>
+        ) : null}
 
         <TestCaseAddModal
           isOpen={isTestCaseAddModalOpen}
-          onClose={() => setIsTestCaseAddModalOpen(false)}
+          onClose={() => {
+            setIsTestCaseAddModalOpen(false);
+            setLoading(true);
+          }}
           problemId={id}
         />
         {isTestCaseEditModalOpen ? (
           <TestCaseEditModal
             isOpen={isTestCaseEditModalOpen}
-            onClose={() => setIsTestCaseEditModalOpen(false)}
+            onClose={() => {
+              setIsTestCaseEditModalOpen(false);
+              setLoading(true);
+            }}
             testCaseId={editingTestCaseId}
           />
         ) : null}
@@ -334,7 +374,10 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
       {isProblemEditModalOpen && (
         <ProblemEditModal
           isOpen={isProblemEditModalOpen}
-          onClose={() => setIsProblemEditModalOpen(false)}
+          onClose={() => {
+            setIsProblemEditModalOpen(false);
+            setLoading(true);
+          }}
           editingProblemId={id}
         />
       )}

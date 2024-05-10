@@ -201,17 +201,19 @@ const Lectures = () => {
                   ) : null}
                 </Link>
               ))}
-              <div
-                className={styles.cell}
-                onClick={() => setIsLectureAddModalOpen(true)}
-              >
-                <div className={styles["title-section"]}>
-                  <div className={styles["cell-title"]}>
-                    <img src={plusSVG} className={styles.icon} />
-                    <span>강의 추가하기</span>
+              {isProfessor ? (
+                <div
+                  className={styles.cell}
+                  onClick={() => setIsLectureAddModalOpen(true)}
+                >
+                  <div className={styles["title-section"]}>
+                    <div className={styles["cell-title"]}>
+                      <img src={plusSVG} className={styles.icon} />
+                      <span>강의 추가하기</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : null}
             </div>
             <h2 className={styles.title}>지난 학기 실습 과목</h2>
             <div className={styles.cells}>

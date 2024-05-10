@@ -13,12 +13,6 @@ const GradeRedirect = () => {
   const auth = useAuth();
 
   useEffect(() => {
-    if (auth.role !== "professor") {
-      toast.error("교수 전용 페이지입니다. 교수 계정으로 로그인 하세요");
-      navigate("/");
-    }
-  });
-  useEffect(() => {
     async function getLectures() {
       const response = await getCurrentSemesterLectures(
         auth.userId,

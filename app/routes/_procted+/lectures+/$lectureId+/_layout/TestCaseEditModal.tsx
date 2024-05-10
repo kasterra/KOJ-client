@@ -13,6 +13,7 @@ import MultipleFileInput from "~/components/Input/MultipleFileInput";
 import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import TextArea from "~/components/Input/TextArea";
+import toast from "react-hot-toast";
 
 interface Props {
   isOpen: boolean;
@@ -60,6 +61,11 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
               formData,
               auth.token
             );
+
+            if (response.status === 200) {
+              toast.success("성공적으로 TC를 수정하였습니다");
+              onClose();
+            }
           }}
         >
           <TextInput

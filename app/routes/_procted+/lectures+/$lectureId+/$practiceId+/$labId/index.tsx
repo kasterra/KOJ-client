@@ -12,6 +12,7 @@ import { STATIC_SERVER_URL } from "~/util/constant";
 import styles from "./index.module.css";
 import SubmitModal from "./SubmitModal";
 import { getPracticeWithPracticeId } from "~/API/practice";
+import { remainingTimeToString } from "~/util";
 
 const LabDetail = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const LabDetail = () => {
       }
     }
     getData();
-  }, []);
+  }, [practiceId, labId]);
 
   const rtf1 = new Intl.RelativeTimeFormat("ko", { style: "long" });
   return loading ? null : (
@@ -54,7 +55,12 @@ const LabDetail = () => {
           <div className={styles["table-title"]}>마감 시간</div>
           <div>{new Date(practiceDetail!.end_time).toLocaleString()}</div>
           <div className={styles["table-title"]}>남은 시간</div>
-          <div>-</div>
+          <div>
+            {remainingTimeToString(
+              new Date(practiceDetail!.end_time).getTime() / 1000 -
+                new Date().getTime() / 1000
+            )}
+          </div>
         </div>
         <div className={styles["top-right"]}>
           <div className={styles["table-col"]}>
@@ -84,10 +90,6 @@ const LabDetail = () => {
       </div>
       <div className={styles["pdf-top"]}>
         <h1 className={styles["problem-title"]}>{problemDetail!.title}</h1>
-        <div className={styles["problem-edit"]}>
-          <button className={styles["delete-button"]}>문제 삭제하기</button>
-          <button className={styles["edit-button"]}>문제 수정하기</button>
-        </div>
       </div>
       <object
         data={`${STATIC_SERVER_URL}/${problemDetail!.file_path}`}

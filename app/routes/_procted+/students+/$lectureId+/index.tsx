@@ -9,7 +9,7 @@ const Wrapper = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    if (auth.role !== "professor") {
+    if (!auth.isRoleFetching && auth.role !== "professor") {
       toast.error("교수 전용 페이지입니다. 교수 계정으로 로그인 하세요");
       navigate("/");
     }
