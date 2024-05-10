@@ -7,6 +7,10 @@ export async function uploadFile(
   file: File,
   token: string
 ): Promise<UploadFileResponse> {
+  if (file.size > 1024 * 1024 * 30) {
+    toast.error("파일이 30MB이상입니다. 너무 파일이 큽니다");
+    return { message: "declined by FE", status: 413 };
+  }
   const formData = new FormData();
   formData.append("documents", file);
   const response = await fetch(`${API_SERVER_URL}/media/upload`, {

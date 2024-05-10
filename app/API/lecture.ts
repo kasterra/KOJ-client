@@ -200,7 +200,7 @@ export async function deleteLecture(lectureId: number, token: string) {
       break;
   }
 
-  return { ...(await response.json()), status: response.status };
+  return { status: response.status };
 }
 
 export async function addUserInLecture(
