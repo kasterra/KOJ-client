@@ -22,10 +22,6 @@ const Modal = ({
     <div
       style={{ display: isOpen ? "flex" : "none" }}
       className={modalStyles.backdrop}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClose();
-      }}
     >
       <dialog
         className={modalStyles.dialog}
