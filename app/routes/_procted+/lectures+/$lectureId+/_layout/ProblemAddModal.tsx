@@ -35,6 +35,7 @@ const ProblemAddModal = ({
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const auth = useAuth();
+  const [dragFile, setDragFile] = useState<File | null>(null);
   return (
     <Modal
       title={`문제 추가 - ${
@@ -51,7 +52,7 @@ const ProblemAddModal = ({
           const name = formData.get("name") as string;
           const time = parseInt(formData.get("time") as string, 10);
           const memory = parseInt(formData.get("memory") as string, 10);
-          const file = formData.get("pdf") as File;
+          const file = dragFile ? dragFile : (formData.get("pdf") as File);
 
           switch (problemType) {
             case "blank":
@@ -127,7 +128,9 @@ const ProblemAddModal = ({
               fileValidator={(file) => {
                 return file.name.endsWith(".pdf");
               }}
-              onFileUpload={() => {}}
+              onFileUpload={(file) => {
+                setDragFile(file);
+              }}
               accept="application/pdf"
             />
             <button type="submit" className={formStyles["primary-button"]}>

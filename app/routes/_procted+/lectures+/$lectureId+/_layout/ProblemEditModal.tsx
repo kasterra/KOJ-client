@@ -41,6 +41,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
   const [language, setLanguage] = useState<lanugage>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [dragFile, setDragFile] = useState<File | null>(null);
   const auth = useAuth();
   useEffect(() => {
     async function getData() {
@@ -83,7 +84,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
             const name = formData.get("name") as string;
             const time = parseInt(formData.get("time") as string, 10);
             const memory = parseInt(formData.get("memory") as string, 10);
-            const file = formData.get("pdf") as File;
+            const file = dragFile ? dragFile : (formData.get("pdf") as File);
 
             let newFilePath = "";
 
@@ -129,8 +130,8 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                   auth.token,
                   newFilePath.length ? newFilePath : prevProblemInfo!.file_path
                 );
-                if (solvingResponse.status === 201) {
-                  toast.success("문제를 성공적으로 추가했습니다!");
+                if (solvingResponse.status === 204) {
+                  toast.success("문제를 성공적으로 수정했습니다!");
                   onClose();
                 }
                 break;
@@ -178,7 +179,9 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                 fileValidator={(file) => {
                   return file && file.name.endsWith(".pdf");
                 }}
-                onFileUpload={() => {}}
+                onFileUpload={(file) => {
+                  setDragFile(file);
+                }}
                 accept="application/pdf"
               />
               <button type="submit" className={formStyles["primary-button"]}>
