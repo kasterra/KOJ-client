@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export function semesterToString(semester: number) {
   switch (semester) {
     case 0:
@@ -78,4 +80,10 @@ export function remainingTimeToString(time: number) {
   if (hour > 0) ret += `${hour}시간  `;
   if (minute > 0) ret += `${minute}분`;
   return ret;
+}
+
+export function handle401() {
+  toast.error("세션이 만료되었습니다. 다시 로그인 해주세요");
+  sessionStorage.clear();
+  window.location.href = "/";
 }

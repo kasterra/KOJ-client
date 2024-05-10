@@ -6,6 +6,7 @@ import {
 } from "~/types/APIResponse";
 import toast from "react-hot-toast";
 import { studentRow } from "~/types";
+import { handle401 } from "~/util";
 
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
@@ -29,7 +30,7 @@ export async function getFutureSemesterLectures(
       toast.error("올바르지 않은 입력입니다!");
       break;
     case 401:
-      toast.error("세션이 만료되었습니다. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("권한이 없습니다!");
@@ -64,7 +65,7 @@ export async function getCurrentSemesterLectures(
       toast.error("올바르지 않은 입력입니다!");
       break;
     case 401:
-      toast.error("세션이 만료되었습니다. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("권한이 없습니다!");
@@ -99,7 +100,7 @@ export async function getPreviousSemesterLectures(
       toast.error("올바르지 않은 입력입니다!");
       break;
     case 401:
-      toast.error("세션이 만료되었습니다. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("권한이 없습니다!");

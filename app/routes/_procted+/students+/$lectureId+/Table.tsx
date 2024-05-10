@@ -28,7 +28,7 @@ import {
   isSuccessResponse,
 } from "~/types/APIResponse";
 import { resetPassword } from "~/API/user";
-import { mapRoleToString } from "~/util";
+import { handle401, mapRoleToString } from "~/util";
 import toast from "react-hot-toast";
 
 const TableHeader = () => {
@@ -196,9 +196,7 @@ const Table = () => {
                         toast.error("형식이 올바르지 않습니다");
                         break;
                       case 401:
-                        toast.error(
-                          "세션이 만료되었습니다. 다시 로그인 해주세요"
-                        );
+                        handle401();
                         break;
                       case 404:
                         toast.error(
