@@ -65,7 +65,9 @@ const LabDetail = () => {
         <div className={styles["top-right"]}>
           <div className={styles["table-col"]}>
             <div className={styles["table-title"]}>문제 점수</div>
-            <div>-/-</div>
+            <div>
+              {problemDetail!.gain_score}/{problemDetail!.total_score}
+            </div>
           </div>
           <div className={styles["submit-buttons"]}>
             <Link

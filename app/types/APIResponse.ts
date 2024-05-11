@@ -104,6 +104,8 @@ export interface SimpleProblemDetail {
   type: "solving" | "blank";
   start_time: string;
   end_time: string;
+  gain_score: number;
+  total_score: number;
 }
 
 export interface SemesterLecturePracticeDetail {
@@ -137,7 +139,7 @@ export interface AllPracticeType {
 }
 
 export interface TestcaseType {
-  argv?: string;
+  argv?: string[];
   file_inputs?: string[];
   file_outputs?: string[];
   id: number;
