@@ -87,3 +87,25 @@ export function handle401() {
   sessionStorage.clear();
   window.location.href = "/";
 }
+
+export function removePackageStatementFromFile(file: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(
+        new File(
+          [(reader.result as string).replaceAll(/package.*;/g, "")],
+          file.name,
+          {
+            type: file.type,
+          }
+        )
+      );
+    };
+    reader.onerror = () => {
+      reject(reader.error);
+    };
+
+    reader.readAsText(file);
+  });
+}

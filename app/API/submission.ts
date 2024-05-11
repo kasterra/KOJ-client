@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { removePackageStatementFromFile } from "~/util";
 
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
@@ -7,6 +8,19 @@ export async function submit(
   problem_id: string,
   formdata: FormData
 ) {
+  if (formdata.get("language") === "java") {
+    const fileList = formdata.getAll("codes") as File[];
+    const code = formdata.get("code") as string;
+    if (fileList.length > 0) {
+      formdata.delete("codes");
+      fileList.map(async (file) => {
+        formdata.set("codes", await removePackageStatementFromFile(file));
+      });
+    } else if (code !== "") {
+      formdata.delete("code");
+      formdata.set("code", code.replaceAll(/package.*;/g, ""));
+    }
+  }
   const response = await fetch(
     `${API_SERVER_URL}/problem/${problem_id}/submission`,
     {
