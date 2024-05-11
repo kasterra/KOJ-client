@@ -19,9 +19,10 @@ const BlankPreviewModal = ({
   let parsedCode: parsedCodeElement[][];
   try {
     parsedCode = codeHole(codeString, language);
-  } catch (error) {
+  } catch (error: any) {
     toast.error(
-      "올바르게 빈칸을 렌더링 할 수 없습니다. 코드를 다시 확인해주세요"
+      "올바르게 빈칸을 렌더링 할 수 없습니다. 코드를 다시 확인해주세요\n" +
+        error.message
     );
     onClose();
     return null;

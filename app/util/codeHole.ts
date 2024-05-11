@@ -69,7 +69,10 @@ function prismCode(code: string, language: string) {
  *
  * @returns {{holeList: holeInfo[], code: string,isEndedOpen:boolean}}
  */
-function commentBlockToHoleInfo(code: string, prevLineOpen = false) {
+function commentBlockToHoleInfo(
+  code: string,
+  prevLineOpen = false
+): { holeList: holeInfo[]; code: string; isEndedOpen: boolean } {
   const retList: holeInfo[] = [];
   const openingBlockRegex = /\/\*/g;
   const closingBlockRegex = /\*\//g;
@@ -150,6 +153,10 @@ function checkCommentBlockMatching(codeString: string) {
       }
       isOpen = false;
     }
+  }
+
+  if (isOpen) {
+    throw new Error("주석이 닫히지 않고 코드가 끝났습니다");
   }
 }
 
@@ -243,7 +250,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
 
           replaceeElements.push({
             type: "hole",
-            content: "*".repeat(holeContents.length),
+            content: "*".repeat(Math.max(1, holeContents.length)),
             className: "",
           });
 
@@ -267,7 +274,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
       }
       replaceeElements.push({
         type: "hole",
-        content: "*".repeat(holeContents.length),
+        content: "*".repeat(Math.max(1, holeContents.length)),
         className: "",
       });
       codes.splice(spliceStartIdx, deleteCount, ...replaceeElements);
