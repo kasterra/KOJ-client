@@ -14,6 +14,8 @@ import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import TextArea from "~/components/Input/TextArea";
 import toast from "react-hot-toast";
+import plusW from "~/assets/plus-w.svg";
+import minusW from "~/assets/minus-w.svg";
 
 interface Props {
   isOpen: boolean;
@@ -27,12 +29,14 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
   const [testCaseData, setTestCaseData] = useState<TestcaseType>(
     {} as TestcaseType
   );
+  const [argvList, setArgvList] = useState<string[]>([]);
 
   useEffect(() => {
     async function getTestCaseFromServer() {
       const response = await getTestcaseById(testCaseId, auth.token);
       if (isSuccessResponse(response)) {
         setTestCaseData((response as SuccessTestcaseResponse).data);
+        setArgvList((response as SuccessTestcaseResponse).data.argv || []);
         setIsLoading(false);
       } else {
         onClose();
@@ -56,6 +60,9 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
           onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
+
+            argvList.forEach((argv) => formData.append("argv", argv));
+
             const response = await updateTestcase(
               testCaseId,
               formData,
@@ -87,12 +94,64 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
             placeholder="0 ~ 100"
             defaultValue={testCaseData.score + ""}
           />
-          <TextInput
-            title="실행 인자"
-            name="argv"
-            placeholder="args에 들어갈 값들"
-            defaultValue={testCaseData.argv}
-          />
+          <div className={styles["input-row"]}>
+            <TextInput
+              title="실행 인자 1"
+              name=""
+              placeholder="1번째 매개변수"
+              value={argvList[0]}
+              onChange={(e) =>
+                setArgvList((prev) => [e.target.value, ...prev.slice(1)])
+              }
+            />
+            <div
+              className={styles["circular-button"]}
+              onClick={() =>
+                setArgvList((prev) => [prev[0], "", ...prev.slice(1)])
+              }
+            >
+              <img src={plusW} alt="plus icon" />
+            </div>
+          </div>
+          {argvList.slice(1).map((arg, idx) => (
+            <div className={styles["input-row"]}>
+              <TextInput
+                title={`실행 인자 ${idx + 2}`}
+                name=""
+                placeholder={`${idx + 2}번째 매개변수`}
+                value={arg}
+                onChange={(e) => {
+                  setArgvList((prev) => {
+                    let ret = [...prev];
+                    ret[idx + 1] = e.target.value;
+                    return ret;
+                  });
+                }}
+              />
+              <div
+                className={styles["circular-button"]}
+                onClick={() =>
+                  setArgvList((prev) => [
+                    ...prev.slice(0, idx + 2),
+                    "",
+                    ...prev.slice(idx + 2),
+                  ])
+                }
+              >
+                <img src={plusW} alt="plus icon" />
+              </div>
+              <div
+                className={styles["circular-button"]}
+                onClick={() =>
+                  setArgvList((prev) => {
+                    return [...prev.slice(0, idx + 1), ...prev.slice(idx + 2)];
+                  })
+                }
+              >
+                <img src={minusW} alt="minus icon" />
+              </div>
+            </div>
+          ))}
           <TextArea
             title="표준 입력"
             name="stdin"

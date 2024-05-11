@@ -8,6 +8,9 @@ import TextInput from "~/components/Input/TextInput";
 import { postNewTestcase } from "~/API/testCase";
 import { useAuth } from "~/contexts/AuthContext";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import plusW from "~/assets/plus-w.svg";
+import minusW from "~/assets/minus-w.svg";
 
 interface Props {
   isOpen: boolean;
@@ -17,6 +20,7 @@ interface Props {
 
 const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
   const auth = useAuth();
+  const [argvList, setArgvList] = useState<string[]>([]);
   return (
     <Modal
       title="테스트 케이스 추가"
@@ -29,6 +33,8 @@ const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
         onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
+
+          argvList.forEach((argv) => formData.append("argv", argv));
 
           const resposnse = await postNewTestcase(
             problemId,
@@ -54,11 +60,64 @@ const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
           textList={["공개", "비공개"]}
         />
         <TextInput title="점수" name="score" placeholder="0 ~ 100" />
-        <TextInput
-          title="실행 인자"
-          name="argv"
-          placeholder="args에 들어갈 값들"
-        />
+        <div className={styles["input-row"]}>
+          <TextInput
+            title="실행 인자 1"
+            name=""
+            placeholder="1번째 매개변수"
+            value={argvList[0]}
+            onChange={(e) =>
+              setArgvList((prev) => [e.target.value, ...prev.slice(1)])
+            }
+          />
+          <div
+            className={styles["circular-button"]}
+            onClick={() =>
+              setArgvList((prev) => [prev[0], "", ...prev.slice(1)])
+            }
+          >
+            <img src={plusW} alt="plus icon" />
+          </div>
+        </div>
+        {argvList.slice(1).map((arg, idx) => (
+          <div className={styles["input-row"]}>
+            <TextInput
+              title={`실행 인자 ${idx + 2}`}
+              name=""
+              placeholder={`${idx + 2}번째 매개변수`}
+              value={arg}
+              onChange={(e) => {
+                setArgvList((prev) => {
+                  let ret = [...prev];
+                  ret[idx + 1] = e.target.value;
+                  return ret;
+                });
+              }}
+            />
+            <div
+              className={styles["circular-button"]}
+              onClick={() =>
+                setArgvList((prev) => [
+                  ...prev.slice(0, idx + 2),
+                  "",
+                  ...prev.slice(idx + 2),
+                ])
+              }
+            >
+              <img src={plusW} alt="plus icon" />
+            </div>
+            <div
+              className={styles["circular-button"]}
+              onClick={() =>
+                setArgvList((prev) => {
+                  return [...prev.slice(0, idx + 1), ...prev.slice(idx + 2)];
+                })
+              }
+            >
+              <img src={minusW} alt="minus icon" />
+            </div>
+          </div>
+        ))}
         <TextArea
           title="표준 입력"
           name="stdin"

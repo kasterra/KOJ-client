@@ -17,3 +17,23 @@
   min-width: 400px;
   gap: 10px;
 }
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 100px;
+  width: 500px;
+}
+
+.circular-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #756f86;
+}
+
+.circular-button img {
+  width: 100%;
+  height: 100%;
+}

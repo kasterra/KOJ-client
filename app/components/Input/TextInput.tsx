@@ -1,3 +1,4 @@
+import { ChangeEventHandler } from "react";
 import styles from "./input.module.css";
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
   required?: boolean;
   defaultValue?: string;
   disabled?: boolean;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  value?: string;
 }
 const TextInput = ({
   name,
@@ -17,6 +20,8 @@ const TextInput = ({
   required = false,
   defaultValue,
   disabled = false,
+  value,
+  onChange,
 }: Props) => {
   return (
     <div className={styles.wrapper}>
@@ -32,6 +37,8 @@ const TextInput = ({
         required={required}
         defaultValue={defaultValue}
         disabled={disabled}
+        value={value}
+        onChange={onChange}
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>

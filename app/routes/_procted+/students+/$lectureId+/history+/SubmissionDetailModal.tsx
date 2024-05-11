@@ -65,103 +65,108 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
           </div>
           <div className={styles["modal-section"]}>
             <h4>채점</h4>
-            {submissionResponse.data.testcase_results.map((result: any) => {
-              console.log(result);
-              return (
-                <div className={styles["modal-section"]}>
-                  <div className={styles.line}>
-                    <h5>{`케이스 ${result.id} : ${result.score} 점`}</h5>
-                    {(function () {
-                      switch (result.status) {
-                        case "accepted":
-                          return (
-                            <span className={styles.correct}>맞았습니다</span>
-                          );
-                        case "time_limit":
-                          return (
-                            <span className={styles.wrong}>시간 초과</span>
-                          );
-                        case "memory_limit":
-                          return (
-                            <span className={styles.wrong}>메모리 초과</span>
-                          );
-                        case "wrong_answer":
-                          return (
-                            <span className={styles.wrong}>틀렸습니다</span>
-                          );
-                        case "runtime_error":
-                          return (
-                            <span className={styles.error}>런타임 에러</span>
-                          );
-                        case "compile_error":
-                          return (
-                            <span className={styles.error}>컴파일 에러</span>
-                          );
-                        case "pending":
-                          return (
-                            <span className={styles.waiting}>기다리는 중</span>
-                          );
-                        case "internal_error":
-                          return (
-                            <span className={styles.error}>서버 내부 에러</span>
-                          );
-                        default:
-                          return (
-                            <span className={styles.error}>
-                              {result.status}
-                            </span>
-                          );
-                      }
-                    })()}
-                  </div>
-                  <TextInput
-                    title="소요 시간"
-                    disabled
-                    name=""
-                    defaultValue={result.used_time}
-                  />
-                  <TextInput
-                    title="사용 메모리"
-                    disabled
-                    name=""
-                    defaultValue={result.used_memory}
-                  />
-                  <TextInput
-                    title="주어진 표준입력"
-                    disabled
-                    name=""
-                    defaultValue={result.stdin}
-                  />
-                  <TextInput
-                    title="주어진 출력"
-                    disabled
-                    name=""
-                    defaultValue={result.stdout}
-                  />
-                  <TextInput
-                    title="예상된 출력"
-                    disabled
-                    name=""
-                    defaultValue={result.judge_answer}
-                  />
-                  <TextInput
-                    title="exit code"
-                    disabled
-                    name=""
-                    defaultValue={result.exit_code}
-                  />
-                  {result.message && (
-                    <TextArea
-                      title="컴파일러 메세지"
+            {submissionResponse.data.testcase_results.map(
+              (result: any, idx: number) => {
+                return (
+                  <div className={styles["modal-section"]}>
+                    <div className={styles.line}>
+                      <h5>{`${idx + 1}번째 케이스 : ${result.score} 점`}</h5>
+                      {(function () {
+                        switch (result.status) {
+                          case "accepted":
+                            return (
+                              <span className={styles.correct}>맞았습니다</span>
+                            );
+                          case "time_limit":
+                            return (
+                              <span className={styles.wrong}>시간 초과</span>
+                            );
+                          case "memory_limit":
+                            return (
+                              <span className={styles.wrong}>메모리 초과</span>
+                            );
+                          case "wrong_answer":
+                            return (
+                              <span className={styles.wrong}>틀렸습니다</span>
+                            );
+                          case "runtime_error":
+                            return (
+                              <span className={styles.error}>런타임 에러</span>
+                            );
+                          case "compile_error":
+                            return (
+                              <span className={styles.error}>컴파일 에러</span>
+                            );
+                          case "pending":
+                            return (
+                              <span className={styles.waiting}>
+                                기다리는 중
+                              </span>
+                            );
+                          case "internal_error":
+                            return (
+                              <span className={styles.error}>
+                                서버 내부 에러
+                              </span>
+                            );
+                          default:
+                            return (
+                              <span className={styles.error}>
+                                {result.status}
+                              </span>
+                            );
+                        }
+                      })()}
+                    </div>
+                    <TextInput
+                      title="소요 시간"
                       disabled
                       name=""
-                      defaultValue={result.message}
-                      height={300}
+                      defaultValue={result.used_time}
                     />
-                  )}
-                </div>
-              );
-            })}
+                    <TextInput
+                      title="사용 메모리"
+                      disabled
+                      name=""
+                      defaultValue={result.used_memory}
+                    />
+                    <TextInput
+                      title="주어진 표준입력"
+                      disabled
+                      name=""
+                      defaultValue={result.stdin}
+                    />
+                    <TextInput
+                      title="주어진 출력"
+                      disabled
+                      name=""
+                      defaultValue={result.stdout}
+                    />
+                    <TextInput
+                      title="예상된 출력"
+                      disabled
+                      name=""
+                      defaultValue={result.judge_answer}
+                    />
+                    <TextInput
+                      title="exit code"
+                      disabled
+                      name=""
+                      defaultValue={result.exit_code}
+                    />
+                    {result.message && (
+                      <TextArea
+                        title="컴파일러 메세지"
+                        disabled
+                        name=""
+                        defaultValue={result.message}
+                        height={300}
+                      />
+                    )}
+                  </div>
+                );
+              }
+            )}
           </div>
         </div>
       )}
