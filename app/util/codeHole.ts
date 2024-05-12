@@ -160,6 +160,25 @@ function checkCommentBlockMatching(codeString: string) {
   }
 }
 
+function checkAdjacentHole(codeString: string) {
+  let isJustClosed = false;
+  for (let i = 0; i < codeString.length; i++) {
+    if (codeString[i] === "*" && codeString[i + 1] === "/") {
+      isJustClosed = true;
+    } else if (
+      isJustClosed &&
+      codeString[i] === "/" &&
+      codeString[i + 1] === "*"
+    ) {
+      throw new Error(
+        "빈칸은 바로 인접할 수 없습니다. 하나의 빈칸으로 정리한 후 다시 시도하세요"
+      );
+    } else if (codeString[i] !== "/" && isJustClosed) {
+      isJustClosed = false;
+    }
+  }
+}
+
 function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
   let codes: parsedCodeElement[] = JSON.parse(JSON.stringify(parsedCodes));
   let currentIdx = 0;
@@ -197,8 +216,8 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
         });
       }
       if (
-        elementBasedIdx + hole.length ===
-        parsedCodes[codesIdx].content.length - 1
+        elementBasedIdx + hole.length !==
+        parsedCodes[codesIdx].content.length
       ) {
         elements.push({
           type: "span",
@@ -250,7 +269,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
 
           replaceeElements.push({
             type: "hole",
-            content: "*".repeat(Math.max(1, holeContents.length)),
+            content: "*".repeat(holeContents.length),
             className: "",
           });
 
@@ -274,7 +293,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
       }
       replaceeElements.push({
         type: "hole",
-        content: "*".repeat(Math.max(1, holeContents.length)),
+        content: "*".repeat(holeContents.length),
         className: "",
       });
       codes.splice(spliceStartIdx, deleteCount, ...replaceeElements);
@@ -290,6 +309,7 @@ function makeHole(parsedCodes: parsedCodeElement[], holes: holeInfo[]) {
 
 export function codeHole(code: string, language: string) {
   checkCommentBlockMatching(code);
+  checkAdjacentHole(code);
   const codeLines = parseCodeToArray(code);
   const holes: holeInfo[][] = [];
   let filteredCodeList = [];
