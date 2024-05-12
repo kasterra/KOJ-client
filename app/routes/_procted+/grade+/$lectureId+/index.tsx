@@ -111,7 +111,7 @@ const TableHeader = () => {
                         semester: lectureData.semester,
                       },
                     });
-                    navigate(`/students/${lecture.id}`);
+                    navigate(`/grade/${lecture.id}`);
                   }}
                 >
                   {lecture.title}
@@ -136,6 +136,7 @@ const LectureScoreBoard = () => {
 
   useEffect(() => {
     async function getData() {
+      setDataHeaders(["사용자 이름", "학번", "총점"]);
       const response = await getLectureScoreBoard(
         auth.token,
         params.lectureId!
@@ -176,7 +177,7 @@ const LectureScoreBoard = () => {
       }
     }
     getData();
-  }, []);
+  }, [params.lectureId]);
 
   return isLoading ? (
     <h2>Loading...</h2>
