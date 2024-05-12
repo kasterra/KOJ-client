@@ -112,7 +112,7 @@ const TableHeader = () => {
                         semester: lectureData.semester,
                       },
                     });
-                    navigate(`/students/${lecture.id}`);
+                    navigate(`/students/${lecture.id}/history`);
                   }}
                 >
                   {lecture.title}
@@ -125,6 +125,8 @@ const TableHeader = () => {
 };
 
 let prevData: any[] = [];
+
+let intervalId: NodeJS.Timeout | undefined = undefined;
 
 const Table = () => {
   const auth = useAuth();
@@ -141,6 +143,7 @@ const Table = () => {
         user_id: auth.userId,
         lecture_id: lectureId,
       });
+      console.log(lectureId);
       if (JSON.stringify(response.data) !== JSON.stringify(prevData)) {
         setIsLoading(true);
       }
@@ -202,11 +205,20 @@ const Table = () => {
         setIsLoading(false);
       }
     }
-    const interval = setInterval(() => {
-      if (data.length === 0 || !isLoading) getData();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (intervalId !== undefined) {
+      clearInterval(intervalId);
+      setIsLoading(true);
+      getData();
+      intervalId = setInterval(() => {
+        if (data.length === 0 || !isLoading) getData();
+      }, 1000);
+    } else {
+      intervalId = setInterval(() => {
+        if (data.length === 0 || !isLoading) getData();
+      }, 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [params.lectureId]);
 
   return isLoading ? (
     <h3>loading...</h3>
