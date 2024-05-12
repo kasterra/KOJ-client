@@ -347,3 +347,22 @@ export function parsedCodesToString(parsedCodes: parsedCodeElement[][]) {
     )
     .join("\r\n");
 }
+
+export function generateFullCode(
+  parsedCodes: parsedCodeElement[][],
+  blanks: string[]
+) {
+  console.log(blanks);
+  let blankIdx = 0;
+  return parsedCodes
+    .map((parsedCode) =>
+      parsedCode
+        .map((parsedCodeElement) =>
+          parsedCodeElement.type === "span"
+            ? parsedCodeElement.content
+            : blanks[blankIdx++]
+        )
+        .join("")
+    )
+    .join("\r\n");
+}

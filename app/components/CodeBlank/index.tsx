@@ -13,16 +13,22 @@ const CodeBlank = ({ parsedCode, language }: Props) => {
       <code className={`language-${language}`}>
         {parsedCode.map((line, idx) => (
           <span key={idx}>
-            {line.map((element, idx) =>
-              element.type === "span" ? (
-                <span className={element.className}>{element.content}</span>
-              ) : (
-                <input
-                  className="blank"
-                  style={{ width: element.content.length * 15 }}
-                />
-              )
-            )}
+            {line.map((element, idx) => {
+              let holeIdx = 0;
+              if (element.type === "span") {
+                return (
+                  <span className={element.className}>{element.content}</span>
+                );
+              } else {
+                return (
+                  <input
+                    className="blank"
+                    style={{ width: element.content.length * 15 }}
+                    name="blank[]"
+                  />
+                );
+              }
+            })}
             <br />
           </span>
         ))}
