@@ -127,7 +127,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               }}
             />
             {!fileList || fileList.length === 0 ? (
-              <div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 <span className={inputStyle.title}>코드로 작성하여 제출</span>
                 <CodeBlock
                   height={500}
@@ -135,6 +135,13 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
                   value={code}
                   onChange={setCode}
                 />
+                {language === "java" ? (
+                  <span style={{ color: "red" }}>
+                    Java에서 코드 작성 제출의 경우 엔트리 포인트 클래스 이름이
+                    <br />
+                    <strong>main</strong>이어야 합니다
+                  </span>
+                ) : null}
               </div>
             ) : null}
           </div>
