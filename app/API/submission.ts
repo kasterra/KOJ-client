@@ -1,7 +1,6 @@
+import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
 import { removePackageStatementFromFile, handle401 } from "~/util";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function submit(
   token: string,

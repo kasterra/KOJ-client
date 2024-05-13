@@ -1,3 +1,4 @@
+import { API_SERVER_URL } from "~/util/constant";
 import {
   AllPracticeResponse,
   LecturesResponse,
@@ -7,8 +8,6 @@ import {
 import toast from "react-hot-toast";
 import { studentRow } from "~/types";
 import { handle401 } from "~/util";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function getFutureSemesterLectures(
   userId: string,
@@ -122,6 +121,22 @@ export async function postNewLecture(
   title: string,
   token: string
 ) {
+  if (!code) {
+    toast.error("강의 코드는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!language) {
+    toast.error("사용 언어는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!semester) {
+    toast.error("학기 정보는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!title) {
+    toast.error("강의 제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const response = await fetch(`${API_SERVER_URL}/lecture`, {
     method: "POST",
     headers: {
@@ -142,6 +157,22 @@ export async function UpdateLecture(
   title: string,
   token: string
 ) {
+  if (!code) {
+    toast.error("강의 코드는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!language) {
+    toast.error("사용 언어는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!semester) {
+    toast.error("학기 정보는 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!title) {
+    toast.error("강의 제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const response = await fetch(`${API_SERVER_URL}/lecture/${lectureId}`, {
     method: "PUT",
     headers: {

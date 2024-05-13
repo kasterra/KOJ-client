@@ -1,12 +1,15 @@
+import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
 import { UploadFileResponse } from "~/types/APIResponse";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function uploadFile(
   file: File,
   token: string
 ): Promise<UploadFileResponse> {
+  if (!file) {
+    toast.error("File이 유효하지 않습니다. 다시 확인해주세요");
+    return { message: "declined by FE", status: 400 };
+  }
   if (file.size > 1024 * 1024 * 30) {
     toast.error("파일이 30MB이상입니다. 너무 파일이 큽니다");
     return { message: "declined by FE", status: 413 };

@@ -1,7 +1,6 @@
+import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
 import { PracticeDetailResponse } from "~/types/APIResponse";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function getPracticeWithPracticeId(
   practiceId: number | string,
@@ -37,6 +36,10 @@ export async function createNewPractice(
   title: string,
   token: string
 ) {
+  if (!title) {
+    toast.error("제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const response = await fetch(`${API_SERVER_URL}/practice`, {
     method: "POST",
     headers: {
@@ -70,6 +73,10 @@ export async function updatePractice(
   title: string,
   token: string
 ) {
+  if (!title) {
+    toast.error("제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const response = await fetch(`${API_SERVER_URL}/practice/${practice_id}`, {
     method: "PUT",
     headers: {

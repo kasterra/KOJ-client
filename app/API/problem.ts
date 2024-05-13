@@ -1,9 +1,8 @@
+import { API_SERVER_URL } from "~/util/constant";
 import { parsedCodeElement } from "~/util/codeHole";
 import toast from "react-hot-toast";
 import { uploadFile } from "./media";
 import { SuccessUploadFileResponse } from "~/types/APIResponse";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function postSolveProblem(
   file: File,
@@ -13,6 +12,18 @@ export async function postSolveProblem(
   title: string,
   token: string
 ) {
+  if (0 > memory_limit || memory_limit > 4096) {
+    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!title) {
+    toast.error("제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (0 > time_limit || time_limit > 10000) {
+    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const fileUploadResponse = await uploadFile(file, token);
   if (fileUploadResponse.status !== 200) {
     return { status: fileUploadResponse.status };
@@ -56,6 +67,18 @@ export async function postBlankProblem(
   title: string,
   token: string
 ) {
+  if (0 > memory_limit || memory_limit > 4096) {
+    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!title) {
+    toast.error("제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (0 > time_limit || time_limit > 10000) {
+    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   const fileUploadResponse = await uploadFile(file, token);
   if (fileUploadResponse.status !== 200) {
     return { status: fileUploadResponse.status };
@@ -100,6 +123,18 @@ export async function updateProblem(
   file_path: string,
   parsed_code_elements?: parsedCodeElement[][]
 ) {
+  if (0 > memory_limit || memory_limit > 4096) {
+    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (!title) {
+    toast.error("제목은 필수 입력 필드입니다");
+    return { status: 400, message: "Declined by FE" };
+  }
+  if (0 > time_limit || time_limit > 10000) {
+    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
+    return { status: 400, message: "Declined by FE" };
+  }
   if (problemType === "blank") {
     if (!parsed_code_elements) {
       toast.error("빈칸 문제에는 빈칸정보가 필요합니다");

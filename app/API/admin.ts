@@ -1,6 +1,5 @@
+import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function setSemester(semester: number, token: string) {
   const response = await fetch(`${API_SERVER_URL}/semester`, {

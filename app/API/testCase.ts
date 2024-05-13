@@ -1,13 +1,17 @@
+import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
 import { TestcaseResponse } from "~/types/APIResponse";
-
-const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
 export async function postNewTestcase(
   problemId: number,
   formData: FormData,
   token: string
 ) {
+  const score = formData.get("score");
+  if (score === "") {
+    toast.error("점수는 필수 입력입니다");
+    return { message: "Declined by FE", status: 400 };
+  }
   const response = await fetch(
     `${API_SERVER_URL}/problem/${problemId}/testcase`,
     {
@@ -73,6 +77,11 @@ export async function updateTestcase(
   formData: FormData,
   token: string
 ) {
+  const score = formData.get("score");
+  if (score === "") {
+    toast.error("점수는 필수 입력입니다");
+    return { message: "Declined by FE", status: 400 };
+  }
   const response = await fetch(`${API_SERVER_URL}/testcase/${testcaseId}`, {
     method: "PUT",
     headers: {
