@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { removePackageStatementFromFile } from "~/util";
+import { removePackageStatementFromFile, handle401 } from "~/util";
 
 const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
 
@@ -36,7 +36,7 @@ export async function submit(
       toast.error("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
     case 403:
       toast.error("소속되어 있지 않은 강의의 문제 접근");
@@ -67,7 +67,7 @@ export async function getSubmissionWithSubmissionId(
       toast.error("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
   }
   return { ...(await response.json()), status: response.status };
@@ -110,7 +110,7 @@ export async function getSubmissionStatus(
       toast.error("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
   }
   return { ...(await response.json()), status: response.status };
@@ -135,7 +135,7 @@ export async function getLectureScoreBoard(
       toast.error("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
     case 403:
       toast.error("소속되지 않은 강의의 스코어보드 접근");
@@ -163,13 +163,47 @@ export async function getPracticeScoreBoard(
       toast.error("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
     case 403:
       toast.error("소속되지 않은 강의의 스코어보드 접근");
       break;
     case 404:
-      toast.error("존재하지 않는 강의");
+      toast.error("아직 미구현 되어있다고 하네요");
+      break;
+  }
+  return { ...(await response.json()), status: response.status };
+}
+
+export async function reJudge(
+  token: string,
+  queryParams: {
+    user_id?: string;
+    practice_id?: number;
+    problem_id?: number;
+  }
+) {
+  const response = await fetch(`${API_SERVER_URL}/re_judge`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(queryParams),
+  });
+
+  switch (response.status) {
+    case 400:
+      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      break;
+    case 401:
+      handle401();
+      break;
+    case 403:
+      toast.error("권한이 부족합니다");
+      break;
+    case 404:
+      toast.error("존재하지 않는걸 재채점 한다고 하네요");
       break;
   }
   return { ...(await response.json()), status: response.status };

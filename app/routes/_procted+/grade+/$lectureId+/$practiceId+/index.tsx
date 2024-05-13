@@ -1,10 +1,11 @@
 import { useParams } from "@remix-run/react";
 import { ReactNode, useEffect, useState } from "react";
 import { getPracticeWithPracticeId } from "~/API/practice";
-import { getPracticeScoreBoard } from "~/API/submission";
+import { getPracticeScoreBoard, reJudge } from "~/API/submission";
 import { useAuth } from "~/contexts/AuthContext";
 import styles from "../index.module.css";
 import TableBase from "~/components/Table/TableBase";
+import toast from "react-hot-toast";
 
 const PracticeScoreBoard = () => {
   const params = useParams();
@@ -39,7 +40,22 @@ const PracticeScoreBoard = () => {
             ...prev,
             <button
               className={styles["white-button"]}
-              onClick={() => alert("재채점 API호출 예정")}
+              onClick={async () => {
+                if (
+                  confirm(
+                    `모든 학생에 대해 ${data.title} 문제를 재채점 하시겠습니까?`
+                  )
+                ) {
+                  const response = await reJudge(auth.token, {
+                    practice_id: parseInt(params.practiceId!),
+                    problem_id: data.id as number,
+                  });
+                  if (response.status === 200) {
+                    toast.success("재채점 완료!");
+                    setIsLoading(true);
+                  }
+                }
+              }}
             >{`${data.title} (${data.score})`}</button>,
           ]);
         });
@@ -54,7 +70,23 @@ const PracticeScoreBoard = () => {
               `problemNo${idx}`,
               <button
                 className={styles["white-button"]}
-                onClick={() => alert("문제 재채점 API호출 예정")}
+                onClick={async () => {
+                  if (
+                    confirm(
+                      `해당 실습에 대해서 ${user.name} 학생을 재채점 하시겠습니까?`
+                    )
+                  ) {
+                    const response = await reJudge(auth.token, {
+                      practice_id: parseInt(params.practiceId!),
+                      problem_id: score.id as number,
+                      user_id: user.id,
+                    });
+                    if (response.status === 200) {
+                      toast.success("재채점 완료!");
+                      setIsLoading(true);
+                    }
+                  }
+                }}
               >
                 {score}
               </button>

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "@remix-run/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { getLectureScoreBoard } from "~/API/submission";
+import { getLectureScoreBoard, reJudge } from "~/API/submission";
 import TableBase from "~/components/Table/TableBase";
 import chevUpSVG from "~/assets/chevronUp.svg";
 import chevDownSVG from "~/assets/chevronDown.svg";
@@ -22,6 +22,7 @@ import {
   isSuccessResponse,
   SuccessLecturesResponse,
 } from "~/types/APIResponse";
+import toast from "react-hot-toast";
 
 const TableHeader = () => {
   const navigate = useNavigate();
@@ -143,12 +144,25 @@ const LectureScoreBoard = () => {
       );
       if (response.status === 200) {
         response.data.metadata.map((data: any) => {
-          console.log(data);
           setDataHeaders((prev) => [
             ...prev,
             <button
               className={styles["white-button"]}
-              onClick={() => alert("재채점 API호출 예정")}
+              onClick={async () => {
+                if (
+                  confirm(
+                    `모든 학생에 대해 ${data.title} 실습을 재채점 하시겠습니까?`
+                  )
+                ) {
+                  const response = await reJudge(auth.token, {
+                    practice_id: data.id as number,
+                  });
+                  if (response.status === 200) {
+                    toast.success("재채점 완료!");
+                    setIsLoading(true);
+                  }
+                }
+              }}
             >{`${data.title} (${data.score})`}</button>,
           ]);
         });
@@ -177,7 +191,7 @@ const LectureScoreBoard = () => {
       }
     }
     getData();
-  }, [params.lectureId]);
+  }, [params.lectureId, isLoading]);
 
   return isLoading ? (
     <h2>Loading...</h2>
