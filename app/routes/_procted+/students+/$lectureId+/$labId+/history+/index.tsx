@@ -88,7 +88,7 @@ const TableHeader = () => {
               key={practice.id}
               onClick={() => {
                 navigate(
-                  `/students/${params.lectrueId}/${practice.id}/history`
+                  `/students/${params.lectureId}/${practice.id}/history`
                 );
               }}
             >
@@ -119,8 +119,8 @@ const Table = () => {
       const response = await getSubmissionStatus(auth.token, {
         user_id: auth.userId,
         lecture_id: lectureId,
+        practice_id: Number(params.labId),
       });
-      console.log(lectureId);
       if (JSON.stringify(response.data) !== JSON.stringify(prevData)) {
         setIsLoading(true);
       }
@@ -195,7 +195,7 @@ const Table = () => {
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [params.lectureId]);
+  }, [params.lectureId, params.labId]);
 
   return isLoading ? (
     <h3>loading...</h3>
