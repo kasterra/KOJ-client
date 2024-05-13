@@ -40,7 +40,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
     }
 
     getData();
-  }, []);
+  }, [lectureId, practiceId, labId]);
 
   return isLoading ? null : (
     <Modal
