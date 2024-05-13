@@ -3,7 +3,7 @@ import Table from "./Table";
 import styles from "./index.module.css";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "@remix-run/react";
+import { MetaFunction, useNavigate } from "@remix-run/react";
 
 const Wrapper = () => {
   const auth = useAuth();
@@ -22,3 +22,19 @@ const Wrapper = () => {
 };
 
 export default Wrapper;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "수강생 관리 | KOJ",
+    },
+    {
+      property: "description",
+      content: "수강생 관리 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - 수강생 관리",
+    },
+  ];
+};

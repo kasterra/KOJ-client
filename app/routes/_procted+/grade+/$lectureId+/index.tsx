@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "@remix-run/react";
+import { MetaFunction, useNavigate, useParams } from "@remix-run/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { getLectureScoreBoard, reJudge } from "~/API/submission";
 import TableBase from "~/components/Table/TableBase";
@@ -208,3 +208,19 @@ const LectureScoreBoard = () => {
 };
 
 export default LectureScoreBoard;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "강의별 성적 보기 | KOJ",
+    },
+    {
+      property: "description",
+      content: "강의별 성적을 확인하는 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - 성적 확인",
+    },
+  ];
+};

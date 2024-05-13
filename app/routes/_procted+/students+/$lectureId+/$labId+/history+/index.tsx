@@ -3,7 +3,7 @@ import styles from "./index.module.css";
 import dropdownStyles from "~/components/common/dropdown.module.css";
 import chevUpSVG from "~/assets/chevronUp.svg";
 import chevDownSVG from "~/assets/chevronDown.svg";
-import { useNavigate, useParams } from "@remix-run/react";
+import { MetaFunction, useNavigate, useParams } from "@remix-run/react";
 import { useAuth } from "~/contexts/AuthContext";
 import { getLectureWithLectureId } from "~/API/lecture";
 import TableBase from "~/components/Table/TableBase";
@@ -219,3 +219,19 @@ const Table = () => {
 };
 
 export default Table;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "제출이력 조회 | KOJ",
+    },
+    {
+      property: "description",
+      content: "제출이력 조회 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - 제출 이력",
+    },
+  ];
+};

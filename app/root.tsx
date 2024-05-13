@@ -14,6 +14,7 @@ import {
 } from "@remix-run/react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { CLIENT_SERVER_URL } from "./util/constant";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: normailzeCSS },
@@ -29,6 +30,18 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="og:image"
+          content={`${CLIENT_SERVER_URL}/images/og-image.jpg`}
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="850" />
+        <meta http-equiv="Copyright" content="skeep and kasterra" />
+
+        <meta
+          name="og:description"
+          content="경북대에서 만든 교육용 다기능 온라인 저지"
+        />
         <script src="/prism.js" />
         <Meta />
         <Links />

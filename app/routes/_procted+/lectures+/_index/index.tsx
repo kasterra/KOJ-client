@@ -10,7 +10,7 @@ import {
   getPreviousSemesterLectures,
 } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
-import { Link } from "@remix-run/react";
+import { Link, MetaFunction } from "@remix-run/react";
 import LectureAddModal from "./LectureAddModal";
 import LectureEditModal from "./LectureEditModal";
 import { formatLectureInfo, semesterToString } from "~/util";
@@ -317,3 +317,19 @@ const Lectures = () => {
 };
 
 export default Lectures;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "강의 목록 | KOJ",
+    },
+    {
+      property: "description",
+      content: "강의 목록 조회 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - 강의 목록",
+    },
+  ];
+};

@@ -385,3 +385,19 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
     </>
   );
 };
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "실습 풀어보기 | KOJ",
+    },
+    {
+      name: "description",
+      content: "실습을 풀어봅시다...",
+    },
+    {
+      name: "og:site_name",
+      content: "KOJ 실습 풀이",
+    },
+  ];
+};

@@ -6,6 +6,7 @@ import styles from "~/components/common/form.module.css";
 import { getSemester, setSemester } from "~/API/admin";
 import { useAuth } from "~/contexts/AuthContext";
 import toast from "react-hot-toast";
+import { MetaFunction } from "@remix-run/react";
 
 const Manage = () => {
   const auth = useAuth();
@@ -67,3 +68,19 @@ const Manage = () => {
 };
 
 export default Manage;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "학기 지정 | KOJ Admin",
+    },
+    {
+      property: "description",
+      content: "학기 지정 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "기술적 문제로 학기는 직접 설정합니다",
+    },
+  ];
+};

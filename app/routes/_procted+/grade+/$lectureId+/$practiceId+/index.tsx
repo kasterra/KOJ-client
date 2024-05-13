@@ -1,4 +1,4 @@
-import { useParams } from "@remix-run/react";
+import { MetaFunction, useParams } from "@remix-run/react";
 import { ReactNode, useEffect, useState } from "react";
 import { getPracticeWithPracticeId } from "~/API/practice";
 import { getPracticeScoreBoard, reJudge } from "~/API/submission";
@@ -114,3 +114,19 @@ const PracticeScoreBoard = () => {
 };
 
 export default PracticeScoreBoard;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "실습별 성적보기 | KOJ",
+    },
+    {
+      property: "description",
+      content: "실습별 성적을 확인하는 화면입니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - 실습별 성적보기",
+    },
+  ];
+};

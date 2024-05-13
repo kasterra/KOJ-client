@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuthDispatch } from "~/contexts/AuthContext";
-import { useNavigate } from "@remix-run/react";
+import { MetaFunction, useNavigate } from "@remix-run/react";
 import styles from "~/css/routes/login.module.css";
 import formStyles from "~/components/common/form.module.css";
 import LogoSVG from "~/assets/logo.svg";
@@ -64,3 +64,19 @@ const Login = () => {
 };
 
 export default Login;
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: "로그인 | KOJ",
+    },
+    {
+      property: "description",
+      content: "KOJ 사용을 위해서는 로그인이 필요합니다",
+    },
+    {
+      property: "og:site_name",
+      content: "KOJ - KNU OJ",
+    },
+  ];
+};
