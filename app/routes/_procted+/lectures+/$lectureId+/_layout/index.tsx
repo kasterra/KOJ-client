@@ -94,7 +94,7 @@ const LectureDetail = () => {
     if (!isContextLoading) {
       getData();
     }
-  }, [isContextLoading, isLoading]);
+  }, [isContextLoading, isLoading, params.lectureId]);
 
   return isLoading ? null : (
     <div className={styles.container}>
@@ -275,10 +275,9 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
         setProblemDetail((response as SuccessProblemDetailResponse).data);
         setLoading(false);
       }
-      console.log(problemDetail);
     }
     getData();
-  }, [isProblemEditModalOpen, isTestCaseAddModalOpen, isTestCaseEditModalOpen]);
+  }, [loading]);
 
   return loading ? (
     <h3>loading...</h3>
@@ -302,6 +301,7 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
             const response = await deleteProblem(id, auth.token);
             if (response.status === 204) {
               toast.success("성공적으로 삭제되었습니다");
+              setLoading(true);
             }
           }
         }}
@@ -332,6 +332,7 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
                       );
                       if (response.status === 204) {
                         toast.success("성공적으로 삭제되었습니다");
+                        setLoading(true);
                       }
                     }
                   },
