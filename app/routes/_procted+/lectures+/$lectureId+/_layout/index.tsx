@@ -59,7 +59,6 @@ const LectureDetail = () => {
   const lectureDataDispatch = useLectureDataDispatch();
   const auth = useAuth();
   const params = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function getData() {

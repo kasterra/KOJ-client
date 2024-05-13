@@ -53,7 +53,8 @@
 
 .element-title-section {
   display: flex;
-  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .element-title-span {
@@ -61,6 +62,7 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
+  width: 100%;
 }
 .element-title-chevron {
   width: 25px;
