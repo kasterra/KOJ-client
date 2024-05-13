@@ -7,9 +7,13 @@ export async function postNewTestcase(
   formData: FormData,
   token: string
 ) {
-  const score = formData.get("score");
+  const score = formData.get("score") as string;
   if (score === "") {
     toast.error("점수는 필수 입력입니다");
+    return { message: "Declined by FE", status: 400 };
+  }
+  if (parseInt(score) < 0) {
+    toast.error("점수는 음수가 될 수 없습니다");
     return { message: "Declined by FE", status: 400 };
   }
   const response = await fetch(
