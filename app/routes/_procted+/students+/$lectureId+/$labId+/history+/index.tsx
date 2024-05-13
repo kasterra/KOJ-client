@@ -5,20 +5,7 @@ import chevUpSVG from "~/assets/chevronUp.svg";
 import chevDownSVG from "~/assets/chevronDown.svg";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useAuth } from "~/contexts/AuthContext";
-import {
-  useLectureData,
-  useLectureDataDispatch,
-} from "~/contexts/LectureDataContext";
-import { Lecture } from "~/types";
-import {
-  getCurrentSemesterLectures,
-  getFutureSemesterLectures,
-  getPreviousSemesterLectures,
-} from "~/API/lecture";
-import {
-  SuccessLecturesResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { getLectureWithLectureId } from "~/API/lecture";
 import TableBase from "~/components/Table/TableBase";
 import { getSubmissionStatus } from "~/API/submission";
 import SubmissionDetailModal from "./SubmissionDetailModal";
@@ -26,46 +13,41 @@ import SubmissionDetailModal from "./SubmissionDetailModal";
 const TableHeader = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-  const lectureData = useLectureData();
-  const dispatchLectureData = useLectureDataDispatch();
-  const [lectureListLoading, setLectureListLoading] = useState(true);
-  const [lectureList, setLectureList] = useState<Lecture[]>([]);
+  const params = useParams();
+  const [practiceListLoading, setPracticeListLoading] = useState(true);
+  const [practiceList, setPracticeList] = useState<
+    {
+      id: number;
+      title: string;
+    }[]
+  >([]);
+  const [practiceName, setPracticeName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const getLectureList = async () => {
+    const getPracticeList = async () => {
       try {
-        if (lectureData.semester === "present") {
-          const response = await getCurrentSemesterLectures(
-            auth.userId,
-            auth.token
+        const response = await getLectureWithLectureId(
+          params.lectureId!,
+          auth.token
+        );
+        if (response.status === 200) {
+          setPracticeList((response.data as any).practices);
+          setPracticeName(
+            (response.data as any).practices.find(
+              (practice: { id: number; title: string }) =>
+                practice.id === Number(params.labId)
+            )?.title
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "past") {
-          const response = await getPreviousSemesterLectures(
-            auth.userId,
-            auth.token
-          );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "future") {
-          const response = await getFutureSemesterLectures(
-            auth.userId,
-            auth.token
-          );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+          setPracticeListLoading(false);
         }
-        setLectureListLoading(false);
       } catch (error) {
         console.error(error);
       }
     };
-    getLectureList();
-  }, [lectureData.semester]);
+    getPracticeList();
+  }, [params.lectureId, params.labId]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -82,13 +64,15 @@ const TableHeader = () => {
     };
   }, [containerRef]);
 
-  return (
+  return practiceListLoading ? (
+    <span>loading...</span>
+  ) : (
     <div className={styles["header-container"]} ref={containerRef}>
       <button
         className={styles.dropdown}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {lectureData.lectureName}
+        {practiceName}
         <img
           className={styles.icon}
           src={isOpen ? chevUpSVG : chevDownSVG}
@@ -98,26 +82,19 @@ const TableHeader = () => {
 
       {isOpen ? (
         <div className={dropdownStyles["dropdown-item-container"]}>
-          {lectureListLoading
-            ? "강의목록 로딩중..."
-            : lectureList.map((lecture) => (
-                <div
-                  className={dropdownStyles["dropdown-item"]}
-                  key={lecture.id}
-                  onClick={() => {
-                    dispatchLectureData({
-                      type: "UPDATE_DATA",
-                      payload: {
-                        lectureName: lecture.title,
-                        semester: lectureData.semester,
-                      },
-                    });
-                    navigate(`/students/${lecture.id}/history`);
-                  }}
-                >
-                  {lecture.title}
-                </div>
-              ))}
+          {practiceList.map((practice) => (
+            <div
+              className={dropdownStyles["dropdown-item"]}
+              key={practice.id}
+              onClick={() => {
+                navigate(
+                  `/students/${params.lectrueId}/${practice.id}/history`
+                );
+              }}
+            >
+              {practice.title}
+            </div>
+          ))}
         </div>
       ) : null}
     </div>

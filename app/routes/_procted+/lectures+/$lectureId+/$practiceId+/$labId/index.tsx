@@ -24,7 +24,6 @@ const LabDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
-  console.log(practiceDetail);
   useEffect(() => {
     async function getData() {
       const response = await getProblemWithProblemId(
@@ -71,7 +70,7 @@ const LabDetail = () => {
           </div>
           <div className={styles["submit-buttons"]}>
             <Link
-              to={`/students/${lectureId}/history`}
+              to={`/students/${lectureId}/${practiceId}/history`}
               style={{ textDecoration: "none" }}
             >
               <button

@@ -72,7 +72,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               )
             );
             await submit(auth.token, labId!, formData);
-            navigate(`/students/${lectureId}/history`);
+            navigate(`/students/${lectureId}/${practiceId}/history`);
           }}
         >
           <CodeBlank
@@ -98,7 +98,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               formData.append("entrypoint", entryPoint);
             }
             await submit(auth.token, labId!, formData);
-            navigate(`/students/${lectureId}/history`);
+            navigate(`/students/${lectureId}/${practiceId}/history`);
           }}
         >
           <RadioGroup

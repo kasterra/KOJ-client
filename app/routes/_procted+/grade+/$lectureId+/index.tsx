@@ -12,7 +12,7 @@ import {
 import { Lecture } from "~/types";
 import dropdownStyles from "~/components/common/dropdown.module.css";
 import styles from "./index.module.css";
-import headerStyles from "~/routes/_procted+/students+/$lectureId+/history+/index.module.css";
+import headerStyles from "~/routes/_procted+/students+/$lectureId+/$labId+/history+/index.module.css";
 import {
   getCurrentSemesterLectures,
   getPreviousSemesterLectures,
