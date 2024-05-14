@@ -1,4 +1,9 @@
-import { MetaFunction, useNavigate, useParams } from "@remix-run/react";
+import {
+  MetaFunction,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "@remix-run/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { getLectureScoreBoard, reJudge } from "~/API/submission";
 import TableBase from "~/components/Table/TableBase";
@@ -29,29 +34,35 @@ const TableHeader = () => {
   const auth = useAuth();
   const lectureData = useLectureData();
   const dispatchLectureData = useLectureDataDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [lectureListLoading, setLectureListLoading] = useState(true);
   const [lectureList, setLectureList] = useState<Lecture[]>([]);
+  const [pastLectureList, setPastLectureList] = useState<Lecture[]>([]);
+  const [currentLectureList, setCurrentLectureList] = useState<Lecture[]>([]);
+  const [futureLectureList, setFutureLectureList] = useState<Lecture[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const semester = searchParams.get("semester");
 
   useEffect(() => {
     const getLectureList = async () => {
       try {
-        if (lectureData.semester === "present") {
+        if (!semester || semester === "present") {
           const response = await getCurrentSemesterLectures(
             auth.userId,
             auth.token
           );
           if (isSuccessResponse(response))
             setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "past") {
+        } else if (semester === "past") {
           const response = await getPreviousSemesterLectures(
             auth.userId,
             auth.token
           );
           if (isSuccessResponse(response))
             setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "future") {
+        } else if (semester === "future") {
           const response = await getFutureSemesterLectures(
             auth.userId,
             auth.token
@@ -59,13 +70,38 @@ const TableHeader = () => {
           if (isSuccessResponse(response))
             setLectureList((response as SuccessLecturesResponse).data);
         }
+        const pastResponse = await getPreviousSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        const currentResponse = await getCurrentSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        const futureResponse = await getFutureSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        if (isSuccessResponse(pastResponse)) {
+          setPastLectureList((pastResponse as SuccessLecturesResponse).data);
+        }
+        if (isSuccessResponse(currentResponse)) {
+          setCurrentLectureList(
+            (currentResponse as SuccessLecturesResponse).data
+          );
+        }
+        if (isSuccessResponse(futureResponse)) {
+          setFutureLectureList(
+            (futureResponse as SuccessLecturesResponse).data
+          );
+        }
         setLectureListLoading(false);
       } catch (error) {
         console.error(error);
       }
     };
     getLectureList();
-  }, [lectureData.semester]);
+  }, [searchParams.get("semester")]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -95,6 +131,58 @@ const TableHeader = () => {
           alt={isOpen ? "열림" : "닫힘"}
         />
       </button>
+      {semester && semester !== "present" ? (
+        <h3
+          className={styles["blue-link"]}
+          onClick={() => {
+            navigate(`/grade/${currentLectureList[0].id}?semester=present`);
+            dispatchLectureData({
+              type: "UPDATE_DATA",
+              payload: {
+                lectureName: currentLectureList[0].title,
+                semester: "present",
+              },
+            });
+          }}
+        >
+          현재 강의 관리하러 가기
+        </h3>
+      ) : null}
+      {semester !== "past" && pastLectureList.length > 0 ? (
+        <h3
+          className={styles["blue-link"]}
+          onClick={() => {
+            navigate(`/grade/${pastLectureList[0].id}?semester=past`);
+            dispatchLectureData({
+              type: "UPDATE_DATA",
+              payload: {
+                lectureName: pastLectureList[0].title,
+                semester: "past",
+              },
+            });
+          }}
+        >
+          과거 강의 관리하러 가기
+        </h3>
+      ) : null}
+
+      {semester !== "future" && futureLectureList.length > 0 ? (
+        <h3
+          className={styles["blue-link"]}
+          onClick={() => {
+            navigate(`/grade/${futureLectureList[0].id}?semester=future`);
+            dispatchLectureData({
+              type: "UPDATE_DATA",
+              payload: {
+                lectureName: futureLectureList[0].title,
+                semester: "future",
+              },
+            });
+          }}
+        >
+          미래 강의 관리하러 가기
+        </h3>
+      ) : null}
 
       {isOpen ? (
         <div className={dropdownStyles["dropdown-item-container"]}>
@@ -112,7 +200,11 @@ const TableHeader = () => {
                         semester: lectureData.semester,
                       },
                     });
-                    navigate(`/grade/${lecture.id}`);
+                    navigate(
+                      `/grade/${lecture.id}${
+                        semester ? `?semester=${semester}` : ""
+                      }`
+                    );
                   }}
                 >
                   {lecture.title}
@@ -134,6 +226,7 @@ const LectureScoreBoard = () => {
     "학번",
     "총점",
   ]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     async function getData() {
@@ -191,7 +284,7 @@ const LectureScoreBoard = () => {
       }
     }
     getData();
-  }, [params.lectureId, isLoading]);
+  }, [params.lectureId, isLoading, searchParams.get("semester")]);
 
   return isLoading ? (
     <h2>Loading...</h2>

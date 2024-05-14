@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useNavigate, useParams, useSearchParams } from "@remix-run/react";
 import TableBase from "~/components/Table/TableBase";
 import styles from "./index.module.css";
 import tableStyles from "~/components/Table/table.module.css";
@@ -40,32 +40,66 @@ const TableHeader = () => {
   const [lectureList, setLectureList] = useState<Lecture[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isUserAddModalOpen, setIsUserAddModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [pastLectureList, setPastLectureList] = useState<Lecture[]>([]);
+  const [currentLectureList, setCurrentLectureList] = useState<Lecture[]>([]);
+  const [futureLectureList, setFutureLectureList] = useState<Lecture[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const semester = searchParams.get("semester");
+
+  console.log(futureLectureList);
 
   useEffect(() => {
     const getLectureList = async () => {
       try {
-        if (lectureData.semester === "present") {
+        if (!semester || semester === "present") {
           const response = await getCurrentSemesterLectures(
             auth.userId,
             auth.token
           );
           if (isSuccessResponse(response))
             setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "past") {
+        } else if (semester === "past") {
           const response = await getPreviousSemesterLectures(
             auth.userId,
             auth.token
           );
           if (isSuccessResponse(response))
             setLectureList((response as SuccessLecturesResponse).data);
-        } else if (lectureData.semester === "future") {
+        } else if (semester === "future") {
           const response = await getFutureSemesterLectures(
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
+          if (isSuccessResponse(response)) {
             setLectureList((response as SuccessLecturesResponse).data);
+          }
+        }
+        const pastResponse = await getPreviousSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        const currentResponse = await getCurrentSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        const futureResponse = await getFutureSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        if (isSuccessResponse(pastResponse)) {
+          setPastLectureList((pastResponse as SuccessLecturesResponse).data);
+        }
+        if (isSuccessResponse(currentResponse)) {
+          setCurrentLectureList(
+            (currentResponse as SuccessLecturesResponse).data
+          );
+        }
+        if (isSuccessResponse(futureResponse)) {
+          setFutureLectureList(
+            (futureResponse as SuccessLecturesResponse).data
+          );
         }
         setLectureListLoading(false);
       } catch (error) {
@@ -73,7 +107,7 @@ const TableHeader = () => {
       }
     };
     getLectureList();
-  }, []);
+  }, [searchParams.get("semester")]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -92,17 +126,76 @@ const TableHeader = () => {
 
   return (
     <div className={styles["header-container"]} ref={containerRef}>
-      <button
-        className={styles.dropdown}
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
-        {lectureData.lectureName}
-        <img
-          className={styles.icon}
-          src={isOpen ? chevUpSVG : chevDownSVG}
-          alt={isOpen ? "열림" : "닫힘"}
-        />
-      </button>
+      <div className={styles.flex}>
+        <button
+          className={styles.dropdown}
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          {lectureData.lectureName}
+          <img
+            className={styles.icon}
+            src={isOpen ? chevUpSVG : chevDownSVG}
+            alt={isOpen ? "열림" : "닫힘"}
+          />
+        </button>
+        <div className={styles.flex}>
+          {semester && semester !== "present" ? (
+            <h3
+              className={styles["blue-link"]}
+              onClick={() => {
+                dispatchLectureData({
+                  type: "UPDATE_DATA",
+                  payload: {
+                    lectureName: currentLectureList[0].title,
+                    semester: "present",
+                  },
+                });
+                navigate(
+                  `/students/${currentLectureList[0].id}?semester=present`
+                );
+              }}
+            >
+              현재 강의 관리하러 가기
+            </h3>
+          ) : null}
+          {semester !== "past" && pastLectureList.length > 0 ? (
+            <h3
+              className={styles["blue-link"]}
+              onClick={() => {
+                dispatchLectureData({
+                  type: "UPDATE_DATA",
+                  payload: {
+                    lectureName: pastLectureList[0].title,
+                    semester: "past",
+                  },
+                });
+                navigate(`/students/${pastLectureList[0].id}?semester=past`);
+              }}
+            >
+              과거 강의 관리하러 가기
+            </h3>
+          ) : null}
+          {semester !== "future" && futureLectureList.length > 0 ? (
+            <h3
+              className={styles["blue-link"]}
+              onClick={() => {
+                dispatchLectureData({
+                  type: "UPDATE_DATA",
+                  payload: {
+                    lectureName: futureLectureList[0].title,
+                    semester: "future",
+                  },
+                });
+                navigate(
+                  `/students/${futureLectureList[0].id}?semester=future`
+                );
+              }}
+            >
+              미래 강의 관리하러 가기
+            </h3>
+          ) : null}
+        </div>
+      </div>
 
       <div className={styles["buttons-container"]}>
         <button
@@ -134,7 +227,11 @@ const TableHeader = () => {
                         semester: lectureData.semester,
                       },
                     });
-                    navigate(`/students/${lecture.id}`);
+                    navigate(
+                      `/students/${lecture.id}${
+                        semester ? `?semester=${semester}` : ""
+                      }`
+                    );
                   }}
                 >
                   {lecture.title}

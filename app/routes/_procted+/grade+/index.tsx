@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { getCurrentSemesterLectures } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
+import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
 import {
   SuccessLecturesResponse,
   isSuccessResponse,
@@ -10,6 +11,7 @@ import {
 
 const GradeRedirect = () => {
   const navigate = useNavigate();
+  const dispatchLectureData = useLectureDataDispatch();
   const auth = useAuth();
 
   useEffect(() => {
@@ -19,6 +21,13 @@ const GradeRedirect = () => {
         auth.token
       );
       if (isSuccessResponse(response)) {
+        dispatchLectureData({
+          type: "UPDATE_DATA",
+          payload: {
+            semester: "present",
+            lectureName: (response as SuccessLecturesResponse).data[0].title,
+          },
+        });
         navigate(`/grade/${(response as SuccessLecturesResponse).data[0].id}`);
       }
     }

@@ -25,3 +25,10 @@
 .sidebar * {
   text-decoration: none;
 }
+
+.blue-link {
+  color: #3366ff;
+  text-decoration: underline;
+  margin: 0;
+  cursor: pointer;
+}

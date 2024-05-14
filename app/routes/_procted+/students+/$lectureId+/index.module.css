@@ -81,3 +81,16 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.blue-link {
+  color: #3366ff;
+  text-decoration: underline;
+  margin: 0;
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
