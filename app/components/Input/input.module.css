@@ -6,7 +6,7 @@
 
 .title {
   color: #756f86;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
@@ -33,7 +33,7 @@
   box-shadow: 0px 4px 8px 0px rgba(44, 39, 56, 0.04);
   padding: 16px;
   color: #2c2738;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -51,7 +51,7 @@
 
 .description {
   color: #756f86;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -103,7 +103,7 @@
 
 .dropdown-container > span {
   color: #756f86;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

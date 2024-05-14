@@ -7,7 +7,7 @@
 .active {
   padding: 11px 16px;
   color: #161616;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -19,7 +19,7 @@
 .deactive {
   padding: 11px 16px;
   color: #525252;
-  font-family: IBM Plex Sans;
+  font-family: IBMPlexSans;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
