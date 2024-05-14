@@ -3,27 +3,47 @@ import styles from "./index.module.css";
 import dropdownStyles from "~/components/common/dropdown.module.css";
 import chevUpSVG from "~/assets/chevronUp.svg";
 import chevDownSVG from "~/assets/chevronDown.svg";
-import { MetaFunction, useNavigate, useParams } from "@remix-run/react";
+import {
+  MetaFunction,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "@remix-run/react";
 import { useAuth } from "~/contexts/AuthContext";
-import { getLectureWithLectureId } from "~/API/lecture";
+import {
+  getLectureWithLectureId,
+  getProblemWithProblemId,
+} from "~/API/lecture";
 import TableBase from "~/components/Table/TableBase";
 import { getSubmissionStatus } from "~/API/submission";
 import SubmissionDetailModal from "./SubmissionDetailModal";
+import { getPracticeWithPracticeId } from "~/API/practice";
 
 const TableHeader = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const params = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const problemId = searchParams.get("problemId");
   const [practiceListLoading, setPracticeListLoading] = useState(true);
+  const [problemListLoading, setProblemListLoading] = useState(true);
   const [practiceList, setPracticeList] = useState<
     {
       id: number;
       title: string;
     }[]
   >([]);
+  const [problemList, setProblemList] = useState<
+    { id: number; title: string }[]
+  >([{ id: -1, title: "---" }]);
   const [practiceName, setPracticeName] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentProblem, setCurrentProblem] = useState<{
+    id: number;
+    title: string;
+  }>({ id: -1, title: "---" });
+  const [isPracticeListOpen, setIsPracticeListOpen] = useState(false);
+  const [isProblemListOpen, setIsProblemListOpen] = useState(false);
+  const tableHeaderContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getPracticeList = async () => {
@@ -49,38 +69,72 @@ const TableHeader = () => {
     getPracticeList();
   }, [params.lectureId, params.labId]);
 
-  const handleClickOutside = (event: MouseEvent) => {
+  useEffect(() => {
+    const getProblemList = async () => {
+      const response = await getPracticeWithPracticeId(
+        params.labId!,
+        auth.token
+      );
+      if (response.status === 200) {
+        setProblemList(((response as any).data as any).problems);
+        setCurrentProblem(
+          ((response as any).data as any).problems.find(
+            (problem: { id: number; title: string }) =>
+              problem.id === parseInt(problemId!)
+          )
+        );
+        setProblemListLoading(false);
+      }
+    };
+    if (problemId) getProblemList();
+    else setProblemListLoading(false);
+  }, [problemId]);
+
+  const handleClickOutsideList = (event: MouseEvent) => {
     if (
-      containerRef.current &&
-      !containerRef.current.contains(event.target as Node)
+      tableHeaderContainerRef.current &&
+      !tableHeaderContainerRef.current.contains(event.target as Node)
     ) {
-      setIsOpen(false);
+      setIsPracticeListOpen(false);
+      setIsProblemListOpen(false);
     }
   };
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutsideList);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutsideList);
     };
-  }, [containerRef]);
+  }, [tableHeaderContainerRef]);
 
-  return practiceListLoading ? (
+  return practiceListLoading || problemListLoading ? (
     <span>loading...</span>
   ) : (
-    <div className={styles["header-container"]} ref={containerRef}>
+    <div className={styles["header-container"]} ref={tableHeaderContainerRef}>
       <button
         className={styles.dropdown}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => setIsPracticeListOpen((prev) => !prev)}
       >
         {practiceName}
         <img
           className={styles.icon}
-          src={isOpen ? chevUpSVG : chevDownSVG}
-          alt={isOpen ? "열림" : "닫힘"}
+          src={isPracticeListOpen ? chevUpSVG : chevDownSVG}
+          alt={isPracticeListOpen ? "열림" : "닫힘"}
         />
       </button>
 
-      {isOpen ? (
+      <button
+        className={styles.dropdown}
+        onClick={() => setIsProblemListOpen((prev) => !prev)}
+      >
+        {currentProblem.title}
+        <img
+          className={styles.icon}
+          src={isProblemListOpen ? chevUpSVG : chevDownSVG}
+          alt={isProblemListOpen ? "열림" : "닫힘"}
+        />
+      </button>
+
+      {isPracticeListOpen ? (
         <div className={dropdownStyles["dropdown-item-container"]}>
           {practiceList.map((practice) => (
             <div
@@ -93,6 +147,25 @@ const TableHeader = () => {
               }}
             >
               {practice.title}
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {isProblemListOpen ? (
+        <div
+          className={dropdownStyles["dropdown-item-container"]}
+          style={{ left: 180 }}
+        >
+          {problemList.map((problem) => (
+            <div
+              className={dropdownStyles["dropdown-item"]}
+              key={problem.id}
+              onClick={() => {
+                if (problem.id !== -1)
+                  setSearchParams({ problemId: problem.id.toString() });
+              }}
+            >
+              {problem.title}
             </div>
           ))}
         </div>
@@ -110,6 +183,8 @@ const Table = () => {
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
   const lectureId = params.lectureId!;
+  const [searchParams] = useSearchParams();
+  const problemId = searchParams.get("problemId");
   const [data, setData] = useState([]);
   const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
   const [detailId, setDetailId] = useState(0);
@@ -120,6 +195,7 @@ const Table = () => {
         user_id: auth.userId,
         lecture_id: lectureId,
         practice_id: Number(params.labId),
+        problem_id: problemId ? Number(problemId) : undefined,
       });
       if (JSON.stringify(response.data) !== JSON.stringify(prevData)) {
         setIsLoading(true);
@@ -195,7 +271,7 @@ const Table = () => {
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [params.lectureId, params.labId]);
+  }, [params.lectureId, params.labId, problemId]);
 
   return isLoading ? (
     <h3>loading...</h3>

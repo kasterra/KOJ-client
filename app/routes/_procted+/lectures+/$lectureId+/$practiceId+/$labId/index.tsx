@@ -70,7 +70,9 @@ const LabDetail = () => {
           </div>
           <div className={styles["submit-buttons"]}>
             <Link
-              to={`/students/${lectureId}/${practiceId}/history`}
+              to={`/students/${lectureId}/${practiceId}/history?problemId=${
+                problemDetail!.id
+              }`}
               style={{ textDecoration: "none" }}
             >
               <button
