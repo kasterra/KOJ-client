@@ -12,9 +12,11 @@ export async function submit(
     const code = formdata.get("code") as string;
     if (fileList.length > 0) {
       formdata.delete("codes");
-      fileList.map(async (file) => {
-        formdata.set("codes", await removePackageStatementFromFile(file));
-      });
+      const processedFiles = await Promise.all(
+        fileList.map(async (file) => await removePackageStatementFromFile(file))
+      );
+
+      processedFiles.forEach((file) => formdata.append("codes", file));
     } else if (code !== "") {
       formdata.delete("code");
       formdata.set("code", code.replaceAll(/package.*;/g, ""));

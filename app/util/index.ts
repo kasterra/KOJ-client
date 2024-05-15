@@ -91,17 +91,18 @@ export function handle401() {
 export function removePackageStatementFromFile(file: File): Promise<File> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+
     reader.onload = () => {
+      const content = reader.result as string;
+      const updatedContent = content.replace(/package\s+[\w\.]+;/g, "");
+
       resolve(
-        new File(
-          [(reader.result as string).replaceAll(/package.*;/g, "")],
-          file.name,
-          {
-            type: file.type,
-          }
-        )
+        new File([updatedContent], file.name, {
+          type: file.type,
+        })
       );
     };
+
     reader.onerror = () => {
       reject(reader.error);
     };

@@ -94,9 +94,6 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               [...fileList].forEach((file) => formData.append("codes", file));
             }
             formData.append("code", code);
-            if (entryPoint) {
-              formData.append("entrypoint", entryPoint);
-            }
             await submit(auth.token, labId!, formData);
             navigate(`/students/${lectureId}/${practiceId}/history`);
           }}
@@ -113,7 +110,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
             {fileList && fileList.length > 1 ? (
               <RadioGroup
                 title="엔트리 포인트 설정"
-                name="entry"
+                name="entrypoint"
                 valueList={[...fileList].map((file) => file.name)}
                 textList={[...fileList].map((file) => file.name)}
                 onChange={setEntryPoint as (value: string) => void}
