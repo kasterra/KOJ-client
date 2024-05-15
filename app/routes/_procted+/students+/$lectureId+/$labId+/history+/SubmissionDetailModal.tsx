@@ -6,6 +6,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import CodeBlock from "~/components/CodeBlock";
 import TextInput from "~/components/Input/TextInput";
 import TextArea from "~/components/Input/TextArea";
+import { bytesToSize } from "~/util";
 
 interface Props {
   isOpen: boolean;
@@ -128,25 +129,28 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                       title="사용 메모리"
                       disabled
                       name=""
-                      defaultValue={result.used_memory}
+                      defaultValue={bytesToSize(result.used_memory)}
                     />
-                    <TextInput
+                    <TextArea
                       title="주어진 표준입력"
                       disabled
                       name=""
                       defaultValue={result.stdin}
+                      height={300}
                     />
-                    <TextInput
+                    <TextArea
                       title="주어진 출력"
                       disabled
                       name=""
                       defaultValue={result.stdout}
+                      height={300}
                     />
-                    <TextInput
+                    <TextArea
                       title="예상된 출력"
                       disabled
                       name=""
                       defaultValue={result.judge_answer}
+                      height={300}
                     />
                     <TextInput
                       title="exit code"
