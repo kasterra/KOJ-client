@@ -1,9 +1,11 @@
 import { useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
-import { getCurrentSemesterLectures } from "~/API/lecture";
+import {
+  getCurrentSemesterLectures,
+  getFutureSemesterLectures,
+  getPreviousSemesterLectures,
+} from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
-import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
 import {
   SuccessLecturesResponse,
   isSuccessResponse,
@@ -11,7 +13,6 @@ import {
 
 const GradeRedirect = () => {
   const navigate = useNavigate();
-  const dispatchLectureData = useLectureDataDispatch();
   const auth = useAuth();
 
   useEffect(() => {
@@ -21,26 +22,41 @@ const GradeRedirect = () => {
         auth.token
       );
       if (isSuccessResponse(response)) {
-        dispatchLectureData({
-          type: "UPDATE_DATA",
-          payload: {
-            semester: "present",
-            lectureName: (response as SuccessLecturesResponse).data[0].title,
-          },
-        });
         navigate(`/grade/${(response as SuccessLecturesResponse).data[0].id}`);
+      } else {
+        const previousResponse = await getPreviousSemesterLectures(
+          auth.userId,
+          auth.token
+        );
+        if (previousResponse.status === 200) {
+          if ((previousResponse as SuccessLecturesResponse).data.length !== 0) {
+            navigate(
+              `/grade/${
+                (previousResponse as SuccessLecturesResponse).data[0].id
+              }?semester=past`
+            );
+          }
+        } else {
+          const futureResponse = await getFutureSemesterLectures(
+            auth.userId,
+            auth.token
+          );
+          if (futureResponse.status === 200) {
+            if ((futureResponse as SuccessLecturesResponse).data.length !== 0) {
+              navigate(
+                `/grade/${
+                  (futureResponse as SuccessLecturesResponse).data[0].id
+                }?semester=future`
+              );
+            }
+          }
+        }
       }
     }
     getLectures();
   }, []);
 
-  return (
-    <h1>
-      내 강의로 리다이렉트중....
-      <br />이 화면이 계속 나온다면, 이번 학기에 강의중인 강의가 있는지 확인해
-      보세요
-    </h1>
-  );
+  return null;
 };
 
 export default GradeRedirect;
