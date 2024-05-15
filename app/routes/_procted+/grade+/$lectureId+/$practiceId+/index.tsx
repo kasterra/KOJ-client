@@ -26,10 +26,11 @@ const PracticeScoreBoard = () => {
       }
     }
     getPracticeName();
-  }, []);
+  }, [params.practiceId]);
 
   useEffect(() => {
     async function getPracticeScore() {
+      setDataHeaders(["이름", "총점"]);
       const response = await getPracticeScoreBoard(
         auth.token,
         params.practiceId!
@@ -98,7 +99,7 @@ const PracticeScoreBoard = () => {
       setIsLoading(false);
     }
     getPracticeScore();
-  }, []);
+  }, [params.practiceId]);
 
   return isLoading ? (
     <h2>Loading...</h2>

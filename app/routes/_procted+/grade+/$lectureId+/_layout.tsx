@@ -23,7 +23,7 @@ const ScoreBoardLayout = () => {
       }
     }
     getPractices();
-  }, []);
+  }, [params.lectureId]);
   return isLoading ? (
     <h1>Loading...</h1>
   ) : (
