@@ -81,13 +81,12 @@ const TableHeader = () => {
           ((response as any).data as any).problems.find(
             (problem: { id: number; title: string }) =>
               problem.id === parseInt(problemId!)
-          )
+          ) || ((response as any).data as any).problems[0]
         );
         setProblemListLoading(false);
       }
     };
-    if (problemId) getProblemList();
-    else setProblemListLoading(false);
+    getProblemList();
   }, [problemId]);
 
   const handleClickOutsideList = (event: MouseEvent) => {
