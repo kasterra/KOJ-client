@@ -20,7 +20,7 @@ const TableBase = ({
   onCheckboxClick,
 }: Props) => {
   return (
-    <>
+    <div className={styles.wrapper}>
       <div className={styles.container}>
         {TableHeader ? (
           <div className={styles.header}>
@@ -63,7 +63,7 @@ const TableBase = ({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,3 +1,6 @@
+.wrapper {
+  max-width: 100vw;
+}
 .modal-body {
   display: flex;
   flex-direction: column;
@@ -37,6 +40,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: pre-wrap;
 }
 
 .table-row > div:not(:last-child) {
@@ -48,6 +52,12 @@
   font-size: 25px;
   font-style: normal;
   font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+  .table-title {
+    font-size: 15px;
+  }
 }
 
 .top-right {
@@ -104,7 +114,8 @@
 }
 
 .pdf {
-  width: 1130px;
+  width: calc(100vw - 30px);
+  max-width: 1130px;
   height: 1460px;
 }
 
@@ -141,4 +152,11 @@
   display: flex;
   gap: 50px;
   flex-direction: column;
+}
+
+@media (max-width: 767.98px) {
+  .problem-meta {
+    flex-direction: column;
+    gap: 5px;
+  }
 }

@@ -76,8 +76,8 @@ export function remainingTimeToString(time: number) {
   const hour = Math.floor((time % 86400) / 3600);
   const minute = Math.floor((time % 3600) / 60);
   let ret = "";
-  if (day > 0) ret += `${day}일  `;
-  if (hour > 0) ret += `${hour}시간  `;
+  if (day > 0) ret += `${day}일  \n`;
+  if (hour > 0) ret += `${hour}시간  \n`;
   if (minute > 0) ret += `${minute}분`;
   return ret;
 }

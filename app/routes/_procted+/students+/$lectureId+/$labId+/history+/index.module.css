@@ -1,3 +1,10 @@
+.page-container {
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .container {
   display: flex;
   width: 100vw;
@@ -127,6 +134,15 @@
   align-items: center;
   min-width: 400px;
   gap: 10px;
+}
+
+@media (max-width: 767.98px) {
+  .modal-body {
+    width: 80vw;
+  }
+  .blank-section {
+    min-width: 100%;
+  }
 }
 
 .line {

@@ -19,6 +19,11 @@
   justify-content: space-between;
   width: 100%;
 }
+@media (max-width: 767.98px) {
+  .navmenu-container {
+    flex-direction: column;
+  }
+}
 
 .navmenu {
   display: flex;

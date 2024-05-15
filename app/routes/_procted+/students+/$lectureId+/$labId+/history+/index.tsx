@@ -276,7 +276,7 @@ const Table = () => {
   return isLoading ? (
     <h3>loading...</h3>
   ) : (
-    <>
+    <div className={styles["page-container"]}>
       <TableBase
         gridTemplateColumns="195px 270px 250px 1fr"
         TableHeader={TableHeader}
@@ -290,7 +290,7 @@ const Table = () => {
           submissionId={detailId}
         />
       )}
-    </>
+    </div>
   );
 };
 

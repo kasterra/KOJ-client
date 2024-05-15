@@ -46,9 +46,8 @@ const LabDetail = () => {
     getData();
   }, [practiceId, labId]);
 
-  const rtf1 = new Intl.RelativeTimeFormat("ko", { style: "long" });
   return loading ? null : (
-    <div>
+    <div className={styles.wrapper}>
       <div className={styles["problem-meta"]}>
         <div className={styles["table-row"]}>
           <div className={styles["table-title"]}>마감 시간</div>

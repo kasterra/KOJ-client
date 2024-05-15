@@ -7,6 +7,14 @@
   gap: 150px;
 }
 
+@media (max-width: 767.98px) {
+  .container {
+    flex-direction: column;
+    margin-left: 30px;
+    gap: 50px;
+  }
+}
+
 .aside {
   width: 250px;
   flex-shrink: 0;
