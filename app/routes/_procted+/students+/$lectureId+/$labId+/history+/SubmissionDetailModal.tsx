@@ -131,13 +131,19 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                       name=""
                       defaultValue={bytesToSize(result.used_memory)}
                     />
-                    <TextArea
-                      title="주어진 표준입력"
-                      disabled
-                      name=""
-                      defaultValue={result.stdin}
-                      height={300}
-                    />
+                    {result.stdin ? (
+                      <TextArea
+                        title="주어진 표준입력"
+                        disabled
+                        name=""
+                        defaultValue={result.stdin}
+                        height={300}
+                      />
+                    ) : (
+                      <span className={styles.error}>
+                        입력이 제공되지 않았거나, 비공개 TC 입니다
+                      </span>
+                    )}
                     <TextArea
                       title="주어진 출력"
                       disabled
