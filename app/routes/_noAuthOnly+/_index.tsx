@@ -57,6 +57,7 @@ const Login = () => {
           <button type="submit" className={formStyles["primary-button"]}>
             로그인
           </button>
+          <h4>시스템 관련 문의 : asdf@knu.ac.kr</h4>
         </form>
       </div>
     </div>

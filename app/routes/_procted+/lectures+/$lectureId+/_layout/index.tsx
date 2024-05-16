@@ -43,7 +43,6 @@ import TestCaseAddModal from "./TestCaseAddModal";
 import TestCaseEditModal from "./TestCaseEditModal";
 import { deleteProblem } from "~/API/problem";
 import { deleteTestcase } from "~/API/testCase";
-
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
@@ -118,6 +117,7 @@ const LectureDetail = () => {
             key={practice.id}
             id={practice.id}
             title={practice.title}
+            setSuperIsLoading={setIsLoading}
           />
         ))}
         {auth.role === "professor" ? (
@@ -161,11 +161,12 @@ export default LectureDetail;
 interface DetailProps {
   lectureName: string;
   superId?: number;
+  setSuperIsLoading?: (isLoading: boolean) => void;
   id: number;
   title: string;
 }
 
-const PracticeDetail = ({ id, title }: DetailProps) => {
+const PracticeDetail = ({ id, title, setSuperIsLoading }: DetailProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -177,6 +178,8 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
       const response = await getPracticeWithPracticeId(id, auth.token);
       if (isSuccessResponse(response)) {
         setPracticeDetail((response as SuccessPracticeDetailResponse).data);
+        setLoading(false);
+      } else if ((response as any).status === 404) {
         setLoading(false);
       } else {
         toast.error("잘못된 접근입니다");
@@ -204,7 +207,7 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
             const response = await deletePractice(id, auth.token);
             if (response.status === 204) {
               toast.success("성공적으로 삭제되었습니다");
-              setLoading(true);
+              setSuperIsLoading!(true);
             }
           }
         }}
@@ -214,6 +217,7 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
             lectureName={practiceDetail!.title}
             key={problem.id}
             superId={id}
+            setSuperIsLoading={setLoading}
             id={problem.id}
             title={problem.title}
           />
@@ -256,7 +260,7 @@ const PracticeDetail = ({ id, title }: DetailProps) => {
   );
 };
 
-const ProblemDetail = ({ superId, id, title }: DetailProps) => {
+const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
   const navigate = useNavigate();
   const auth = useAuth();
   const params = useParams();
@@ -272,6 +276,9 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
       const response = await getProblemWithProblemId(id, auth.token);
       if (isSuccessResponse(response)) {
         setProblemDetail((response as SuccessProblemDetailResponse).data);
+        setLoading(false);
+      }
+      if (response.status === 404) {
         setLoading(false);
       }
     }
@@ -300,7 +307,7 @@ const ProblemDetail = ({ superId, id, title }: DetailProps) => {
             const response = await deleteProblem(id, auth.token);
             if (response.status === 204) {
               toast.success("성공적으로 삭제되었습니다");
-              setLoading(true);
+              setSuperIsLoading!(true);
             }
           }
         }}
