@@ -72,7 +72,9 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               )
             );
             await submit(auth.token, labId!, formData);
-            navigate(`/students/${lectureId}/${practiceId}/history`);
+            navigate(
+              `/students/${lectureId}/${practiceId}/history?problemId=${labId!}`
+            );
           }}
         >
           <CodeBlank
@@ -101,8 +103,8 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           <RadioGroup
             title="프로그래밍 언어"
             name="language"
-            valueList={["c", "java", "python", "plaintext"]}
-            textList={["C", "Java", "Python", "Text"]}
+            valueList={["c", "java", "python" /*"plaintext"*/]}
+            textList={["C", "Java", "Python" /*"Text"*/]}
             onChange={setLanguage as (value: string) => void}
           />
 
