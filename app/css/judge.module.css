@@ -1,0 +1,19 @@
+.waiting {
+  color: #667085;
+}
+
+.inprogress {
+  color: #e67e22;
+}
+
+.correct {
+  color: #009874;
+}
+
+.wrong {
+  color: #fa7671;
+}
+
+.error {
+  color: #834ba9;
+}

@@ -79,7 +79,7 @@ export async function getSubmissionStatus(
   queryParams: {
     user_id?: string;
     lecture_id?: string | number;
-    practice_id?: number;
+    practice_id?: string | number;
     problem_id?: number;
   }
 ) {
@@ -183,29 +183,35 @@ export async function reJudge(
     practice_id?: number;
     problem_id?: number;
   }
-) {
-  const response = await fetch(`${API_SERVER_URL}/re_judge`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(queryParams),
-  });
+): Promise<{ status: number; message: string }> {
+  return new Promise(async (resolve, reject) => {
+    const response = await fetch(`${API_SERVER_URL}/re_judge`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(queryParams),
+    });
 
-  switch (response.status) {
-    case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
-      break;
-    case 401:
-      handle401();
-      break;
-    case 403:
-      toast.error("권한이 부족합니다");
-      break;
-    case 404:
-      toast.error("존재하지 않는걸 재채점 한다고 하네요");
-      break;
-  }
-  return { ...(await response.json()), status: response.status };
+    switch (response.status) {
+      case 400:
+        toast.error("JWT토큰이 없거나 입력값 검증 실패");
+        reject(400);
+        break;
+      case 401:
+        handle401();
+        reject(401);
+        break;
+      case 403:
+        toast.error("권한이 부족합니다");
+        reject(403);
+        break;
+      case 404:
+        toast.error("존재하지 않는걸 재채점 한다고 하네요");
+        reject(404);
+        break;
+    }
+    resolve({ ...(await response.json()), status: response.status });
+  });
 }

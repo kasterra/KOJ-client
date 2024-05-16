@@ -1,0 +1,35 @@
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  min-width: 300px;
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+}
+
+.buttons-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.white-button {
+  all: unset;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}

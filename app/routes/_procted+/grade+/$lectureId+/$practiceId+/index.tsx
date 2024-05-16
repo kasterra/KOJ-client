@@ -6,6 +6,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import styles from "../index.module.css";
 import TableBase from "~/components/Table/TableBase";
 import toast from "react-hot-toast";
+import SubmissionRecordModal from "./SubmissionRecordModal";
 
 const PracticeScoreBoard = () => {
   const params = useParams();
@@ -14,6 +15,11 @@ const PracticeScoreBoard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<any>({});
   const [dataHeaders, setDataHeaders] = useState<ReactNode[]>(["이름", "총점"]);
+  const [isSubmissionRecordModalOpen, setIsSubmissionRecordModalOpen] =
+    useState(false);
+  const [problemID, setProblemID] = useState(0);
+  const [studentID, setStudentID] = useState("");
+  const [studentName, setStudentName] = useState("");
 
   useEffect(() => {
     async function getPracticeName() {
@@ -62,7 +68,7 @@ const PracticeScoreBoard = () => {
         });
       }
       setData(
-        response.data.users.map((user: any) => {
+        response.data.users.map((user: any, userIdx: number) => {
           const map = new Map<string, ReactNode>();
           map.set("userName", user.name);
           map.set("totalScore", user.total_score);
@@ -71,22 +77,11 @@ const PracticeScoreBoard = () => {
               `problemNo${idx}`,
               <button
                 className={styles["white-button"]}
-                onClick={async () => {
-                  if (
-                    confirm(
-                      `해당 실습에 대해서 ${user.name} 학생을 재채점 하시겠습니까?`
-                    )
-                  ) {
-                    const response = await reJudge(auth.token, {
-                      practice_id: parseInt(params.practiceId!),
-                      problem_id: score.id as number,
-                      user_id: user.id,
-                    });
-                    if (response.status === 200) {
-                      toast.success("재채점 완료!");
-                      setIsLoading(true);
-                    }
-                  }
+                onClick={() => {
+                  setProblemID(response.data.metadata[idx].id);
+                  setStudentID(user.id);
+                  setStudentName(user.name);
+                  setIsSubmissionRecordModalOpen(true);
                 }}
               >
                 {score}
@@ -104,13 +99,24 @@ const PracticeScoreBoard = () => {
   return isLoading ? (
     <h2>Loading...</h2>
   ) : (
-    <TableBase
-      gridTemplateColumns={`150px 150px ${"200px ".repeat(
-        dataHeaders.length
-      )} `}
-      dataHeaders={dataHeaders as ReactNode[]}
-      dataRows={data}
-    />
+    <>
+      <TableBase
+        gridTemplateColumns={`150px 150px ${"200px ".repeat(
+          dataHeaders.length
+        )} `}
+        dataHeaders={dataHeaders as ReactNode[]}
+        dataRows={data}
+      />
+      {isSubmissionRecordModalOpen ? (
+        <SubmissionRecordModal
+          isOpen={isSubmissionRecordModalOpen}
+          onClose={() => setIsSubmissionRecordModalOpen(false)}
+          problemId={problemID}
+          studentId={studentID}
+          studentName={studentName}
+        />
+      ) : null}
+    </>
   );
 };
 
