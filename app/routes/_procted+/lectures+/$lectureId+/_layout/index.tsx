@@ -166,13 +166,14 @@ interface DetailProps {
   title: string;
 }
 
-const PracticeDetail = ({ id, title, setSuperIsLoading }: DetailProps) => {
+const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [practiceDetail, setPracticeDetail] = useState<SimplePracticeDetail>();
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
+  const [isFoldableOpen, setIsFoldableOpen] = useState(false);
   useEffect(() => {
     async function getData() {
       const response = await getPracticeWithPracticeId(id, auth.token);
@@ -195,6 +196,8 @@ const PracticeDetail = ({ id, title, setSuperIsLoading }: DetailProps) => {
     <>
       <FoldableSuperButtonElement
         key={id}
+        isOpen={isFoldableOpen}
+        setIsOpen={setIsFoldableOpen}
         title={practiceDetail!.title}
         isEditable={auth.role === "professor"}
         onEditClick={() => {
@@ -270,6 +273,7 @@ const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
   const [isTestCaseAddModalOpen, setIsTestCaseAddModalOpen] = useState(false);
   const [isTestCaseEditModalOpen, setIsTestCaseEditModalOpen] = useState(false);
   const [editingTestCaseId, setEditingTestCaseId] = useState(-1);
+  const [isFoldableOpen, setIsFoldableOpen] = useState(false);
 
   useEffect(() => {
     async function getData() {
@@ -291,6 +295,8 @@ const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
     <>
       <FoldableSuperButtonElement
         key={id}
+        isOpen={isFoldableOpen}
+        setIsOpen={setIsFoldableOpen}
         onTextClick={() =>
           navigate(`/lectures/${params.lectureId}/${superId}/${id}`)
         }

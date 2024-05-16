@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import styles from "./element.module.css";
 import pencilSVG from "~/assets/pencil.svg";
 import trashSVG from "~/assets/trash.svg";
@@ -78,6 +78,8 @@ interface FoldableProps {
   onIconClick?: () => void;
   level?: number;
   isFoldable?: boolean;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const FoldableSuperButtonElement = ({
@@ -89,8 +91,9 @@ export const FoldableSuperButtonElement = ({
   level,
   isFoldable = true,
   children,
+  isOpen,
+  setIsOpen,
 }: PropsWithChildren<FoldableProps>) => {
-  const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
   };
