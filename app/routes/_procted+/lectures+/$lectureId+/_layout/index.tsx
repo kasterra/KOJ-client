@@ -148,7 +148,6 @@ const LectureDetail = () => {
         <DownloadMyCodesModal
           isOpen={isDownloadMyCodesModalOpen}
           onClose={() => {
-            debugger;
             setIsDownloadMyCodesModalOpen(false);
           }}
         />

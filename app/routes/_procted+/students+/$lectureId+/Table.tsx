@@ -48,8 +48,6 @@ const TableHeader = () => {
 
   const semester = searchParams.get("semester");
 
-  console.log(futureLectureList);
-
   useEffect(() => {
     const getLectureList = async () => {
       try {
