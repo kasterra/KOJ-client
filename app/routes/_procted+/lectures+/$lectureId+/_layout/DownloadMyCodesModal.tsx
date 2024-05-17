@@ -13,6 +13,9 @@ import TreeView, {
 import { useAuth } from "~/contexts/AuthContext";
 import styles from "./modal.module.css";
 import formStyles from "~/components/common/form.module.css";
+import { getCodesWithZipFile } from "~/util/getMyAllCodes";
+import pkg from "file-saver";
+const { saveAs } = pkg;
 
 interface Props {
   isOpen: boolean;
@@ -25,6 +28,7 @@ const DownloadMyCodesModal = ({ isOpen, onClose }: Props) => {
     { fullName: string; id: string }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState("");
   const auth = useAuth();
   const params = useParams();
 
@@ -92,7 +96,24 @@ const DownloadMyCodesModal = ({ isOpen, onClose }: Props) => {
         className={styles["modal-body"]}
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(selectedNode);
+          toast
+            .promise(
+              getCodesWithZipFile(
+                auth.token,
+                params.lectureId!,
+                selectedNode,
+                setProgress
+              ),
+              {
+                loading: progress,
+                success: "불러오기 완료!",
+                error: (err) => err.toString(),
+              }
+            )
+            .then((res) => {
+              onClose();
+              saveAs(res);
+            });
         }}
       >
         <TreeView
@@ -100,7 +121,7 @@ const DownloadMyCodesModal = ({ isOpen, onClose }: Props) => {
           selectedList={selectedNode}
           setSelectedList={setSelectedNode}
         />
-        <button className={formStyles["primary-button"]}>
+        <button role="submit" className={formStyles["primary-button"]}>
           선택 실습 다운로드 받기
         </button>
       </form>
