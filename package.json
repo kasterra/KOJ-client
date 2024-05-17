@@ -17,6 +17,7 @@
     "@remix-run/react": "^2.4.1",
     "@remix-run/serve": "^2.4.1",
     "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "isbot": "^3.6.8",
     "jszip": "^3.10.1",
     "prismjs": "^1.29.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.4.1",
+    "@types/file-saver": "^2.0.7",
     "@types/prismjs": "^1.26.3",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
