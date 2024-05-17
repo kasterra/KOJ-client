@@ -68,7 +68,7 @@ const TreeNode = ({
         {isTerminal ? (
           <>
             <div style={{ width: 8 }} />
-            <button
+            <div
               className={styles["section-btn"]}
               onClick={() => {
                 setSelectedList((prev) => {
@@ -84,10 +84,10 @@ const TreeNode = ({
                 alt="file icon"
               />
               {title}
-            </button>
+            </div>
           </>
         ) : (
-          <button
+          <div
             className={styles["section-btn"]}
             onClick={() => setIsOpen((prev) => !prev)}
           >
@@ -102,7 +102,7 @@ const TreeNode = ({
               className={styles["leading-img"]}
             />
             <span>{title}</span>
-          </button>
+          </div>
         )}
       </div>
       {isOpen && children
