@@ -94,7 +94,7 @@ const PracticeScoreBoard = () => {
       setIsLoading(false);
     }
     getPracticeScore();
-  }, [params.practiceId]);
+  }, [params.practiceId, isLoading]);
 
   return isLoading ? (
     <h2>Loading...</h2>
