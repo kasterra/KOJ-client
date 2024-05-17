@@ -43,12 +43,15 @@ import TestCaseAddModal from "./TestCaseAddModal";
 import TestCaseEditModal from "./TestCaseEditModal";
 import { deleteProblem } from "~/API/problem";
 import { deleteTestcase } from "~/API/testCase";
+import DownloadMyCodesModal from "./DownloadMyCodesModal";
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
   const [currentLecture, setCurrentLecture] = useState<SimpleLectureDetail>();
   const [isNewPracticeModalOpen, setIsNewPracticeModalOpen] = useState(false);
   const [isImportPracticeModalOpen, setIsImportPracticeModalOpen] =
+    useState(false);
+  const [isDownloadMyCodesModalOpen, setIsDownloadMyCodesModalOpen] =
     useState(false);
 
   const {
@@ -120,6 +123,11 @@ const LectureDetail = () => {
             setSuperIsLoading={setIsLoading}
           />
         ))}
+        <ButtonElement
+          title="내 제출물 다운받기"
+          onButtonClick={() => setIsDownloadMyCodesModalOpen(true)}
+          iconSrcList={[downloadSVG]}
+        />
         {auth.role === "professor" ? (
           <>
             <ButtonElement
@@ -135,6 +143,17 @@ const LectureDetail = () => {
           </>
         ) : null}
       </aside>
+
+      {isDownloadMyCodesModalOpen ? (
+        <DownloadMyCodesModal
+          isOpen={isDownloadMyCodesModalOpen}
+          onClose={() => {
+            debugger;
+            setIsDownloadMyCodesModalOpen(false);
+          }}
+        />
+      ) : null}
+
       {isNewPracticeModalOpen ? (
         <NewPracticeModal
           isOpen={isNewPracticeModalOpen}
