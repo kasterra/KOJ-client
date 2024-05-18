@@ -2,7 +2,12 @@ import Modal from "~/components/Modal";
 import styles from "./modal.module.css";
 import formStyles from "~/components/common/form.module.css";
 import { useEffect, useState } from "react";
-import { getTestcaseById, updateTestcase } from "~/API/testCase";
+import {
+  deleteFileInputFromTestCase,
+  deleteFileOutputFromTestCase,
+  getTestcaseById,
+  updateTestcase,
+} from "~/API/testCase";
 import { useAuth } from "~/contexts/AuthContext";
 import {
   SuccessTestcaseResponse,
@@ -16,6 +21,10 @@ import TextArea from "~/components/Input/TextArea";
 import toast from "react-hot-toast";
 import plusW from "~/assets/plus-w.svg";
 import minusW from "~/assets/minus-w.svg";
+import trash from "~/assets/trash.svg";
+import download from "~/assets/download.svg";
+import pkg from "file-saver";
+const { saveAs } = pkg;
 
 interface Props {
   isOpen: boolean;
@@ -30,6 +39,8 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
     {} as TestcaseType
   );
   const [argvList, setArgvList] = useState<string[]>([]);
+  const [newInputFiles, setNewInputFiles] = useState<FileList | null>(null);
+  const [newOutputFiles, setNewOutputFiles] = useState<FileList | null>(null);
 
   useEffect(() => {
     async function getTestCaseFromServer() {
@@ -44,7 +55,7 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
     }
 
     getTestCaseFromServer();
-  }, []);
+  }, [isLoading]);
   return (
     <Modal
       title="테스트 케이스 수정"
@@ -62,6 +73,15 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
             const formData = new FormData(e.currentTarget);
 
             argvList.forEach((argv) => formData.append("argv", argv));
+
+            newInputFiles &&
+              [...newInputFiles].forEach((file) =>
+                formData.append("file_inputs", file)
+              );
+            newOutputFiles &&
+              [...newOutputFiles].forEach((file) =>
+                formData.append("file_outputs", file)
+              );
 
             const response = await updateTestcase(
               testCaseId,
@@ -166,15 +186,105 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
             height={200}
             defaultValue={testCaseData.stdout}
           />
+          <div className={styles.area}>
+            <h3 className={styles.title}>기존 파일 입력</h3>
+            <div className={styles["file-rows"]}>
+              {testCaseData.file_input!.map((file) => (
+                <div
+                  className={styles["file-row"]}
+                  onClick={() => {
+                    saveAs(new File([file.content], file.name), file.name);
+                  }}
+                >
+                  <span className={styles["file-name"]}>{file.name}</span>
+                  <div className={styles["icon-area"]}>
+                    <div className={styles["icon"]}>
+                      <img src={download} alt="download icon" />
+                    </div>
+                    <div
+                      className={styles.icon}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await toast.promise(
+                          deleteFileInputFromTestCase(
+                            testCaseId,
+                            file.name,
+                            auth.token
+                          ),
+                          {
+                            loading: "TC 파일 삭제중...",
+                            success: "TC 파일 삭제완료!",
+                            error: (err) => err.toString(),
+                          }
+                        );
+                        setIsLoading(true);
+                      }}
+                    >
+                      <img src={trash} alt="delete icon" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <MultipleFileInput
-            title="파일 입력"
+            title="파일 입력 추가"
             name="file_inputs"
             placeholder="텍스트, 이진 파일 업로드"
+            onFileUpload={async (files) => {
+              setNewInputFiles(files);
+            }}
+            description="기존 TC에 파일을 추가합니다. 이 입력으로는 기존 파일은 변경되지 않습니다"
           />
+          <div className={styles.area}>
+            <h3 className={styles.title}>기존 파일 출력</h3>
+            <div className={styles["file-rows"]}>
+              {testCaseData.file_output!.map((file) => (
+                <div
+                  className={styles["file-row"]}
+                  onClick={() => {
+                    saveAs(new File([file.content], file.name), file.name);
+                  }}
+                >
+                  <span className={styles["file-name"]}>{file.name}</span>
+                  <div className={styles["icon-area"]}>
+                    <div className={styles["icon"]}>
+                      <img src={download} alt="download icon" />
+                    </div>
+                    <div
+                      className={styles.icon}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await toast.promise(
+                          deleteFileOutputFromTestCase(
+                            testCaseId,
+                            file.name,
+                            auth.token
+                          ),
+                          {
+                            loading: "TC 파일 삭제중...",
+                            success: "TC 파일 삭제완료!",
+                            error: (err) => err.toString(),
+                          }
+                        );
+                        setIsLoading(true);
+                      }}
+                    >
+                      <img src={trash} alt="delete icon" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <MultipleFileInput
-            title="파일 출력"
+            title="파일 출력 추가"
             name="file_outputs"
             placeholder="텍스트, 이진 파일 업로드"
+            onFileUpload={async (files) => {
+              setNewOutputFiles(files);
+            }}
+            description="기존 TC에 파일을 추가합니다. 이 입력으로는 기존 파일은 변경되지 않습니다"
           />
           <button type="submit" className={formStyles["primary-button"]}>
             TC 저장

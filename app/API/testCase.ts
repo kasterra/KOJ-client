@@ -1,6 +1,7 @@
 import { API_SERVER_URL } from "~/util/constant";
 import toast from "react-hot-toast";
 import { TestcaseResponse } from "~/types/APIResponse";
+import { handle401 } from "~/util";
 
 export async function postNewTestcase(
   problemId: number,
@@ -32,7 +33,7 @@ export async function postNewTestcase(
       toast.error("입력값 검증이 실패하였습니다");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
@@ -60,7 +61,7 @@ export async function getTestcaseById(
 
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
@@ -99,7 +100,7 @@ export async function updateTestcase(
       toast.error("JWT 토큰이 없거나 입력값 검증이 실패하였습니다");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
@@ -122,7 +123,7 @@ export async function deleteTestcase(testcaseId: number, token: string) {
 
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
       toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
@@ -135,4 +136,42 @@ export async function deleteTestcase(testcaseId: number, token: string) {
       break;
   }
   return { status: response.status };
+}
+
+export async function deleteFileInputFromTestCase(
+  testcaseId: number,
+  token: string,
+  fileName: string
+) {
+  const response = { status: 404 };
+  switch (response.status) {
+    case 401:
+      handle401();
+      break;
+    case 403:
+      throw new Error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+    case 404:
+      throw new Error("현재 구현되어 있지 않은 API 입니다");
+    case 500:
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+  }
+}
+
+export async function deleteFileOutputFromTestCase(
+  testcaseId: number,
+  token: string,
+  fileName: string
+) {
+  const response = { status: 404 };
+  switch (response.status) {
+    case 401:
+      handle401();
+      break;
+    case 403:
+      throw new Error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+    case 404:
+      throw new Error("현재 구현되어 있지 않은 API 입니다");
+    case 500:
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+  }
 }

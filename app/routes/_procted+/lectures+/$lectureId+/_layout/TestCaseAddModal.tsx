@@ -21,6 +21,8 @@ interface Props {
 const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
   const auth = useAuth();
   const [argvList, setArgvList] = useState<string[]>([]);
+  const [inputFiles, setInputFiles] = useState<FileList | null>(null);
+  const [outputFiles, setOutputFiles] = useState<FileList | null>(null);
   return (
     <Modal
       title="테스트 케이스 추가"
@@ -33,6 +35,15 @@ const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
         onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
+
+          inputFiles &&
+            [...inputFiles].forEach((file) =>
+              formData.append("file_inputs", file)
+            );
+          outputFiles &&
+            [...outputFiles].forEach((file) =>
+              formData.append("file_outputs", file)
+            );
 
           argvList.forEach((argv) => formData.append("argv", argv));
 
@@ -132,12 +143,18 @@ const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
         />
         <MultipleFileInput
           title="파일 입력"
-          name="file_inputs"
+          name="f_i"
           placeholder="텍스트, 이진 파일 업로드"
+          onFileUpload={async (files) => {
+            setInputFiles(files);
+          }}
         />
         <MultipleFileInput
           title="파일 출력"
-          name="file_outputs"
+          name="f_o"
+          onFileUpload={async (files) => {
+            setOutputFiles(files);
+          }}
           placeholder="텍스트, 이진 파일 업로드"
         />
         <button type="submit" className={formStyles["primary-button"]}>
