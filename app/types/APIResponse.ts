@@ -140,8 +140,8 @@ export interface AllPracticeType {
 
 export interface TestcaseType {
   argv?: string[];
-  file_inputs?: string[];
-  file_outputs?: string[];
+  file_input?: { content: string; name: string }[];
+  file_output?: { content: string; name: string }[];
   id: number;
   is_visible: boolean;
   score: number;
