@@ -22,6 +22,7 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
   const params = useParams();
   const lectureId = parseInt(params.lectureId!, 10);
   const [tabIndex, setTabIndex] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
   return (
     <Modal
       title="학생 등록"
@@ -35,10 +36,10 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           if (tabIndex === 0) {
-            const file = formData.get("file") as File;
+            const formFile = file ? file : (formData.get("file") as File);
             const response = await addUsersInLecture(
               lectureId,
-              await parseXlsx(file),
+              await parseXlsx(formFile),
               auth.token
             );
             if (response.status === 201) {
@@ -76,7 +77,7 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
             <SingleFileInput
               title="학생 명부 엑셀 파일"
               name="file"
-              onFileUpload={(file) => console.log(file.name)}
+              onFileUpload={(file) => setFile(file)}
               fileValidator={(file) => file.name.endsWith(".xlsx")}
               placeholder="xlsx 파일 업로드"
             />
