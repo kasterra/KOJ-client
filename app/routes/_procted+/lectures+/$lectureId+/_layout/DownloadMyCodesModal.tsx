@@ -121,6 +121,7 @@ const DownloadMyCodesModal = ({ isOpen, onClose }: Props) => {
           selectedList={selectedNode}
           setSelectedList={setSelectedNode}
         />
+        <span>맞았습니다!를 받은 제일 최근 코드를 모아서 다운로드 합니다</span>
         <button role="submit" className={formStyles["primary-button"]}>
           선택 실습 다운로드 받기
         </button>
