@@ -1,7 +1,12 @@
 import { API_SERVER_URL } from "~/util/constant";
-import toast from "react-hot-toast";
+import { handle401 } from "~/util";
+import { EmptyResponse } from "~/types/APIResponse";
+import { BadRequestError, ForbiddenError } from "~/util/errors";
 
-export async function setSemester(semester: number, token: string) {
+export async function setSemester(
+  semester: number,
+  token: string
+): Promise<EmptyResponse> {
   const response = await fetch(`${API_SERVER_URL}/semester`, {
     method: "PUT",
     headers: {
@@ -13,19 +18,21 @@ export async function setSemester(semester: number, token: string) {
 
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰");
+      handle401();
       break;
     case 403:
-      toast.error("관리자만 접근할 수 있는 API 입니다");
+      throw new ForbiddenError("관리자만 접근할 수 있는 API 입니다");
       break;
   }
   return { ...(await response.json()), status: response.status };
 }
 
-export async function getSemester(token: string) {
+export async function getSemester(
+  token: string
+): Promise<{ semester: number }> {
   const response = await fetch(`${API_SERVER_URL}/semester`, {
     method: "GET",
     headers: {
@@ -36,13 +43,13 @@ export async function getSemester(token: string) {
 
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰");
+      handle401();
       break;
     case 403:
-      toast.error("관리자만 접근할 수 있는 API 입니다");
+      throw new ForbiddenError("관리자만 접근할 수 있는 API 입니다");
       break;
   }
   return { ...(await response.json()), status: response.status };

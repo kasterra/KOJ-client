@@ -1,13 +1,22 @@
 import { API_SERVER_URL } from "~/util/constant";
 import {
-  AllPracticeResponse,
+  AllPracticesResponse,
+  EmptyResponse,
+  LectureResponse,
   LecturesResponse,
   ProblemDetailResponse,
   UserSearchResponse,
 } from "~/types/APIResponse";
-import toast from "react-hot-toast";
 import { studentRow } from "~/types";
 import { handle401 } from "~/util";
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UnauthorizedError,
+} from "~/util/errors";
 
 export async function getFutureSemesterLectures(
   userId: string,
@@ -24,24 +33,27 @@ export async function getFutureSemesterLectures(
     }
   );
 
+  const data = await response.json();
+
   switch (response.status) {
     case 400:
-      toast.error("올바르지 않은 입력입니다!");
-      break;
+      throw new BadRequestError(data.message);
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("권한이 없습니다!");
+      throw new UnauthorizedError(data.message);
       break;
     case 404:
-      toast.error("요청하는 사용자의 ID가 존재하지 않습니다");
+      throw new NotFoundError("요청하는 사용자의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function getCurrentSemesterLectures(
@@ -59,24 +71,26 @@ export async function getCurrentSemesterLectures(
     }
   );
 
+  const data = await response.json();
+
   switch (response.status) {
     case 400:
-      toast.error("올바르지 않은 입력입니다!");
+      throw new BadRequestError(data.message);
       break;
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("권한이 없습니다!");
+      throw new UnauthorizedError(data.message);
       break;
     case 404:
-      toast.error("요청하는 사용자의 ID가 존재하지 않습니다");
+      throw new Error("요청하는 사용자의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function getPreviousSemesterLectures(
@@ -94,24 +108,24 @@ export async function getPreviousSemesterLectures(
     }
   );
 
+  const data = await response.json();
+
   switch (response.status) {
     case 400:
-      toast.error("올바르지 않은 입력입니다!");
-      break;
+      throw new BadRequestError("올바르지 않은 입력입니다!");
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("권한이 없습니다!");
-      break;
+      throw new UnauthorizedError("권한이 없습니다!");
     case 404:
-      toast.error("요청하는 사용자의 ID가 존재하지 않습니다");
-      break;
+      throw new NotFoundError("요청하는 사용자의 ID가 존재하지 않습니다");
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
-      break;
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function postNewLecture(
@@ -120,22 +134,18 @@ export async function postNewLecture(
   semester: number,
   title: string,
   token: string
-) {
+): Promise<LectureResponse> {
   if (!code) {
-    toast.error("강의 코드는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("강의 코드는 필수 입력 필드입니다");
   }
   if (!language) {
-    toast.error("사용 언어는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("사용 언어는 필수 입력 필드입니다");
   }
   if (!semester) {
-    toast.error("학기 정보는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("학기 정보는 필수 입력 필드입니다");
   }
   if (!title) {
-    toast.error("강의 제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("강의 제목은 필수 입력 필드입니다");
   }
   const response = await fetch(`${API_SERVER_URL}/lecture`, {
     method: "POST",
@@ -146,7 +156,25 @@ export async function postNewLecture(
     body: JSON.stringify({ code, language, semester, title }),
   });
 
-  return { ...(await response.json()), status: response.status };
+  const data = await response.json();
+
+  switch (response.status) {
+    case 400:
+      throw new BadRequestError(data.message);
+    case 401:
+      handle401();
+      break;
+    case 403:
+      throw new UnauthorizedError(data.message);
+    case 409:
+      throw new ConflictError(data.message);
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
+  }
+
+  return data;
 }
 
 export async function UpdateLecture(
@@ -156,22 +184,18 @@ export async function UpdateLecture(
   semester: number,
   title: string,
   token: string
-) {
+): Promise<LectureResponse> {
   if (!code) {
-    toast.error("강의 코드는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("강의 코드는 필수 입력 필드입니다");
   }
   if (!language) {
-    toast.error("사용 언어는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("사용 언어는 필수 입력 필드입니다");
   }
   if (!semester) {
-    toast.error("학기 정보는 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("학기 정보는 필수 입력 필드입니다");
   }
   if (!title) {
-    toast.error("강의 제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("강의 제목은 필수 입력 필드입니다");
   }
   const response = await fetch(`${API_SERVER_URL}/lecture/${lectureId}`, {
     method: "PUT",
@@ -182,30 +206,35 @@ export async function UpdateLecture(
     body: JSON.stringify({ code, language, semester, title }),
   });
 
+  const data = await response.json();
+
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 409:
-      toast.error("강의가 중복됩니다! 입력값을 확인해 주세요");
+      throw new Error("강의가 중복됩니다! 입력값을 확인해 주세요");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
   }
 
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
-export async function deleteLecture(lectureId: number, token: string) {
+export async function deleteLecture(
+  lectureId: number,
+  token: string
+): Promise<EmptyResponse> {
   const response = await fetch(`${API_SERVER_URL}/lecture/${lectureId}`, {
     method: "DELETE",
     headers: {
@@ -214,32 +243,31 @@ export async function deleteLecture(lectureId: number, token: string) {
     },
   });
 
+  const data = await response.json();
+
   switch (response.status) {
-    case 204:
-      toast.success("성공적으로 삭제되었습니다");
-      break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new Error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new Error("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
       break;
   }
 
-  return { status: response.status };
+  return data;
 }
 
 export async function addUserInLecture(
   lectureId: number,
   userInfo: studentRow,
   token: string
-) {
+): Promise<EmptyResponse> {
   const { userId, isTutor, userName } = userInfo;
   const response = await fetch(`${API_SERVER_URL}/lecture/${lectureId}/users`, {
     method: "POST",
@@ -251,28 +279,31 @@ export async function addUserInLecture(
       data: [{ id: userId, is_tutor: isTutor, name: userName }],
     }),
   });
+
+  const data = await response.json();
+
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new Error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new Error("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new Error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function addUsersInLecture(
   lecurteId: number,
   usersInfo: studentRow[],
   token: string
-) {
+): Promise<EmptyResponse> {
   const response = await fetch(`${API_SERVER_URL}/lecture/${lecurteId}/users`, {
     method: "POST",
     headers: {
@@ -287,27 +318,30 @@ export async function addUsersInLecture(
       })),
     }),
   });
+  const data = await response.json();
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function removeUserInLecture(
   lectureId: string,
   userId: string,
   token: string
-) {
+): Promise<EmptyResponse> {
   const response = await fetch(
     `${API_SERVER_URL}/lecture/${lectureId}/user/${userId}`,
     {
@@ -318,20 +352,25 @@ export async function removeUserInLecture(
       },
     }
   );
+
+  const data = await response.json();
+
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID 또는 학생 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID 또는 학생 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { status: response.status };
+  return data;
 }
 
 export async function getUsersInLecture(
@@ -345,26 +384,29 @@ export async function getUsersInLecture(
       Authorization: `Bearer ${token}`,
     },
   });
+  const data = await response.json();
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function getLectureWithLectureId(
   lectureId: string,
   token: string
-) {
+): Promise<LectureResponse> {
   const response = await fetch(`${API_SERVER_URL}/lecture/${lectureId}`, {
     method: "GET",
     headers: {
@@ -372,21 +414,26 @@ export async function getLectureWithLectureId(
       Authorization: `Bearer ${token}`,
     },
   });
+  const data = await response.json();
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의에 소속이 되어있지 않습니다. 다시 확인해 주세요");
+      throw new ForbiddenError(
+        "강의에 소속이 되어있지 않습니다. 다시 확인해 주세요"
+      );
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function getProblemWithProblemId(
@@ -400,27 +447,32 @@ export async function getProblemWithProblemId(
       Authorization: `Bearer ${token}`,
     },
   });
+  const data = await response.json();
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의에 소속이 되어있지 않습니다. 다시 확인해 주세요");
+      throw new ForbiddenError(
+        "강의에 소속이 되어있지 않습니다. 다시 확인해 주세요"
+      );
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }
 
 export async function getAllPractices(
   token: string,
   userId: string
-): Promise<AllPracticeResponse> {
+): Promise<AllPracticesResponse> {
   const response = await fetch(`${API_SERVER_URL}/user/${userId}/practices`, {
     method: "GET",
     headers: {
@@ -428,19 +480,24 @@ export async function getAllPractices(
       Authorization: `Bearer ${token}`,
     },
   });
+  const data = await response.json();
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의에 소속이 되어있지 않습니다. 다시 확인해 주세요");
+      throw new ForbiddenError(
+        "강의에 소속이 되어있지 않습니다. 다시 확인해 주세요"
+      );
       break;
     case 404:
-      toast.error("해당 강의 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 강의 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }

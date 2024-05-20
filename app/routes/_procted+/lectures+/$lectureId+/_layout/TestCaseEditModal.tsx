@@ -9,11 +9,7 @@ import {
   updateTestcase,
 } from "~/API/testCase";
 import { useAuth } from "~/contexts/AuthContext";
-import {
-  SuccessTestcaseResponse,
-  TestcaseType,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { TestcaseType } from "~/types/APIResponse";
 import MultipleFileInput from "~/components/Input/MultipleFileInput";
 import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
@@ -44,12 +40,13 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
 
   useEffect(() => {
     async function getTestCaseFromServer() {
-      const response = await getTestcaseById(testCaseId, auth.token);
-      if (isSuccessResponse(response)) {
-        setTestCaseData((response as SuccessTestcaseResponse).data);
-        setArgvList((response as SuccessTestcaseResponse).data.argv || []);
+      try {
+        const response = await getTestcaseById(testCaseId, auth.token);
+        setTestCaseData(response.data);
+        setArgvList(response.data.argv || []);
         setIsLoading(false);
-      } else {
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
         onClose();
       }
     }
@@ -83,16 +80,18 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
                 formData.append("file_outputs", file)
               );
 
-            const response = await updateTestcase(
-              testCaseId,
-              formData,
-              auth.token
+            await toast.promise(
+              updateTestcase(testCaseId, formData, auth.token),
+              {
+                loading: "TC 수정중...",
+                success: () => {
+                  onClose();
+                  return "성공적으로 TC를 수정하였습니다";
+                },
+                error: (error) =>
+                  `Error: ${error.message} - ${error.responseMessage}`,
+              }
             );
-
-            if (response.status === 200) {
-              toast.success("성공적으로 TC를 수정하였습니다");
-              onClose();
-            }
           }}
         >
           <TextInput
@@ -214,7 +213,8 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
                           {
                             loading: "TC 파일 삭제중...",
                             success: "TC 파일 삭제완료!",
-                            error: (err) => err.toString(),
+                            error: (error) =>
+                              `Error: ${error.message} - ${error.responseMessage}`,
                           }
                         );
                         setIsLoading(true);
@@ -264,7 +264,8 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
                           {
                             loading: "TC 파일 삭제중...",
                             success: "TC 파일 삭제완료!",
-                            error: (err) => err.toString(),
+                            error: (error) =>
+                              `Error: ${error.message} - ${error.responseMessage}`,
                           }
                         );
                         setIsLoading(true);

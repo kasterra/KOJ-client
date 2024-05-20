@@ -47,16 +47,16 @@ const TestCaseAddModal = ({ isOpen, onClose, problemId }: Props) => {
 
           argvList.forEach((argv) => formData.append("argv", argv));
 
-          const resposnse = await postNewTestcase(
-            problemId,
-            formData,
-            auth.token
+          await toast.promise(
+            postNewTestcase(problemId, formData, auth.token),
+            {
+              loading: "TC를 추가시도...",
+              success: "성공적으로 TC를 추가하였습니다",
+              error: (error) =>
+                `Error: ${error.message} - ${error.responseMessage}`,
+            }
           );
-
-          if (resposnse.status === 201) {
-            toast.success("성공적으로 TC를 추가하였습니다");
-            onClose();
-          }
+          onClose();
         }}
       >
         <TextInput

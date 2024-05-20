@@ -34,55 +34,47 @@ const DownloadMyCodesModal = ({ isOpen, onClose }: Props) => {
 
   useEffect(() => {
     async function getData() {
-      const lectureResponse = await getLectureWithLectureId(
-        params.lectureId!,
-        auth.token
-      );
+      try {
+        const lectureResponse = await getLectureWithLectureId(
+          params.lectureId!,
+          auth.token
+        );
 
-      if (lectureResponse.status !== 200)
-        throw new Error("Failed to get lecture");
+        const practices = lectureResponse.data.practices;
+        const practicesResponseList = await Promise.all(
+          practices.map(async (practice: any) =>
+            getPracticeWithPracticeId(practice.id, auth.token)
+          )
+        );
 
-      const practices = (lectureResponse as any).data.practices;
-      const practicesResponseList = await Promise.all(
-        practices.map(async (practice: any) =>
-          getPracticeWithPracticeId(practice.id, auth.token)
-        )
-      );
-
-      practicesResponseList.forEach((res) => {
-        if (res.status !== 200) throw new Error("Failed to get practice");
-      });
-
-      const practiceNodes = await Promise.all(
-        practicesResponseList.map(async (practiceResponse) => {
-          const problemResponseList = await Promise.all(
-            practiceResponse.data.problems.map(async (problem: any) =>
-              getProblemWithProblemId(problem.id, auth.token)
-            )
-          );
-          const problemDataList = problemResponseList.map((res) => {
-            if (res.status !== 200) throw new Error("Failed to get problem");
+        const practiceNodes = await Promise.all(
+          practicesResponseList.map(async (practiceResponse) => {
+            const problemResponseList = await Promise.all(
+              practiceResponse.data.problems.map(async (problem: any) =>
+                getProblemWithProblemId(problem.id, auth.token)
+              )
+            );
+            const problemDataList = problemResponseList.map((res) => {
+              return {
+                title: res.data.title as string,
+                id: res.data.id + "",
+                children: null,
+              };
+            });
             return {
-              title: res.data.title as string,
-              id: res.data.id as string,
-              children: null,
+              title: practiceResponse.data.title,
+              id: practiceResponse.data.id + "",
+              children: problemDataList,
             };
-          });
-          return {
-            title: practiceResponse.data.title,
-            id: practiceResponse.data.id,
-            children: problemDataList,
-          };
-        })
-      );
-      setNodesData(practiceNodes);
-      setIsLoading(false);
+          })
+        );
+        setNodesData(practiceNodes);
+        setIsLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
+      }
     }
-    toast.promise(getData(), {
-      loading: "이 강의에 대한 정보들을 불러오는중...",
-      success: "불러오기 완료!",
-      error: (err) => err.toString(),
-    });
+    getData();
   }, [params.lectureId]);
 
   return isLoading ? null : (

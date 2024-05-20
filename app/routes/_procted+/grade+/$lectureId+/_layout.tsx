@@ -5,6 +5,7 @@ import { getLectureWithLectureId } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
 import { ButtonElement } from "~/components/Aside/ButtonElement";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ScoreBoardLayout = () => {
   const params = useParams();
@@ -13,13 +14,15 @@ const ScoreBoardLayout = () => {
   const [practiceList, setPracticeList] = useState([]);
   useEffect(() => {
     async function getPractices() {
-      const response = await getLectureWithLectureId(
-        params.lectureId!,
-        auth.token
-      );
-      if (response.status === 200) {
+      try {
+        const response = await getLectureWithLectureId(
+          params.lectureId!,
+          auth.token
+        );
         setPracticeList((response as any).data.practices);
         setIsLoading(false);
+      } catch (e: any) {
+        toast.error(`Error: ${e.message} - ${e.responseMessage}`);
       }
     }
     getPractices();

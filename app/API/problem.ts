@@ -1,8 +1,14 @@
 import { API_SERVER_URL } from "~/util/constant";
 import { parsedCodeElement } from "~/util/codeHole";
-import toast from "react-hot-toast";
 import { uploadFile } from "./media";
-import { SuccessUploadFileResponse } from "~/types/APIResponse";
+import { handle401 } from "~/util";
+import {
+  BadRequestError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+} from "~/util/errors";
+import { EmptyResponse, ProblemDetailResponse } from "~/types/APIResponse";
 
 export async function postSolveProblem(
   file: File,
@@ -11,24 +17,18 @@ export async function postSolveProblem(
   time_limit: number,
   title: string,
   token: string
-) {
+): Promise<ProblemDetailResponse> {
   if (0 > memory_limit || memory_limit > 4096) {
-    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
   }
   if (!title) {
-    toast.error("제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
   }
   if (0 > time_limit || time_limit > 10000) {
-    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
   }
   const fileUploadResponse = await uploadFile(file, token);
-  if (fileUploadResponse.status !== 200) {
-    return { status: fileUploadResponse.status };
-  }
-  const file_path = (fileUploadResponse as SuccessUploadFileResponse).data.path;
+  const file_path = fileUploadResponse.data.path;
   const response = await fetch(`${API_SERVER_URL}/problem`, {
     method: "POST",
     headers: {
@@ -46,15 +46,15 @@ export async function postSolveProblem(
   });
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
   }
-  return { status: response.status, ...(await response.json()) };
+  return await response.json();
 }
 
 export async function postBlankProblem(
@@ -66,24 +66,18 @@ export async function postBlankProblem(
   time_limit: number,
   title: string,
   token: string
-) {
+): Promise<ProblemDetailResponse> {
   if (0 > memory_limit || memory_limit > 4096) {
-    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
   }
   if (!title) {
-    toast.error("제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
   }
   if (0 > time_limit || time_limit > 10000) {
-    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
   }
   const fileUploadResponse = await uploadFile(file, token);
-  if (fileUploadResponse.status !== 200) {
-    return { status: fileUploadResponse.status };
-  }
-  const file_path = (fileUploadResponse as SuccessUploadFileResponse).data.path;
+  const file_path = fileUploadResponse.data.path;
   const response = await fetch(`${API_SERVER_URL}/problem`, {
     method: "POST",
     headers: {
@@ -102,15 +96,15 @@ export async function postBlankProblem(
   });
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
   }
-  return { status: response.status, ...(await response.json()) };
+  return await response.json();
 }
 
 export async function updateProblem(
@@ -122,23 +116,19 @@ export async function updateProblem(
   token: string,
   file_path: string,
   parsed_code_elements?: parsedCodeElement[][]
-) {
+): Promise<EmptyResponse> {
   if (0 > memory_limit || memory_limit > 4096) {
-    toast.error("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
   }
   if (!title) {
-    toast.error("제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
   }
   if (0 > time_limit || time_limit > 10000) {
-    toast.error("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
   }
   if (problemType === "blank") {
     if (!parsed_code_elements) {
-      toast.error("빈칸 문제에는 빈칸정보가 필요합니다");
-      return { status: 400 };
+      throw new BadRequestError("빈칸 문제에는 빈칸정보가 필요합니다");
     }
   }
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
@@ -158,25 +148,30 @@ export async function updateProblem(
   });
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 문제 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 문제 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { status: response.status };
+  return await response.json();
 }
 
-export async function deleteProblem(problemId: number, token: string) {
+export async function deleteProblem(
+  problemId: number,
+  token: string
+): Promise<EmptyResponse> {
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
     method: "DELETE",
     headers: {
@@ -186,17 +181,19 @@ export async function deleteProblem(problemId: number, token: string) {
   });
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 문제 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 문제 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { status: response.status };
+  return await response.json();
 }

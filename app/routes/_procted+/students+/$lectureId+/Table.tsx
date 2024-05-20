@@ -21,14 +21,9 @@ import {
 import { useAuth } from "~/contexts/AuthContext";
 import plusW from "~/assets/plus-w.svg";
 import UserAddModal from "./UserAddModal";
-import {
-  SuccessLecturesResponse,
-  SuccessUserSearchResponse,
-  UserEntity,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { UserEntity } from "~/types/APIResponse";
 import { resetPassword } from "~/API/user";
-import { handle401, mapRoleToString } from "~/util";
+import { mapRoleToString } from "~/util";
 import toast from "react-hot-toast";
 
 const TableHeader = () => {
@@ -56,23 +51,20 @@ const TableHeader = () => {
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+          setLectureList(response.data);
         } else if (semester === "past") {
           const response = await getPreviousSemesterLectures(
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+
+          setLectureList(response.data);
         } else if (semester === "future") {
           const response = await getFutureSemesterLectures(
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response)) {
-            setLectureList((response as SuccessLecturesResponse).data);
-          }
+          setLectureList(response.data);
         }
         const pastResponse = await getPreviousSemesterLectures(
           auth.userId,
@@ -86,22 +78,12 @@ const TableHeader = () => {
           auth.userId,
           auth.token
         );
-        if (isSuccessResponse(pastResponse)) {
-          setPastLectureList((pastResponse as SuccessLecturesResponse).data);
-        }
-        if (isSuccessResponse(currentResponse)) {
-          setCurrentLectureList(
-            (currentResponse as SuccessLecturesResponse).data
-          );
-        }
-        if (isSuccessResponse(futureResponse)) {
-          setFutureLectureList(
-            (futureResponse as SuccessLecturesResponse).data
-          );
-        }
+        setPastLectureList(pastResponse.data);
+        setCurrentLectureList(currentResponse.data);
+        setFutureLectureList(futureResponse.data);
         setLectureListLoading(false);
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     };
     getLectureList();
@@ -257,11 +239,13 @@ const Table = () => {
 
   useEffect(() => {
     async function getData() {
-      const response = await getUsersInLecture(lectureId, auth.token);
-      if (isSuccessResponse(response)) {
-        setUsers((response as SuccessUserSearchResponse).data);
+      try {
+        const response = await getUsersInLecture(lectureId, auth.token);
+        setUsers(response.data);
+        setIsLoading(false);
+      } catch (err: any) {
+        toast.error(`Error: ${err.message} - ${err.responseMessage}`);
       }
-      setIsLoading(false);
     }
     getData();
   }, [isLoading, params.lectureId]);
@@ -282,31 +266,12 @@ const Table = () => {
                 className={tableStyles["reset-password"]}
                 onClick={async () => {
                   if (confirm("정말로 초기화 하시겠습니까?")) {
-                    const response = await resetPassword(elem.id, auth.token);
-                    switch (response.status) {
-                      case 200:
-                        toast.success("성공적으로 암호를 초기화 했습니다");
-                        break;
-                      case 400:
-                        toast.error("형식이 올바르지 않습니다");
-                        break;
-                      case 401:
-                        handle401();
-                        break;
-                      case 404:
-                        toast.error(
-                          "초기화 하려는 사용자의 ID가 존재하지 않습니다"
-                        );
-                        break;
-                      case 409:
-                      case 500:
-                        toast.error(
-                          "서버 오류가 발생했습니다. 관리자에게 문의해 주세요"
-                        );
-                        break;
-                      default:
-                        break;
-                    }
+                    await toast.promise(resetPassword(elem.id, auth.token), {
+                      loading: "초기화 요청중...",
+                      success: "성공적으로 암호를 초기화 했습니다",
+                      error: (err) =>
+                        `Error: ${err.message} - ${err.responseMessage}`,
+                    });
                   }
                 }}
               >
@@ -316,30 +281,15 @@ const Table = () => {
                 className={tableStyles["out-user"]}
                 onClick={async () => {
                   if (confirm("정말로 해당 유저를 내보내시겠습니까?")) {
-                    const response = await removeUserInLecture(
-                      lectureId,
-                      elem.id,
-                      auth.token
+                    await toast.promise(
+                      removeUserInLecture(lectureId, elem.id, auth.token),
+                      {
+                        loading: "내보내기 요청중...",
+                        success: "성공적으로 유저를 내보냈습니다",
+                        error: (err) =>
+                          `Error: ${err.message} - ${err.responseMessage}`,
+                      }
                     );
-                    switch (response.status) {
-                      case 204:
-                        toast.success("성공적으로 유저를 내보냈습니다");
-                        break;
-                      case 401:
-                        toast.error(
-                          "유효하지 않은 JWT 토큰. 다시 로그인 해주세요"
-                        );
-                        break;
-                      case 403:
-                        toast.error(
-                          "강의 소유 권한이 없습니다. 다시 확인해 주세요"
-                        );
-                        break;
-                      case 404:
-                        toast.error(
-                          "해당 강의 ID 또는 유저 ID가 존재하지 않습니다"
-                        );
-                    }
                     setIsLoading(true);
                   }
                 }}

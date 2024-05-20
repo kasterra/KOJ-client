@@ -23,10 +23,6 @@ import {
   getPreviousSemesterLectures,
   getFutureSemesterLectures,
 } from "~/API/lecture";
-import {
-  isSuccessResponse,
-  SuccessLecturesResponse,
-} from "~/types/APIResponse";
 import toast from "react-hot-toast";
 
 const TableHeader = () => {
@@ -53,22 +49,19 @@ const TableHeader = () => {
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+          setLectureList(response.data);
         } else if (semester === "past") {
           const response = await getPreviousSemesterLectures(
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+          setLectureList(response.data);
         } else if (semester === "future") {
           const response = await getFutureSemesterLectures(
             auth.userId,
             auth.token
           );
-          if (isSuccessResponse(response))
-            setLectureList((response as SuccessLecturesResponse).data);
+          setLectureList(response.data);
         }
         const pastResponse = await getPreviousSemesterLectures(
           auth.userId,
@@ -82,22 +75,12 @@ const TableHeader = () => {
           auth.userId,
           auth.token
         );
-        if (isSuccessResponse(pastResponse)) {
-          setPastLectureList((pastResponse as SuccessLecturesResponse).data);
-        }
-        if (isSuccessResponse(currentResponse)) {
-          setCurrentLectureList(
-            (currentResponse as SuccessLecturesResponse).data
-          );
-        }
-        if (isSuccessResponse(futureResponse)) {
-          setFutureLectureList(
-            (futureResponse as SuccessLecturesResponse).data
-          );
-        }
+        setPastLectureList(pastResponse.data);
+        setCurrentLectureList(currentResponse.data);
+        setFutureLectureList(futureResponse.data);
         setLectureListLoading(false);
-      } catch (error) {
-        console.error(error);
+      } catch (e: any) {
+        toast.error(`Error: ${e.message} - ${e.responseMessage}`);
       }
     };
     getLectureList();
@@ -231,12 +214,13 @@ const LectureScoreBoard = () => {
   useEffect(() => {
     async function getData() {
       setDataHeaders(["사용자 이름", "학번", "총점"]);
-      const response = await getLectureScoreBoard(
-        auth.token,
-        params.lectureId!
-      );
-      if (response.status === 200) {
-        response.data.metadata.map((data: any) => {
+      try {
+        const response = await getLectureScoreBoard(
+          auth.token,
+          params.lectureId!
+        );
+
+        response.data.metadata.map((data) => {
           setDataHeaders((prev) => [
             ...prev,
             <button
@@ -247,25 +231,30 @@ const LectureScoreBoard = () => {
                     `모든 학생에 대해 ${data.title} 실습을 재채점 하시겠습니까?`
                   )
                 ) {
-                  const response = await reJudge(auth.token, {
-                    practice_id: data.id as number,
-                  });
-                  if (response.status === 200) {
-                    toast.success("재채점 완료!");
-                    setIsLoading(true);
-                  }
+                  await toast.promise(
+                    reJudge(auth.token, {
+                      practice_id: data.id as number,
+                    }),
+                    {
+                      loading: "재채점 요청 중...",
+                      success: "재채점 완료!",
+                      error: (err) =>
+                        `Error: ${err.message} - ${err.responseMessage}`,
+                    }
+                  );
+                  setIsLoading(true);
                 }
               }}
             >{`${data.title} (${data.score})`}</button>,
           ]);
         });
         setData(
-          response.data.users.map((user: any) => {
+          response.data.users.map((user) => {
             const map = new Map<string, ReactNode>();
             map.set("userName", user.name);
             map.set("userId", user.id);
             map.set("totalScore", user.total_score);
-            user.scores.map((score: any, idx: number) => {
+            user.scores.map((score, idx: number) => {
               map.set(
                 `problemNo${idx}`,
                 `${
@@ -281,6 +270,8 @@ const LectureScoreBoard = () => {
           })
         );
         setIsLoading(false);
+      } catch (e: any) {
+        toast.error(`Error: ${e.message} - ${e.responseMessage}`);
       }
     }
     getData();

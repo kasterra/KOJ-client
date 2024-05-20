@@ -20,11 +20,8 @@ export async function getCodesWithZipFile(
       lecture_id: lectureId,
       problem_id: parseInt(node.id),
     });
-    if (submissionResponse.status !== 200) {
-      throw new Error("failed to get submission data");
-    }
     const recentCorrectData = submissionResponse.data.find(
-      (elem: any) => elem.status === "accepted"
+      (elem) => elem.status === "accepted"
     );
     if (!recentCorrectData) continue;
 
@@ -37,7 +34,7 @@ export async function getCodesWithZipFile(
 
     setProgress(`${idx}/${length} ${node.fullName} 가져오기 완료!`);
 
-    correctSubmissionResponse.data.codes.map((file: any) => {
+    correctSubmissionResponse.data.codes.map((file) => {
       zip.file(`${practiceName}/${problemName}/${file.name}`, file.content);
       console.log(file.content);
     });

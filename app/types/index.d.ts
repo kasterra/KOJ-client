@@ -29,3 +29,19 @@ export type lanugage =
   | "javascript"
   | "c"
   | "cpp";
+
+export type judgeStatus =
+  | "accepted"
+  | "time_limit"
+  | "memory_limit"
+  | "wrong_answer"
+  | "runtime_error"
+  | "compile_error"
+  | "pending"
+  | "running"
+  | "internal_error";
+
+export interface ServerSideFile {
+  name: string;
+  content: string;
+}

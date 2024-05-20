@@ -22,13 +22,17 @@ const ProctedRoute = () => {
       setIsNotAdmin(true);
       return;
     }
-    getUserInfo(userId, token).then(({ status, data }) => {
-      console.log(token, userId);
-      if (status !== 200 || data.is_admin === false) {
+    getUserInfo(userId, token)
+      .then(({ data }) => {
+        console.log(token, userId);
+        if (data.is_admin === false) {
+          setIsNotAdmin(true);
+          return;
+        }
+      })
+      .catch(() => {
         setIsNotAdmin(true);
-        return;
-      }
-    });
+      });
   }, []);
 
   useEffect(() => {

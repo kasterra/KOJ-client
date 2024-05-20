@@ -1,12 +1,24 @@
 import { API_SERVER_URL } from "~/util/constant";
-import toast from "react-hot-toast";
 import { removePackageStatementFromFile, handle401 } from "~/util";
+import {
+  BoardResponse,
+  EmptyResponse,
+  SubmissionResponse,
+  SubmissionsResponse,
+} from "~/types/APIResponse";
+import {
+  BadRequestError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  RequestTooLongError,
+} from "~/util/errors";
 
 export async function submit(
   token: string,
   problem_id: string,
   formdata: FormData
-) {
+): Promise<SubmissionResponse> {
   if (formdata.get("language") === "java") {
     const fileList = formdata.getAll("codes") as File[];
     const code = formdata.get("code") as string;
@@ -34,28 +46,32 @@ export async function submit(
   );
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("소속되어 있지 않은 강의의 문제 접근");
+      throw new ForbiddenError("소속되어 있지 않은 강의의 문제 접근");
       break;
     case 404:
-      toast.error("problem_id가 존재하지 않습니다");
+      throw new NotFoundError("problem_id가 존재하지 않습니다");
       break;
     case 413:
-      toast.error("Request too long");
+      throw new RequestTooLongError("Request too long");
       break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function getSubmissionWithSubmissionId(
   submissionId: number,
   token: string
-) {
+): Promise<SubmissionResponse> {
   const response = await fetch(`${API_SERVER_URL}/submission/${submissionId}`, {
     method: "GET",
     headers: {
@@ -65,13 +81,13 @@ export async function getSubmissionWithSubmissionId(
   });
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
       handle401();
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function getSubmissionStatus(
@@ -82,7 +98,7 @@ export async function getSubmissionStatus(
     practice_id?: string | number;
     problem_id?: number;
   }
-) {
+): Promise<SubmissionsResponse> {
   const searchParams = new URLSearchParams();
   if (queryParams.user_id !== undefined) {
     searchParams.append("user_id", queryParams.user_id);
@@ -108,19 +124,23 @@ export async function getSubmissionStatus(
   );
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
       handle401();
       break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function getLectureScoreBoard(
   token: string,
   lecture_id: string | number
-) {
+): Promise<BoardResponse> {
   const response = await fetch(
     `${API_SERVER_URL}/lecture/${lecture_id}/score`,
     {
@@ -133,22 +153,26 @@ export async function getLectureScoreBoard(
   );
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("소속되지 않은 강의의 스코어보드 접근");
+      throw new ForbiddenError("소속되지 않은 강의의 스코어보드 접근");
       break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function getPracticeScoreBoard(
   token: string,
   practice_id: number | string
-) {
+): Promise<BoardResponse> {
   const response = await fetch(
     `${API_SERVER_URL}/practice/${practice_id}/score`,
     {
@@ -161,19 +185,23 @@ export async function getPracticeScoreBoard(
   );
   switch (response.status) {
     case 400:
-      toast.error("JWT토큰이 없거나 입력값 검증 실패");
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
       break;
     case 401:
       handle401();
       break;
     case 403:
-      toast.error("소속되지 않은 강의의 스코어보드 접근");
+      throw new ForbiddenError("소속되지 않은 강의의 스코어보드 접근");
       break;
     case 404:
-      toast.error("아직 미구현 되어있다고 하네요");
+      throw new NotFoundError("존재하지 않는 강의");
       break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function reJudge(
@@ -183,35 +211,33 @@ export async function reJudge(
     practice_id?: number;
     problem_id?: number;
   }
-): Promise<{ status: number; message: string }> {
-  return new Promise(async (resolve, reject) => {
-    const response = await fetch(`${API_SERVER_URL}/re_judge`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(queryParams),
-    });
-
-    switch (response.status) {
-      case 400:
-        toast.error("JWT토큰이 없거나 입력값 검증 실패");
-        reject(400);
-        break;
-      case 401:
-        handle401();
-        reject(401);
-        break;
-      case 403:
-        toast.error("권한이 부족합니다");
-        reject(403);
-        break;
-      case 404:
-        toast.error("존재하지 않는걸 재채점 한다고 하네요");
-        reject(404);
-        break;
-    }
-    resolve({ ...(await response.json()), status: response.status });
+): Promise<EmptyResponse> {
+  const response = await fetch(`${API_SERVER_URL}/re_judge`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(queryParams),
   });
+
+  switch (response.status) {
+    case 400:
+      throw new BadRequestError("JWT토큰이 없거나 입력값 검증 실패");
+      break;
+    case 401:
+      handle401();
+      break;
+    case 403:
+      throw new ForbiddenError("권한이 부족합니다");
+      break;
+    case 404:
+      throw new NotFoundError("존재하지 않는 항목");
+      break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
+  }
+  return await response.json();
 }

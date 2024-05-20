@@ -1,6 +1,12 @@
 import { API_SERVER_URL } from "~/util/constant";
-import toast from "react-hot-toast";
 import { PracticeDetailResponse } from "~/types/APIResponse";
+import { handle401 } from "~/util";
+import {
+  BadRequestError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+} from "~/util/errors";
 
 export async function getPracticeWithPracticeId(
   practiceId: number | string,
@@ -15,18 +21,24 @@ export async function getPracticeWithPracticeId(
   });
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 하세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의에 소속된 유저가 이닙니다. 다시 확인해 주세요");
+      throw new ForbiddenError(
+        "강의에 소속된 유저가 이닙니다. 다시 확인해 주세요"
+      );
       break;
     case 404:
-      toast.error("해당 실습 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 실습 ID가 존재하지 않습니다");
       break;
+    case 500:
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
     default:
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function createNewPractice(
@@ -37,8 +49,7 @@ export async function createNewPractice(
   token: string
 ) {
   if (!title) {
-    toast.error("제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
   }
   const response = await fetch(`${API_SERVER_URL}/practice`, {
     method: "POST",
@@ -51,19 +62,21 @@ export async function createNewPractice(
 
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }
 
 export async function updatePractice(
@@ -74,8 +87,7 @@ export async function updatePractice(
   token: string
 ) {
   if (!title) {
-    toast.error("제목은 필수 입력 필드입니다");
-    return { status: 400, message: "Declined by FE" };
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
   }
   const response = await fetch(`${API_SERVER_URL}/practice/${practice_id}`, {
     method: "PUT",
@@ -88,22 +100,24 @@ export async function updatePractice(
 
   switch (response.status) {
     case 400:
-      toast.error("입력값 검증 실패");
+      throw new BadRequestError("입력값 검증 실패");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("해당 실습 ID가 존재하지 않습니다");
+      throw new NotFoundError("해당 실습 ID가 존재하지 않습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { status: response.status };
+  return await response.json();
 }
 
 export async function deletePractice(
@@ -119,17 +133,19 @@ export async function deletePractice(
   });
   switch (response.status) {
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 403:
-      toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
       break;
     case 404:
-      toast.error("강의 ID가 없거나 실습 ID 가 없습니다");
+      throw new NotFoundError("강의 ID가 없거나 실습 ID 가 없습니다");
       break;
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { status: response.status };
+  return await response.json();
 }

@@ -1,18 +1,21 @@
 import { API_SERVER_URL } from "~/util/constant";
-import toast from "react-hot-toast";
 import { UploadFileResponse } from "~/types/APIResponse";
+import {
+  BadRequestError,
+  InternalServerError,
+  RequestTooLongError,
+} from "~/util/errors";
+import { handle401 } from "~/util";
 
 export async function uploadFile(
   file: File,
   token: string
 ): Promise<UploadFileResponse> {
   if (!file) {
-    toast.error("File이 유효하지 않습니다. 다시 확인해주세요");
-    return { message: "declined by FE", status: 400 };
+    throw new BadRequestError("File이 유효하지 않습니다. 다시 확인해주세요");
   }
   if (file.size > 1024 * 1024 * 30) {
-    toast.error("파일이 30MB이상입니다. 너무 파일이 큽니다");
-    return { message: "declined by FE", status: 413 };
+    throw new RequestTooLongError("파일이 30MB이상입니다. 너무 파일이 큽니다");
   }
   const formData = new FormData();
   formData.append("documents", file);
@@ -23,19 +26,23 @@ export async function uploadFile(
     },
     body: formData,
   });
+
+  const data = await response.json();
+
   switch (response.status) {
     case 400:
-      toast.error("uploadFile은 하나의 파일만 업로드 가능합니다");
+      throw new BadRequestError("uploadFile은 하나의 파일만 업로드 가능합니다");
       break;
     case 401:
-      toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
+      handle401();
       break;
     case 413:
-      toast.error("파일이 너무 큽니다.");
-      break;
+      throw new RequestTooLongError("파일이 너무 큽니다.");
     case 500:
-      toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
+      throw new InternalServerError(
+        "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
+      );
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return data;
 }

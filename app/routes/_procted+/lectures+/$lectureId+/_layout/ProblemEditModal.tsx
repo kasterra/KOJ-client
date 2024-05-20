@@ -4,12 +4,7 @@ import formStyles from "~/components/common/form.module.css";
 import { useEffect, useState } from "react";
 import { getProblemWithProblemId } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
-import {
-  SimpleProblemDetail,
-  SuccessProblemDetailResponse,
-  SuccessUploadFileResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { SimpleProblemDetail } from "~/types/APIResponse";
 import toast from "react-hot-toast";
 import { updateProblem } from "~/API/problem";
 import {
@@ -45,12 +40,12 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
   const auth = useAuth();
   useEffect(() => {
     async function getData() {
-      const response = await getProblemWithProblemId(
-        editingProblemId,
-        auth.token
-      );
-      if (isSuccessResponse(response)) {
-        const problemInfo = (response as SuccessProblemDetailResponse).data;
+      try {
+        const response = await getProblemWithProblemId(
+          editingProblemId,
+          auth.token
+        );
+        const problemInfo = response.data;
         setPrevProblemInfo(problemInfo);
         setProblemType(problemInfo.type);
         if (problemInfo.parsed_code_elements) {
@@ -60,7 +55,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
           );
         }
         setLoading(false);
-      } else {
+      } catch (e) {
         toast.error("잘못된 접근입니다");
         onClose();
       }
@@ -89,11 +84,13 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
             let newFilePath = "";
 
             if (file.size !== 0) {
-              const fileUploadResponse = await uploadFile(file, auth.token);
-              if (isSuccessResponse(fileUploadResponse)) {
-                newFilePath = (fileUploadResponse as SuccessUploadFileResponse)
-                  .data.path;
-              } else onClose();
+              try {
+                const fileUploadResponse = await uploadFile(file, auth.token);
+                newFilePath = fileUploadResponse.data.path;
+              } catch (e) {
+                toast.error("파일 저장에 오류가 있습니다!");
+                onClose();
+              }
             }
 
             switch (problemType) {
@@ -105,35 +102,47 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                   toast.error("블록 주석에 오류가 있습니다!");
                   return;
                 }
-                const blankResponse = await updateProblem(
-                  problemType,
-                  editingProblemId,
-                  memory,
-                  time,
-                  name,
-                  auth.token,
-                  newFilePath.length ? newFilePath : prevProblemInfo!.file_path,
-                  holes
+                await toast.promise(
+                  updateProblem(
+                    problemType,
+                    editingProblemId,
+                    memory,
+                    time,
+                    name,
+                    auth.token,
+                    newFilePath.length
+                      ? newFilePath
+                      : prevProblemInfo!.file_path,
+                    holes
+                  ),
+                  {
+                    loading: "문제를 수정하는중...",
+                    success: "문제를 성공적으로 수정했습니다!",
+                    error: (e) => `Error: ${e.message} - ${e.responseMessage}`,
+                  }
                 );
-                if (blankResponse.status === 204) {
-                  toast.success("문제를 성공적으로 수정했습니다!");
-                  onClose();
-                }
+                onClose();
                 break;
               case "solving":
-                const solvingResponse = await updateProblem(
-                  problemType,
-                  editingProblemId,
-                  memory,
-                  time,
-                  name,
-                  auth.token,
-                  newFilePath.length ? newFilePath : prevProblemInfo!.file_path
+                await toast.promise(
+                  updateProblem(
+                    problemType,
+                    editingProblemId,
+                    memory,
+                    time,
+                    name,
+                    auth.token,
+                    newFilePath.length
+                      ? newFilePath
+                      : prevProblemInfo!.file_path
+                  ),
+                  {
+                    loading: "문제를 수정하는중...",
+                    success: "문제를 성공적으로 수정했습니다!",
+                    error: (e) => `Error: ${e.message} - ${e.responseMessage}`,
+                  }
                 );
-                if (solvingResponse.status === 204) {
-                  toast.success("문제를 성공적으로 수정했습니다!");
-                  onClose();
-                }
+                onClose();
                 break;
             }
           }}

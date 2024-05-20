@@ -13,6 +13,8 @@ import { useNavigate, useParams } from "@remix-run/react";
 import CodeBlank from "~/components/CodeBlank";
 import { getProblemWithProblemId } from "~/API/lecture";
 import { generateFullCode } from "~/util/codeHole";
+import toast from "react-hot-toast";
+import { SimpleProblemDetail } from "~/types/APIResponse";
 
 interface Props {
   isOpen: boolean;
@@ -28,14 +30,16 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
   const [language, setLanguage] = useState<lanugage>("c");
   const [entryPoint, setEntryPoint] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [problemDetail, setProblemDetail] = useState<any>();
+  const [problemDetail, setProblemDetail] = useState<SimpleProblemDetail>();
 
   useEffect(() => {
     async function getData() {
-      const response = await getProblemWithProblemId(labId!, auth.token);
-      if (response.status / 100 === 2) {
-        setProblemDetail((response as any).data);
+      try {
+        const response = await getProblemWithProblemId(labId!, auth.token);
+        setProblemDetail(response.data);
         setIsLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     }
 

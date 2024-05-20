@@ -7,6 +7,7 @@ import CodeBlock from "~/components/CodeBlock";
 import TextInput from "~/components/Input/TextInput";
 import TextArea from "~/components/Input/TextArea";
 import { bytesToSize } from "~/util";
+import toast from "react-hot-toast";
 
 interface Props {
   isOpen: boolean;
@@ -21,15 +22,16 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
 
   useEffect(() => {
     async function getSubmissionFromServer() {
-      const response = await getSubmissionWithSubmissionId(
-        submissionId,
-        auth.token
-      );
-      if (response.status === 200) {
+      try {
+        const response = await getSubmissionWithSubmissionId(
+          submissionId,
+          auth.token
+        );
         setSubmissionResponse(response);
         setIsLoading(false);
-      } else {
+      } catch (error: any) {
         onClose();
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     }
 

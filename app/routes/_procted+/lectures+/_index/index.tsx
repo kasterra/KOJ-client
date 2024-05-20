@@ -15,12 +15,8 @@ import LectureAddModal from "./LectureAddModal";
 import LectureEditModal from "./LectureEditModal";
 import { formatLectureInfo, semesterToString } from "~/util";
 import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
-import {
-  LectureEntity,
-  LecturesResponse,
-  SuccessLecturesResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { LectureEntity, LecturesResponse } from "~/types/APIResponse";
+import toast from "react-hot-toast";
 
 const Lectures = () => {
   const [currentSemeseterLectures, setCurrentSemeseterLectures] = useState<
@@ -44,24 +40,19 @@ const Lectures = () => {
   const isProfessor = role === "professor";
   useEffect(() => {
     const getLectures = async () => {
-      const lectures = await Promise.all([
-        getCurrentSemesterLectures(userId, token),
-        getPreviousSemesterLectures(userId, token),
-        getFutureSemesterLectures(userId, token),
-      ]);
-      if (isSuccessResponse(lectures[0]))
-        setCurrentSemeseterLectures(
-          (lectures[0] as SuccessLecturesResponse).data
-        );
-      if (isSuccessResponse(lectures[1]))
-        setPreviousSemesterLectures(
-          (lectures[1] as SuccessLecturesResponse).data
-        );
-      if (isSuccessResponse(lectures[2]))
-        setFutureSemesterLectures(
-          (lectures[2] as SuccessLecturesResponse).data
-        );
-      setIsLoading(false);
+      try {
+        const lectures = await Promise.all([
+          getCurrentSemesterLectures(userId, token),
+          getPreviousSemesterLectures(userId, token),
+          getFutureSemesterLectures(userId, token),
+        ]);
+        setCurrentSemeseterLectures(lectures[0].data);
+        setPreviousSemesterLectures(lectures[1].data);
+        setFutureSemesterLectures(lectures[2].data);
+        setIsLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
+      }
     };
     getLectures();
   }, [isLoading]);
@@ -122,13 +113,19 @@ const Lectures = () => {
                             className={styles.icon}
                             onClick={async (e) => {
                               if (confirm("정말로 강의를 삭제하시겠습니까")) {
-                                const response = await deleteLecture(
-                                  lecture.id,
-                                  token
+                                await toast.promise(
+                                  deleteLecture(lecture.id, token),
+                                  {
+                                    loading:
+                                      "강의를 삭제중입니다...",
+                                    success: () => {
+                                      setIsLoading(true);
+                                      return "강의를 성공적으로 삭제하였습니다";
+                                    },
+                                    error: (err) =>
+                                      `Error: ${err.message} - ${err.responseMessage}`,
+                                  }
                                 );
-                                if (response.status === 204) {
-                                  setIsLoading(true);
-                                }
                               }
                             }}
                           />
@@ -187,13 +184,18 @@ const Lectures = () => {
                         className={styles.icon}
                         onClick={async (e) => {
                           if (confirm("정말로 강의를 삭제하시겠습니까")) {
-                            const response = await deleteLecture(
-                              lecture.id,
-                              token
+                            await toast.promise(
+                              deleteLecture(lecture.id, token),
+                              {
+                                loading: "강의를 삭제중입니다...",
+                                success: () => {
+                                  setIsLoading(true);
+                                  return "강의를 성공적으로 삭제하였습니다";
+                                },
+                                error: (err) =>
+                                  `Error: ${err.message} - ${err.responseMessage}`,
+                              }
                             );
-                            if (response.status === 204) {
-                              setIsLoading(true);
-                            }
                           }
                         }}
                       />
@@ -269,13 +271,18 @@ const Lectures = () => {
                               "정말로 강의를 삭제하시겠습니까? 강의에 소속된 실습 등도 모두 삭제됩니다!"
                             )
                           ) {
-                            const response = await deleteLecture(
-                              lecture.id,
-                              token
+                            await toast.promise(
+                              deleteLecture(lecture.id, token),
+                              {
+                                loading: "강의를 삭제중입니다...",
+                                success: () => {
+                                  setIsLoading(true);
+                                  return "강의를 성공적으로 삭제하였습니다";
+                                },
+                                error: (err) =>
+                                  `Error: ${err.message} - ${err.responseMessage}`,
+                              }
                             );
-                            if (response.status === 204) {
-                              setIsLoading(true);
-                            }
                           }
                         }}
                       />

@@ -34,32 +34,32 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
         className={styles["modal-body"]}
         onSubmit={async (e) => {
           e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          if (tabIndex === 0) {
-            const formFile = file ? file : (formData.get("file") as File);
-            const response = await addUsersInLecture(
-              lectureId,
-              await parseXlsx(formFile),
-              auth.token
-            );
-            if (response.status === 201) {
+          try {
+            const formData = new FormData(e.currentTarget);
+            if (tabIndex === 0) {
+              const formFile = file ? file : (formData.get("file") as File);
+              await addUsersInLecture(
+                lectureId,
+                await parseXlsx(formFile),
+                auth.token
+              );
               toast.success("성공적으로 추가하였습니다");
               onClose();
-            }
-          } else {
-            const name = formData.get("name") as string;
-            const id = formData.get("id") as string;
-            const role = formData.get("role") as string;
+            } else {
+              const name = formData.get("name") as string;
+              const id = formData.get("id") as string;
+              const role = formData.get("role") as string;
 
-            const response = await addUserInLecture(
-              lectureId,
-              { userId: id, isTutor: role === "tutor", userName: name },
-              auth.token
-            );
-            if (response.status === 201) {
+              await addUserInLecture(
+                lectureId,
+                { userId: id, isTutor: role === "tutor", userName: name },
+                auth.token
+              );
               toast.success("성공적으로 추가하였습니다");
               onClose();
             }
+          } catch (error: any) {
+            toast.error(`Error: ${error.message} - ${error.responseMessage}`);
           }
         }}
       >

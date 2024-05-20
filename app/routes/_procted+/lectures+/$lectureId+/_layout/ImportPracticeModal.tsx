@@ -10,10 +10,6 @@ import inputStyles from "~/components/Input/input.module.css";
 import formStyles from "~/components/common/form.module.css";
 import TextInput from "~/components/Input/TextInput";
 import DateInput from "~/components/Input/DateInput";
-import {
-  SuccessAllPracticesResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
 
 interface Props {
   isOpen: boolean;
@@ -29,30 +25,26 @@ const ImportPracticeModal = ({ isOpen, onClose }: Props) => {
     async function getData() {
       try {
         const response = await getAllPractices(token, userId);
-        if (isSuccessResponse(response)) {
-          const res: TreeViewNode[] = [];
-          (response as SuccessAllPracticesResponse).data.forEach(
-            (data, idx) => {
-              res[idx] = {} as TreeViewNode;
-              res[idx].title = semesterNumberToString(data.semester);
-              res[idx].id = data.semester + "";
-              res[idx].children = data.lectures.map((lecture) => {
+        const res: TreeViewNode[] = [];
+        response.data.forEach((data, idx) => {
+          res[idx] = {} as TreeViewNode;
+          res[idx].title = semesterNumberToString(data.semester);
+          res[idx].id = data.semester + "";
+          res[idx].children = data.lectures.map((lecture) => {
+            return {
+              title: lecture.title,
+              id: lecture.id + "",
+              children: lecture.practices.map((practice) => {
                 return {
-                  title: lecture.title,
-                  id: lecture.id + "",
-                  children: lecture.practices.map((practice) => {
-                    return {
-                      title: practice.title,
-                      id: practice.id + "",
-                      children: null,
-                    };
-                  }) as TreeViewNode[],
+                  title: practice.title,
+                  id: practice.id + "",
+                  children: null,
                 };
-              });
-            }
-          );
-          setData(res);
-        }
+              }) as TreeViewNode[],
+            };
+          });
+        });
+        setData(res);
       } catch (error) {
         console.error(error);
       }

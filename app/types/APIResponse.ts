@@ -1,5 +1,5 @@
 import { codeHoles } from "~/util/codeHole";
-import { Lecture } from ".";
+import { Lecture, ServerSideFile, judgeStatus, lanugage } from ".";
 
 export interface UserEntity {
   id: string;
@@ -15,68 +15,73 @@ export interface LectureEntity {
   semester: number;
   title: string;
   professor_name: string;
+  practices: SimplePracticeDetail[];
 }
 
-export interface SuccessUserSearchResponse {
-  status: 200;
+export interface UserSearchResponse {
   message: string;
   data: UserEntity[];
 }
 
-export interface SuccessUserResponse {
-  status: 200;
+export interface UserResponse {
   message: string;
   data: UserEntity;
 }
 
-export interface SuccessLecturesResponse {
-  status: 200;
+export interface LectureResponse {
+  message: string;
+  data: LectureEntity;
+}
+
+export interface LecturesResponse {
   message: string;
   data: LectureEntity[];
 }
 
-export interface SuccessPracticeDetailResponse {
-  status: 200;
+export interface PracticeDetailResponse {
   message: string;
   data: SimplePracticeDetail;
 }
 
-export interface SuccessAllPracticesResponse {
-  status: 200;
+export interface AllPracticesResponse {
   message: string;
   data: AllPracticeType[];
 }
 
-export interface SuccessProblemDetailResponse {
-  status: 200;
+export interface ProblemDetailResponse {
   message: string;
   data: SimpleProblemDetail;
 }
 
-export interface SuccessUploadFileResponse {
-  status: 200;
+export interface UploadFileResponse {
   message: string;
   data: {
     path: string;
   };
 }
 
-export interface SuccessTestcaseResponse {
-  status: 200;
+export interface TestcaseResponse {
   message: string;
   data: TestcaseType;
 }
 
-export interface FailedResponse {
-  status: number;
-  message: string;
+export interface EmptyResponse {
+  message?: string;
 }
 
-export interface SimpleLectureDetail extends Lecture {
-  practices: {
-    id: number;
-    title: string;
-  }[];
+export interface SubmissionResponse {
+  message: string;
+  data: Submission;
+}
+
+export interface SubmissionsResponse {
+  message: string;
+  data: Submission[];
+}
+
+export interface BoardResponse {
+  message: string;
+  data: Board;
 }
 
 export interface SimplePracticeDetail {
@@ -140,8 +145,8 @@ export interface AllPracticeType {
 
 export interface TestcaseType {
   argv?: string[];
-  file_input?: { content: string; name: string }[];
-  file_output?: { content: string; name: string }[];
+  file_input?: ServerSideFile[];
+  file_output?: ServerSideFile[];
   id: number;
   is_visible: boolean;
   score: number;
@@ -150,39 +155,29 @@ export interface TestcaseType {
   title: string;
 }
 
-export type UserResponse = SuccessUserResponse | FailedResponse;
+export interface Submission {
+  codes: ServerSideFile[];
+  created_at: string;
+  entrypoint: string;
+  id: number;
+  language: lanugage;
+  message: string;
+  progress: number;
+  status: judgeStatus;
+  used_memory: number;
+  used_time: number;
+}
 
-export type UserSearchResponse = SuccessUserSearchResponse | FailedResponse;
-
-export type LecturesResponse = SuccessLecturesResponse | FailedResponse;
-
-export type AllPracticeResponse = SuccessAllPracticesResponse | FailedResponse;
-
-export type UploadFileResponse = SuccessUploadFileResponse | FailedResponse;
-
-export type TestcaseResponse = SuccessTestcaseResponse | FailedResponse;
-
-export type ProblemDetailResponse =
-  | SuccessProblemDetailResponse
-  | FailedResponse;
-export type PracticeDetailResponse =
-  | SuccessPracticeDetailResponse
-  | FailedResponse;
-
-export function isSuccessResponse(
-  response:
-    | UserResponse
-    | UserSearchResponse
-    | LecturesResponse
-    | PracticeDetailResponse
-    | AllPracticeResponse
-    | TestcaseResponse
-): response is
-  | SuccessUserResponse
-  | SuccessUserSearchResponse
-  | SuccessLecturesResponse
-  | PracticeDetailResponse
-  | SuccessAllPracticesResponse
-  | SuccessTestcaseResponse {
-  return response.status < 300;
+export interface Board {
+  metadata: {
+    id: number;
+    score: number;
+    title: string;
+  }[];
+  users: {
+    id: string;
+    name: string;
+    scores: number[];
+    total_score: number;
+  }[];
 }

@@ -12,7 +12,7 @@ import {
 } from "./AdminTableRowDataContext";
 import { deleteUser, resetPassword, searchUser } from "~/API/user";
 import { useAuth } from "~/contexts/AuthContext";
-import { handle401, mapRoleToString } from "~/util";
+import { mapRoleToString } from "~/util";
 import toast from "react-hot-toast";
 
 const TableHeader = () => {
@@ -30,24 +30,14 @@ const TableHeader = () => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           const searchStr = formData.get("search") as string;
-          const response = await searchUser(searchStr, auth.token);
-          switch (response.status) {
-            case 200:
-              toast.success("성공적으로 검색하였습니다");
+          await toast.promise(searchUser(searchStr, auth.token), {
+            loading: "제목 검색시도...",
+            success: (response) => {
               dispatch({ type: "UPDATE_DATA", payload: response.data });
-              break;
-            case 400:
-              toast.error("인증 토큰이 누락되었습니다");
-              break;
-            case 401:
-              toast.error("다시 로그인 하십시오");
-              break;
-            case 500:
-              toast.error("서버 오류가 발생했습니다. 관리자에게 문의해 주세요");
-              break;
-            default:
-              break;
-          }
+              return "성공적으로 검색하였습니다";
+            },
+            error: (e) => `Error: ${e.message} - ${e.responseMessage}`,
+          });
         }}
       />
       <div
@@ -87,31 +77,12 @@ const Table = () => {
                 className={tableStyles["reset-password"]}
                 onClick={async () => {
                   if (confirm("정말로 초기화 하시겠습니까?")) {
-                    const response = await resetPassword(elem.id, auth.token);
-                    switch (response.status) {
-                      case 200:
-                        toast.success("성공적으로 암호를 초기화 했습니다");
-                        break;
-                      case 400:
-                        toast.error("형식이 올바르지 않습니다");
-                        break;
-                      case 401:
-                        handle401();
-                        break;
-                      case 404:
-                        toast.error(
-                          "초기화 하려는 사용자의 ID가 존재하지 않습니다"
-                        );
-                        break;
-                      case 409:
-                      case 500:
-                        toast.error(
-                          "서버 오류가 발생했습니다. 관리자에게 문의해 주세요"
-                        );
-                        break;
-                      default:
-                        break;
-                    }
+                    await toast.promise(resetPassword(elem.id, auth.token), {
+                      loading: "초기화 요청중...",
+                      success: "성공적으로 암호를 초기화 했습니다",
+                      error: (err) =>
+                        `Error: ${err.message} - ${err.responseMessage}`,
+                    });
                   }
                 }}
               >
@@ -121,24 +92,12 @@ const Table = () => {
                 className={tableStyles["out-user"]}
                 onClick={async () => {
                   if (confirm("정말로 해당 유저를 삭제하시겠습니까?")) {
-                    const response = await deleteUser(elem.id, auth.token);
-                    switch (response.status) {
-                      case 204:
-                        toast.success("성공적으로 삭제되었습니다");
-                        break;
-                      case 401:
-                        toast.error("관리자 권한이 필요합니다");
-                        break;
-                      case 404:
-                        toast.error(
-                          "삭제하려는 사용자의 해당 ID가 존재하지 않습니다"
-                        );
-                        break;
-                      case 500:
-                        toast.error("500 : 관리자에게 문의해 주세요");
-                      default:
-                        break;
-                    }
+                    await toast.promise(deleteUser(elem.id, auth.token), {
+                      loading: "삭제 요청중...",
+                      success: "성공적으로 삭제되었습니다",
+                      error: (err) =>
+                        `Error: ${err.message} - ${err.responseMessage}`,
+                    });
                   }
                 }}
               >

@@ -21,16 +21,18 @@ const Login = () => {
       toast.error("ID와 비밀번호를 입력하십시오!");
       return;
     }
-    const response = await login(id, password);
 
-    if (response.status === 201) {
+    try {
+      const response = await login(id, password);
       authDispatch({
         type: "UPDATE_DATA",
         payload: { token: response.data.token, userId: id },
       });
       toast.success("성공적으로 로그인 하였습니다!");
       navigate("/lectures");
-    } else toast(response.message, { icon: "⚠️" });
+    } catch (e: any) {
+      toast(e.message, { icon: "⚠️" });
+    }
   }
 
   return (

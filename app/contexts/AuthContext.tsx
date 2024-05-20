@@ -111,16 +111,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     async function fetchRole() {
       const response = await getUserInfo(state.userId, state.token);
-      if (response.status === 200) {
-        dispatch({
-          type: "__internal_fetch_complete",
-          payload: {
-            role: response.data.role as "student" | "professor",
-            isAdmin: response.data.is_admin,
-            userName: response.data.name,
-          },
-        });
-      }
+      dispatch({
+        type: "__internal_fetch_complete",
+        payload: {
+          role: response.data.role as "student" | "professor",
+          isAdmin: response.data.is_admin,
+          userName: response.data.name,
+        },
+      });
     }
     if (state.token) fetchRole();
   }, [state.token]);

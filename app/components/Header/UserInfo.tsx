@@ -48,19 +48,14 @@ const UserInfo = ({ userId, token, userName, userClass, isAdmin }: Props) => {
       return;
     }
 
-    const { status, message } = await changePassword(
-      userId,
-      token,
-      old_password,
-      new_password
+    await toast.promise(
+      changePassword(userId, token, old_password, new_password),
+      {
+        loading: "변경중...",
+        success: "성공적으로 변경되었습니다!",
+        error: (err) => `Error: ${err.message} - ${err.responseMessage}`,
+      }
     );
-
-    if (status === 200) {
-      toast.success("성공적으로 변경되었습니다!");
-      setIsPWChangeModalOpen(false);
-    } else {
-      toast(message, { icon: "⚠️" });
-    }
   }
 
   async function logout() {

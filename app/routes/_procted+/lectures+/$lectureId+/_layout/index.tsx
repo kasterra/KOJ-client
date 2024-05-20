@@ -3,13 +3,8 @@ import { MetaFunction, Outlet, useNavigate, useParams } from "@remix-run/react";
 import styles from "~/css/routes/lectureDetail.module.css";
 import {
   LectureEntity,
-  SimpleLectureDetail,
   SimplePracticeDetail,
   SimpleProblemDetail,
-  SuccessLecturesResponse,
-  SuccessPracticeDetailResponse,
-  SuccessProblemDetailResponse,
-  isSuccessResponse,
 } from "~/types/APIResponse";
 import {
   useBlockingLectureData,
@@ -47,7 +42,7 @@ import DownloadMyCodesModal from "./DownloadMyCodesModal";
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
-  const [currentLecture, setCurrentLecture] = useState<SimpleLectureDetail>();
+  const [currentLecture, setCurrentLecture] = useState<LectureEntity>();
   const [isNewPracticeModalOpen, setIsNewPracticeModalOpen] = useState(false);
   const [isImportPracticeModalOpen, setIsImportPracticeModalOpen] =
     useState(false);
@@ -64,33 +59,33 @@ const LectureDetail = () => {
 
   useEffect(() => {
     async function getData() {
-      if (semester === "present") {
-        const responses = await Promise.all([
-          getCurrentSemesterLectures(auth.userId, auth.token),
-          getLectureWithLectureId(params.lectureId!, auth.token),
-        ]);
-        if (isSuccessResponse(responses[0])) {
-          setLectures((responses[0] as SuccessLecturesResponse).data);
+      try {
+        if (semester === "present") {
+          const responses = await Promise.all([
+            getCurrentSemesterLectures(auth.userId, auth.token),
+            getLectureWithLectureId(params.lectureId!, auth.token),
+          ]);
+          setLectures(responses[0].data);
+          setCurrentLecture(responses[1].data);
+        } else if (semester === "past") {
+          const responses = await Promise.all([
+            getPreviousSemesterLectures(auth.userId, auth.token),
+            getLectureWithLectureId(params.lectureId!, auth.token),
+          ]);
+          setLectures(responses[0].data);
+          setCurrentLecture(responses[1].data);
+        } else if (semester === "future") {
+          const responses = await Promise.all([
+            getFutureSemesterLectures(auth.userId, auth.token),
+            getLectureWithLectureId(params.lectureId!, auth.token),
+          ]);
+          setLectures(responses[0].data);
+          setCurrentLecture(responses[1].data);
         }
-        setCurrentLecture(responses[1].data);
-      } else if (semester === "past") {
-        const responses = await Promise.all([
-          getPreviousSemesterLectures(auth.userId, auth.token),
-          getLectureWithLectureId(params.lectureId!, auth.token),
-        ]);
-        if (isSuccessResponse(responses[0]))
-          setLectures((responses[0] as SuccessLecturesResponse).data);
-        setCurrentLecture(responses[1].data);
-      } else if (semester === "future") {
-        const responses = await Promise.all([
-          getFutureSemesterLectures(auth.userId, auth.token),
-          getLectureWithLectureId(params.lectureId!, auth.token),
-        ]);
-        if (isSuccessResponse(responses[0]))
-          setLectures((responses[0] as SuccessLecturesResponse).data);
-        setCurrentLecture(responses[1].data);
+        setIsLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
-      setIsLoading(false);
     }
     if (!isContextLoading) {
       getData();
@@ -194,14 +189,12 @@ const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
   const [isFoldableOpen, setIsFoldableOpen] = useState(false);
   useEffect(() => {
     async function getData() {
-      const response = await getPracticeWithPracticeId(id, auth.token);
-      if (isSuccessResponse(response)) {
-        setPracticeDetail((response as SuccessPracticeDetailResponse).data);
+      try {
+        const response = await getPracticeWithPracticeId(id, auth.token);
+        setPracticeDetail(response.data);
         setLoading(false);
-      } else if ((response as any).status === 404) {
-        setLoading(false);
-      } else {
-        toast.error("잘못된 접근입니다");
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
         navigate("/");
       }
     }
@@ -295,13 +288,12 @@ const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
 
   useEffect(() => {
     async function getData() {
-      const response = await getProblemWithProblemId(id, auth.token);
-      if (isSuccessResponse(response)) {
-        setProblemDetail((response as SuccessProblemDetailResponse).data);
+      try {
+        const response = await getProblemWithProblemId(id, auth.token);
+        setProblemDetail(response.data);
         setLoading(false);
-      }
-      if (response.status === 404) {
-        setLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     }
     getData();
@@ -328,11 +320,15 @@ const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
           if (
             confirm(`정말로 ${problemDetail!.title} 문제을 삭제 하시겠습니까?`)
           ) {
-            const response = await deleteProblem(id, auth.token);
-            if (response.status === 204) {
-              toast.success("성공적으로 삭제되었습니다");
-              setSuperIsLoading!(true);
-            }
+            await toast.promise(deleteProblem(id, auth.token), {
+              loading: "문제 삭제중...",
+              success: () => {
+                setSuperIsLoading!(true);
+                return "성공적으로 삭제되었습니다";
+              },
+              error: (error) =>
+                `Error: ${error.message} - ${error.responseMessage}`,
+            });
           }
         }}
         isFoldable={auth.role === "professor"}
@@ -356,14 +352,18 @@ const ProblemDetail = ({ superId, id, setSuperIsLoading }: DetailProps) => {
                         `정말로 ${testcase.title} 테스트 케이스를 삭제하시겠습니까?`
                       )
                     ) {
-                      const response = await deleteTestcase(
-                        testcase.id,
-                        auth.token
+                      await toast.promise(
+                        deleteTestcase(testcase.id, auth.token),
+                        {
+                          loading: "TC 삭제중...",
+                          success: () => {
+                            setSuperIsLoading!(true);
+                            return "성공적으로 삭제되었습니다";
+                          },
+                          error: (error) =>
+                            `Error: ${error.message} - ${error.responseMessage}`,
+                        }
                       );
-                      if (response.status === 204) {
-                        toast.success("성공적으로 삭제되었습니다");
-                        setLoading(true);
-                      }
                     }
                   },
                 ]}

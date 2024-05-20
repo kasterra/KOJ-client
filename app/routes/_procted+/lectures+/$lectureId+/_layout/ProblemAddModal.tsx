@@ -63,34 +63,48 @@ const ProblemAddModal = ({
                 toast.error("블록 주석에 오류가 있습니다!");
                 return;
               }
-              const blankResponse = await postBlankProblem(
-                file,
-                memory,
-                holes,
-                language,
-                practiceId,
-                time,
-                name,
-                auth.token
+              await toast.promise(
+                postBlankProblem(
+                  file,
+                  memory,
+                  holes,
+                  language,
+                  practiceId,
+                  time,
+                  name,
+                  auth.token
+                ),
+                {
+                  loading: "문제를 추가하는중...",
+                  success: () => {
+                    onClose();
+                    return "문제를 성공적으로 추가했습니다!";
+                  },
+                  error: (err) =>
+                    `Error: ${err.message} - ${err.responseMessage}`,
+                }
               );
-              if (blankResponse.status === 201) {
-                toast.success("문제를 성공적으로 추가했습니다!");
-                onClose();
-              }
               break;
             case "solving":
-              const solvingResponse = await postSolveProblem(
-                file,
-                memory,
-                practiceId,
-                time,
-                name,
-                auth.token
+              await toast.promise(
+                postSolveProblem(
+                  file,
+                  memory,
+                  practiceId,
+                  time,
+                  name,
+                  auth.token
+                ),
+                {
+                  loading: "문제를 추가하는중...",
+                  success: () => {
+                    onClose();
+                    return "문제를 성공적으로 추가했습니다!";
+                  },
+                  error: (err) =>
+                    `Error: ${err.message} - ${err.responseMessage}`,
+                }
               );
-              if (solvingResponse.status === 201) {
-                toast.success("문제를 성공적으로 추가했습니다!");
-                onClose();
-              }
               break;
           }
         }}

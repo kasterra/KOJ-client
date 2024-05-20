@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useReducer } from "react";
-import { SuccessUserSearchResponse, UserEntity } from "~/types/APIResponse";
+import { UserEntity } from "~/types/APIResponse";
 
 type AdminTableRowDataType = {
   data: UserEntity[];

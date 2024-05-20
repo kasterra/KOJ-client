@@ -32,20 +32,23 @@ const SubmissionRecordModal = ({
     useState(false);
   useEffect(() => {
     async function getHistory() {
-      const response = await getSubmissionStatus(auth.token, {
-        user_id: studentId,
-        lecture_id: params.lectureId!,
-        practice_id: params.practiceId!,
-        problem_id: problemId,
-      });
-      if (response.status === 200) {
-        setHistory((response as any).data);
-        setIsLoading(false);
-      } else {
-        toast.error(
-          "올바르게 데이터를 가져오지 못했습니다. 다시 시도해 주세요"
-        );
-      }
+      await toast.promise(
+        getSubmissionStatus(auth.token, {
+          user_id: studentId,
+          lecture_id: params.lectureId!,
+          practice_id: params.practiceId!,
+          problem_id: problemId,
+        }),
+        {
+          loading: "불러오는 중...",
+          success: (response) => {
+            setHistory(response.data);
+            setIsLoading(false);
+            return "불러오기 완료!";
+          },
+          error: (err) => `Error: ${err.message} - ${err.responseMessage}`,
+        }
+      );
     }
     getHistory();
   }, []);
@@ -64,7 +67,7 @@ const SubmissionRecordModal = ({
             <button
               className={styles["white-button"]}
               onClick={async () => {
-                toast.promise(
+                await toast.promise(
                   reJudge(auth.token, {
                     user_id: studentId,
                     practice_id: parseInt(params.practiceId!),

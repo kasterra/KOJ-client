@@ -48,39 +48,22 @@ const LectureEditModal = ({
           const code = formData.get("code") as string;
           const language = formData.get("language") as string;
 
-          const response = await UpdateLecture(
-            lectureId,
-            code,
-            language,
-            semesterStringToNumber(lectureYear, lectureSemester),
-            name,
-            auth.token
+          await toast.promise(
+            UpdateLecture(
+              lectureId,
+              code,
+              language,
+              semesterStringToNumber(lectureYear, lectureSemester),
+              name,
+              auth.token
+            ),
+            {
+              loading: "Loading",
+              success: "강의 업데이트 성공",
+              error: (err) => `Error: ${err.message} - ${err.responseMessage}`,
+            }
           );
-
-          switch (response.status) {
-            case 200:
-              toast.success("강의 업데이트 성공");
-              onClose();
-              break;
-            case 401:
-              toast.error("유효하지 않은 JWT 토큰. 다시 로그인 해주세요");
-              onClose();
-              break;
-            case 403:
-              toast.error("강의 소유 권한이 없습니다. 다시 확인해 주세요");
-              break;
-            case 404:
-              toast.error("해당 강의 ID가 존재하지 않습니다");
-              break;
-            case 409:
-              toast.error(
-                "수정 하려는 정보 조합이 이미 존재합니다. 다시 확인해 주세요"
-              );
-              break;
-            case 500:
-              toast.error("서버 에러가 발생했습니다. 관리자에게 문의해 주세요");
-              break;
-          }
+          onClose();
         }}
       >
         <div className={styles.inputs}>

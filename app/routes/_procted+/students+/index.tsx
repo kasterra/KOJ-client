@@ -4,11 +4,7 @@ import { useAuth } from "~/contexts/AuthContext";
 import { getCurrentSemesterLectures } from "~/API/lecture";
 import toast from "react-hot-toast";
 import { useLectureDataDispatch } from "~/contexts/LectureDataContext";
-import {
-  LectureEntity,
-  SuccessLecturesResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { LectureEntity } from "~/types/APIResponse";
 
 const index = () => {
   const { token, userId } = useAuth();
@@ -21,29 +17,21 @@ const index = () => {
     const getFirstLecture = async () => {
       try {
         const response = await getCurrentSemesterLectures(userId, token);
-        if (!isSuccessResponse(response)) {
-          toast.error("강의를 불러오는데 실패하였습니다");
-          return;
-        }
-        if ((response as SuccessLecturesResponse).data.length === 0) {
+        if (response.data.length === 0) {
           toast("현재 학기에 강의를 생성하신 후 이용해 주세요");
           navigate("/lectures");
         }
-        setFirstLectId(
-          ((response as SuccessLecturesResponse).data as LectureEntity[])[0]
-            .id + ""
-        );
+        setFirstLectId((response.data as LectureEntity[])[0].id + "");
         dispatch({
           type: "UPDATE_DATA",
           payload: {
             semester: "present",
-            lectureName: (
-              (response as SuccessLecturesResponse).data as LectureEntity[]
-            )[0].title,
+            lectureName: (response.data as LectureEntity[])[0].title,
           },
         });
         setLoading(false);
       } catch (error) {
+        toast.error("강의를 불러오는데 실패하였습니다");
         console.error(error);
       }
     };

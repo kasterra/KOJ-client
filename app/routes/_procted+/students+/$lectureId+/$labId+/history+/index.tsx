@@ -18,6 +18,7 @@ import TableBase from "~/components/Table/TableBase";
 import { getSubmissionStatus } from "~/API/submission";
 import SubmissionDetailModal from "./SubmissionDetailModal";
 import { getPracticeWithPracticeId } from "~/API/practice";
+import toast from "react-hot-toast";
 
 const TableHeader = () => {
   const navigate = useNavigate();
@@ -52,18 +53,16 @@ const TableHeader = () => {
           params.lectureId!,
           auth.token
         );
-        if (response.status === 200) {
-          setPracticeList((response.data as any).practices);
-          setPracticeName(
-            (response.data as any).practices.find(
-              (practice: { id: number; title: string }) =>
-                practice.id === Number(params.labId)
-            )?.title
-          );
-          setPracticeListLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
+        setPracticeList(response.data.practices);
+        setPracticeName(
+          response.data.practices.find(
+            (practice: { id: number; title: string }) =>
+              practice.id === Number(params.labId)
+          )?.title || ""
+        );
+        setPracticeListLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     };
     getPracticeList();
@@ -71,19 +70,21 @@ const TableHeader = () => {
 
   useEffect(() => {
     const getProblemList = async () => {
-      const response = await getPracticeWithPracticeId(
-        params.labId!,
-        auth.token
-      );
-      if (response.status === 200) {
-        setProblemList(((response as any).data as any).problems);
+      try {
+        const response = await getPracticeWithPracticeId(
+          params.labId!,
+          auth.token
+        );
+        setProblemList(response.data.problems);
         setCurrentProblem(
-          ((response as any).data as any).problems.find(
+          response.data.problems.find(
             (problem: { id: number; title: string }) =>
               problem.id === parseInt(problemId!)
-          ) || ((response as any).data as any).problems[0]
+          ) || response.data.problems[0]
         );
         setProblemListLoading(false);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
       }
     };
     getProblemList();
@@ -184,7 +185,7 @@ const Table = () => {
   const lectureId = params.lectureId!;
   const [searchParams] = useSearchParams();
   const problemId = searchParams.get("problemId");
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Map<string, ReactNode>[]>([]);
   const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false);
   const [detailId, setDetailId] = useState(0);
 
@@ -199,63 +200,62 @@ const Table = () => {
       if (JSON.stringify(response.data) !== JSON.stringify(prevData)) {
         setIsLoading(true);
       }
-      if (response.status === 200) {
-        prevData = response.data;
-        setData(
-          response.data.map((data: any) => {
-            const map = new Map<string, ReactNode>();
-            map.set("id", data.id);
-            map.set(
-              "result",
-              (function () {
-                switch (data.status) {
-                  case "accepted":
-                    return <span className={styles.correct}>맞았습니다</span>;
-                  case "time_limit":
-                    return <span className={styles.wrong}>시간 초과</span>;
-                  case "memory_limit":
-                    return <span className={styles.wrong}>메모리 초과</span>;
-                  case "wrong_answer":
-                    return <span className={styles.wrong}>틀렸습니다</span>;
-                  case "runtime_error":
-                    return <span className={styles.error}>런타임 에러</span>;
-                  case "compile_error":
-                    return <span className={styles.error}>컴파일 에러</span>;
-                  case "pending":
-                    return <span className={styles.waiting}>기다리는 중</span>;
-                  case "running":
-                    return (
-                      <span
-                        className={styles.inprogress}
-                      >{`실행중 ${data.progress}%`}</span>
-                    );
-                  case "internal_error":
-                    return <span className={styles.error}>서버 내부 에러</span>;
-                  default:
-                    return <span className={styles.error}>{data.status}</span>;
-                }
-              })()
-            );
-            map.set("time", new Date(data.created_at).toLocaleString());
-            map.set(
-              "buttons",
-              <div className={styles["buttons-container"]}>
-                <button
-                  className={styles["white-button"]}
-                  onClick={() => {
-                    setDetailId(data.id);
-                    setIsSubmissionModalOpen(true);
-                  }}
-                >
-                  제출 결과 보기
-                </button>
-              </div>
-            );
-            return map;
-          })
-        );
-        setIsLoading(false);
-      }
+
+      prevData = response.data;
+      setData(
+        response.data.map((data: any) => {
+          const map = new Map<string, ReactNode>();
+          map.set("id", data.id);
+          map.set(
+            "result",
+            (function () {
+              switch (data.status) {
+                case "accepted":
+                  return <span className={styles.correct}>맞았습니다</span>;
+                case "time_limit":
+                  return <span className={styles.wrong}>시간 초과</span>;
+                case "memory_limit":
+                  return <span className={styles.wrong}>메모리 초과</span>;
+                case "wrong_answer":
+                  return <span className={styles.wrong}>틀렸습니다</span>;
+                case "runtime_error":
+                  return <span className={styles.error}>런타임 에러</span>;
+                case "compile_error":
+                  return <span className={styles.error}>컴파일 에러</span>;
+                case "pending":
+                  return <span className={styles.waiting}>기다리는 중</span>;
+                case "running":
+                  return (
+                    <span
+                      className={styles.inprogress}
+                    >{`실행중 ${data.progress}%`}</span>
+                  );
+                case "internal_error":
+                  return <span className={styles.error}>서버 내부 에러</span>;
+                default:
+                  return <span className={styles.error}>{data.status}</span>;
+              }
+            })()
+          );
+          map.set("time", new Date(data.created_at).toLocaleString());
+          map.set(
+            "buttons",
+            <div className={styles["buttons-container"]}>
+              <button
+                className={styles["white-button"]}
+                onClick={() => {
+                  setDetailId(data.id);
+                  setIsSubmissionModalOpen(true);
+                }}
+              >
+                제출 결과 보기
+              </button>
+            </div>
+          );
+          return map;
+        })
+      );
+      setIsLoading(false);
     }
     if (intervalId !== undefined) {
       clearInterval(intervalId);

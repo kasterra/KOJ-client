@@ -3,11 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { getProblemWithProblemId } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
-import {
-  SimpleProblemDetail,
-  SuccessProblemDetailResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { SimpleProblemDetail } from "~/types/APIResponse";
 import { STATIC_SERVER_URL } from "~/util/constant";
 import styles from "./index.module.css";
 import SubmitModal from "./SubmitModal";
@@ -26,20 +22,20 @@ const LabDetail = () => {
 
   useEffect(() => {
     async function getData() {
-      const response = await getProblemWithProblemId(
-        parseInt(labId!),
-        auth.token
-      );
-      const response2 = await getPracticeWithPracticeId(
-        practiceId!,
-        auth.token
-      );
-      if (isSuccessResponse(response) && response2.status === 200) {
-        setProblemDetail((response as SuccessProblemDetailResponse).data);
-        setPracticeDetail((response2 as any).data);
+      try {
+        const response = await getProblemWithProblemId(
+          parseInt(labId!),
+          auth.token
+        );
+        const response2 = await getPracticeWithPracticeId(
+          practiceId!,
+          auth.token
+        );
+        setProblemDetail(response.data);
+        setPracticeDetail(response2.data);
         setLoading(false);
-      } else {
-        toast.error("잘못된 접근입니다");
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
         navigate("/");
       }
     }

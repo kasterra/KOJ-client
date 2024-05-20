@@ -15,11 +15,11 @@ const Manage = () => {
 
   useEffect(() => {
     async function getSemesterFromServer() {
-      const { status, data } = await getSemester(auth.token);
-      if (status === 200) {
+      try {
+        const data = await getSemester(auth.token);
         setCurrentSemester(data.semester);
-      } else {
-        toast(data.message, { icon: "⚠️" });
+      } catch (error: any) {
+        toast(error.message, { icon: "⚠️" });
       }
     }
 
@@ -34,15 +34,14 @@ const Manage = () => {
         const formData = new FormData(e.currentTarget);
         const year = formData.get("year") as string;
 
-        const { status, message } = await setSemester(
-          semesterStringToNumber(year, semesterString),
-          auth.token
-        );
-
-        if (status === 200) {
+        try {
+          await setSemester(
+            semesterStringToNumber(year, semesterString),
+            auth.token
+          );
           toast.success("성공적으로 변경되었습니다!");
-        } else {
-          toast(message, { icon: "⚠️" });
+        } catch (error: any) {
+          toast(error.message, { icon: "⚠️" });
         }
       }}
     >

@@ -8,11 +8,7 @@ import { updatePractice } from "~/API/practice";
 import { useAuth } from "~/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { getPracticeWithPracticeId } from "~/API/practice";
-import {
-  SimplePracticeDetail,
-  SuccessPracticeDetailResponse,
-  isSuccessResponse,
-} from "~/types/APIResponse";
+import { SimplePracticeDetail } from "~/types/APIResponse";
 import { toLocalDateTimeString } from "~/util";
 
 interface Props {
@@ -28,10 +24,14 @@ const PracticeEditModal = ({ isOpen, onClose, practiceId }: Props) => {
 
   useEffect(() => {
     async function getPracticeFromServer() {
-      const response = await getPracticeWithPracticeId(practiceId, auth.token);
-      if (isSuccessResponse(response))
-        setPracticeData((response as SuccessPracticeDetailResponse).data);
-      else {
+      try {
+        const response = await getPracticeWithPracticeId(
+          practiceId,
+          auth.token
+        );
+        setPracticeData(response.data);
+      } catch (error: any) {
+        toast.error(`Error: ${error.message} - ${error.responseMessage}`);
         onClose();
       }
       setIsLoading(false);
