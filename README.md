@@ -10,8 +10,11 @@
 
 - Remix
 - Typescript
-- css modules
--
+- CSS modules
+- react-hot-toast
+- prism.js
+- exceljs
+- jszip & file-saver
 
 # 폴더 구조
 
@@ -30,3 +33,7 @@
 `app/util` : 여러곳에 쓰여서 코드 중복이 발생하거나, 외부라이브러리에 너무 적극적으로 의존해서 렌더링 로직에 넣기 뭣한 것들
 
 `public` : 전역으로 필요한 폰트, og:image, 빈칸 코드 렌더링 보조를 위한 prism.js, 학생 등록을 위해 필요한 엑셀 파일
+
+# 추가적인 정보
+
+각 코드에 대한 설명이나, 왜 이 기술 스택을 사용했는지에 대한 설명은 `app/README.md`에 적혀 있습니다.
