@@ -77,12 +77,16 @@ const LabDetail = () => {
                 채점 기록
               </button>
             </Link>
-            <button
-              className={styles["submit-button"]}
-              onClick={() => setIsSubmitModalOpen(true)}
-            >
-              정답 제출
-            </button>
+            {new Date(practiceDetail!.end_time) > new Date() ? (
+              <button
+                className={styles["submit-button"]}
+                onClick={() => setIsSubmitModalOpen(true)}
+              >
+                정답 제출
+              </button>
+            ) : (
+              <div className={styles["submit-button"]}>제출 기한 경과!</div>
+            )}
           </div>
         </div>
       </div>

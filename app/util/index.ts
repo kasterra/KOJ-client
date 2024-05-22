@@ -79,6 +79,7 @@ export function remainingTimeToString(time: number) {
   if (day > 0) ret += `${day}일  \n`;
   if (hour > 0) ret += `${hour}시간  \n`;
   if (minute > 0) ret += `${minute}분`;
+  if (ret === "") ret = "제출 기한 경과!";
   return ret;
 }
 

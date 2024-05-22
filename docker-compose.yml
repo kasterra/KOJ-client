@@ -1,6 +1,6 @@
 services:
   frontend:
-    container_name: frontend
+    container_name: koj-frontend
     image: ghcr.io/kasterra/koj-client:latest
     ports:
       - 1705:3000
