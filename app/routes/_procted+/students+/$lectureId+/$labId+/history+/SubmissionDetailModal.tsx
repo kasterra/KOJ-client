@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { getSubmissionWithSubmissionId } from "~/API/submission";
 import Modal from "~/components/Modal";
 import styles from "./index.module.css";
+import judgeStyles from "~/css/judge.module.css";
 import { useAuth } from "~/contexts/AuthContext";
 import CodeBlock from "~/components/CodeBlock";
 import TextInput from "~/components/Input/TextInput";
 import TextArea from "~/components/Input/TextArea";
 import { bytesToSize } from "~/util";
 import toast from "react-hot-toast";
+import download from "~/assets/download.svg";
+import pkg from "file-saver";
+const { saveAs } = pkg;
 
 interface Props {
   isOpen: boolean;
@@ -172,6 +176,93 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                       name=""
                       defaultValue={result.exit_code}
                     />
+                    {result.file_inputs && (
+                      <div className={styles.area}>
+                        <h3 className={styles.title}>파일 입력</h3>
+                        <div className={judgeStyles["file-rows"]}>
+                          {result.file_inputs!.map(
+                            (file: { name: string; content: string }) => (
+                              <div
+                                className={judgeStyles["file-row"]}
+                                onClick={() => {
+                                  saveAs(
+                                    new File([file.content], file.name),
+                                    file.name
+                                  );
+                                }}
+                              >
+                                <span className={judgeStyles["file-name"]}>
+                                  {file.name}
+                                </span>
+                                <div className={judgeStyles["icon-area"]}>
+                                  <div className={judgeStyles["icon"]}>
+                                    <img src={download} alt="download icon" />
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {result.file_outputs && (
+                      <div className={styles.area}>
+                        <h3 className={styles.title}>내 파일 출력</h3>
+                        <div className={judgeStyles["file-rows"]}>
+                          {result.file_outputs!.map(
+                            (file: { name: string; content: string }) => (
+                              <div
+                                className={judgeStyles["file-row"]}
+                                onClick={() => {
+                                  saveAs(
+                                    new File([file.content], file.name),
+                                    file.name
+                                  );
+                                }}
+                              >
+                                <span className={judgeStyles["file-name"]}>
+                                  {file.name}
+                                </span>
+                                <div className={judgeStyles["icon-area"]}>
+                                  <div className={judgeStyles["icon"]}>
+                                    <img src={download} alt="download icon" />
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {result.judge_file_outputs && (
+                      <div className={styles.area}>
+                        <h3 className={styles.title}>저지 파일 출력</h3>
+                        <div className={judgeStyles["file-rows"]}>
+                          {result.judge_file_outputs!.map(
+                            (file: { name: string; content: string }) => (
+                              <div
+                                className={judgeStyles["file-row"]}
+                                onClick={() => {
+                                  saveAs(
+                                    new File([file.content], file.name),
+                                    file.name
+                                  );
+                                }}
+                              >
+                                <span className={judgeStyles["file-name"]}>
+                                  {file.name}
+                                </span>
+                                <div className={judgeStyles["icon-area"]}>
+                                  <div className={judgeStyles["icon"]}>
+                                    <img src={download} alt="download icon" />
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
                     {result.message && (
                       <TextArea
                         title="컴파일러 메세지"
