@@ -77,7 +77,8 @@ const LabDetail = () => {
                 채점 기록
               </button>
             </Link>
-            {new Date(practiceDetail!.end_time) > new Date() ? (
+            {auth.role === "professor" ||
+            new Date(practiceDetail!.end_time) > new Date() ? (
               <button
                 className={styles["submit-button"]}
                 onClick={() => setIsSubmitModalOpen(true)}
