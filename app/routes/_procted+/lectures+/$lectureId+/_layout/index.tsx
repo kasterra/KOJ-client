@@ -262,11 +262,9 @@ const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
           if (
             confirm(`정말로 ${practiceDetail!.title} 실습을 삭제 하시겠습니까?`)
           ) {
-            const response = await deletePractice(id, auth.token);
-            if (response.status === 204) {
-              toast.success("성공적으로 삭제되었습니다");
-              setSuperIsLoading!(true);
-            }
+            await deletePractice(id, auth.token);
+            toast.success("성공적으로 삭제되었습니다");
+            setSuperIsLoading!(true);
           }
         }}
       >

@@ -43,18 +43,22 @@ const NewPracticeModal = ({ isOpen, onClose }: Props) => {
           const start_time = start.toISOString();
           const end_time = end.toISOString();
 
-          const response = await createNewPractice(
-            lecture_id,
-            start_time,
-            end_time,
-            title,
-            auth.token
+          await toast.promise(
+            createNewPractice(
+              lecture_id,
+              start_time,
+              end_time,
+              title,
+              auth.token
+            ),
+            {
+              loading: "실습 생성중...",
+              success: "성공적으로 실습을 생성하였습니다",
+              error: (error) =>
+                `Error: ${error.message} - ${error.responseMessage}`,
+            }
           );
-
-          if (response.status === 201) {
-            toast.success("성공적으로 실습을 생성하였습니다");
-            onClose();
-          }
+          onClose();
         }}
       >
         <TextInput

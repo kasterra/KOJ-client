@@ -77,10 +77,8 @@ const PracticeEditModal = ({ isOpen, onClose, practiceId }: Props) => {
               auth.token
             );
 
-            if (response.status === 204) {
-              toast.success("성공적으로 수정하였습니다");
-              onClose();
-            }
+            toast.success("성공적으로 수정하였습니다");
+            onClose();
           }}
         >
           <TextInput
