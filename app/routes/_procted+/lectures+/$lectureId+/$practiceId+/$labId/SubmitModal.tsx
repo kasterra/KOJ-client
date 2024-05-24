@@ -142,7 +142,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
                   <span style={{ color: "red" }}>
                     Java에서 코드 작성 제출의 경우 엔트리 포인트 클래스 이름이
                     <br />
-                    <strong>main</strong>이어야 합니다
+                    <strong>Main</strong>이어야 합니다
                   </span>
                 ) : null}
               </div>
