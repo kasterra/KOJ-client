@@ -153,13 +153,19 @@ const SubmissionDetailModal = ({ isOpen, onClose, submissionId }: Props) => {
                       defaultValue={result.stdout}
                       height={300}
                     />
-                    <TextArea
-                      title="예상된 출력"
-                      disabled
-                      name=""
-                      defaultValue={result.judge_answer}
-                      height={300}
-                    />
+                    {result.judge_answer ? (
+                      <TextArea
+                        title="예상된 출력"
+                        disabled
+                        name=""
+                        defaultValue={result.judge_answer}
+                        height={300}
+                      />
+                    ) : (
+                      <span className={styles.error}>
+                        출력이 제공되지 않았거나, 비공개 TC 입니다
+                      </span>
+                    )}
                     <TextInput
                       title="exit code"
                       disabled
