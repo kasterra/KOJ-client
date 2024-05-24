@@ -166,6 +166,14 @@ const ProblemAddModal = ({
                   <option value="python">Python</option>
                   <option value="plaintext">Text</option>
                 </select>
+                <span>
+                  언어와 관계없이 빈칸으로 표시하고 싶은 부분을 블록 주석(/**/)
+                  으로 표시해 주세요
+                </span>
+                <span>
+                  해당 언어의 문법에 적합하지 않은 빈칸은 적절하지 못하게 표시될
+                  수 있습니다
+                </span>
                 <CodeBlock
                   height={500}
                   language={language}
