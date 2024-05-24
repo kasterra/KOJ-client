@@ -109,15 +109,55 @@ const LectureDetail = () => {
             });
           })}
         />
-        {currentLecture!.practices.map((practice) => (
-          <PracticeDetail
-            lectureName={currentLecture!.title}
-            key={practice.id}
-            id={practice.id}
-            title={practice.title}
-            setSuperIsLoading={setIsLoading}
-          />
-        ))}
+        <h4>완료된 실습</h4>
+        {currentLecture!.practices
+          .filter((practice) => new Date(practice.end_time) <= new Date())
+          .map((practice) => (
+            <PracticeDetail
+              lectureName={currentLecture!.title}
+              key={practice.id}
+              id={practice.id}
+              title={practice.title}
+              setSuperIsLoading={setIsLoading}
+            />
+          ))}
+        <h4>진행중인 실습</h4>
+
+        {currentLecture!.practices
+          .filter(
+            (practice) =>
+              new Date(practice.start_time) <= new Date() &&
+              new Date(practice.end_time) >= new Date()
+          )
+          .map((practice) => (
+            <PracticeDetail
+              lectureName={currentLecture!.title}
+              key={practice.id}
+              id={practice.id}
+              title={practice.title}
+              setSuperIsLoading={setIsLoading}
+            />
+          ))}
+
+        {auth.role === "professor" && (
+          <>
+            <h4>진행 예정 실습</h4>
+            {currentLecture!.practices
+              .filter((practice) => new Date(practice.end_time) < new Date())
+              .map((practice) => (
+                <PracticeDetail
+                  lectureName={currentLecture!.title}
+                  key={practice.id}
+                  id={practice.id}
+                  title={practice.title}
+                  setSuperIsLoading={setIsLoading}
+                />
+              ))}
+          </>
+        )}
+
+        <hr />
+
         <ButtonElement
           title="내 제출물 다운받기"
           onButtonClick={() => setIsDownloadMyCodesModalOpen(true)}
