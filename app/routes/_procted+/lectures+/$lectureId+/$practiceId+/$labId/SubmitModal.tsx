@@ -107,8 +107,8 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           <RadioGroup
             title="프로그래밍 언어"
             name="language"
-            valueList={["c", "java", "python" /*"plaintext"*/]}
-            textList={["C", "Java", "Python" /*"Text"*/]}
+            valueList={["c", "cpp", "java", "python", "plaintext"]}
+            textList={["C", "c++", "Java", "Python", "Text"]}
             onChange={setLanguage as (value: string) => void}
           />
 
