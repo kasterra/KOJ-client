@@ -1,3 +1,3 @@
-export const STATIC_SERVER_URL = "http://155.230.34.223:53469/static";
-export const API_SERVER_URL = "http://155.230.34.223:53469/api/v1";
-export const CLIENT_SERVER_URL = "http://155.230.34.223:3000";
+export const STATIC_SERVER_URL = "https://koj.kasterra.dev/api/static";
+export const API_SERVER_URL = "https://koj.kasterra.dev/api/api/v1";
+export const CLIENT_SERVER_URL = "https://koj.kasterra.dev";
