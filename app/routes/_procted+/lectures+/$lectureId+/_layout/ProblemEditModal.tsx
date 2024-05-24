@@ -113,7 +113,8 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                     newFilePath.length
                       ? newFilePath
                       : prevProblemInfo!.file_path,
-                    holes
+                    holes,
+                    language
                   ),
                   {
                     loading: "문제를 수정하는중...",

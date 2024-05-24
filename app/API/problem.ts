@@ -115,7 +115,8 @@ export async function updateProblem(
   title: string,
   token: string,
   file_path: string,
-  parsed_code_elements?: parsedCodeElement[][]
+  parsed_code_elements?: parsedCodeElement[][],
+  language?: string
 ): Promise<EmptyResponse> {
   if (0 > memory_limit || memory_limit > 4096) {
     throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
@@ -131,6 +132,7 @@ export async function updateProblem(
       throw new BadRequestError("빈칸 문제에는 빈칸정보가 필요합니다");
     }
   }
+  console.log(parsed_code_elements);
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
     method: "PUT",
     headers: {
@@ -140,7 +142,9 @@ export async function updateProblem(
     body: JSON.stringify({
       file_path,
       memory_limit,
-      ...(parsed_code_elements ? { parsed_code_elements } : {}),
+      ...(parsed_code_elements
+        ? { parsed_code_elements: { data: parsed_code_elements, language } }
+        : {}),
       time_limit,
       title,
       type: problemType,
