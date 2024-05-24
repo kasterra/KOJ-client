@@ -101,7 +101,11 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
             }
             formData.append("code", code);
             await submit(auth.token, labId!, formData);
-            navigate(`/students/${lectureId}/${practiceId}/history`);
+            navigate(
+              `/students/${lectureId}/${practiceId}/history?problemId=${
+                problemDetail!.id
+              }`
+            );
           }}
         >
           <RadioGroup
