@@ -1,6 +1,7 @@
 .bg {
   display: flex;
   justify-content: center;
+  max-width: 100vw;
 }
 
 .container {
