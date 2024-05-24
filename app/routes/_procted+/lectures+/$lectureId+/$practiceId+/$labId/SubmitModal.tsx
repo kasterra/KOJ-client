@@ -142,6 +142,12 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
                   value={code}
                   onChange={setCode}
                 />
+                {language === "c" ? (
+                  <span style={{ color: "red" }}>
+                    void main()은 비표준 입니다. <br />
+                    정상적인 채점 결과를 위해 int main을 사용해 주세요
+                  </span>
+                ) : null}
                 {language === "java" ? (
                   <span style={{ color: "red" }}>
                     Java에서 코드 작성 제출의 경우 엔트리 포인트 클래스 이름이
