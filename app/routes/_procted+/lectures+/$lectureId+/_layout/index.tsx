@@ -121,6 +121,8 @@ const LectureDetail = () => {
               setSuperIsLoading={setIsLoading}
             />
           ))}
+
+        <hr />
         <h4>진행중인 실습</h4>
 
         {currentLecture!.practices
@@ -139,11 +141,13 @@ const LectureDetail = () => {
             />
           ))}
 
+        <hr />
+
         {auth.role === "professor" && (
           <>
             <h4>진행 예정 실습</h4>
             {currentLecture!.practices
-              .filter((practice) => new Date(practice.end_time) < new Date())
+              .filter((practice) => new Date(practice.start_time) > new Date())
               .map((practice) => (
                 <PracticeDetail
                   lectureName={currentLecture!.title}
@@ -153,11 +157,11 @@ const LectureDetail = () => {
                   setSuperIsLoading={setIsLoading}
                 />
               ))}
+            <hr />
           </>
         )}
 
-        <hr />
-
+        <h4>관리 도구</h4>
         <ButtonElement
           title="내 제출물 다운받기"
           onButtonClick={() => setIsDownloadMyCodesModalOpen(true)}
