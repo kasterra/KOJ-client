@@ -223,7 +223,6 @@ const TableHeader = () => {
         isOpen={isUserAddModalOpen}
         onClose={() => {
           setIsUserAddModalOpen(false);
-          window.location.reload();
         }}
       />
     </div>

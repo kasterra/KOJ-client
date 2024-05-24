@@ -25,7 +25,7 @@ export async function parseXlsx(file: File): Promise<studentRow[]> {
     for (let i = 0; i < listLength; ++i) {
       ret.push({
         userId: idList[i],
-        userName: nameList[i],
+        userName: nameList[i] + "",
         isTutor: isTutorList[i],
       });
     }

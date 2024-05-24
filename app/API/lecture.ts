@@ -283,6 +283,8 @@ export async function addUserInLecture(
   const data = await response.json();
 
   switch (response.status) {
+    case 400:
+      throw new BadRequestError("입력값 검증 실패");
     case 401:
       handle401();
       break;
@@ -320,6 +322,8 @@ export async function addUsersInLecture(
   });
   const data = await response.json();
   switch (response.status) {
+    case 400:
+      throw new BadRequestError(data.message);
     case 401:
       handle401();
       break;
@@ -353,8 +357,6 @@ export async function removeUserInLecture(
     }
   );
 
-  const data = await response.json();
-
   switch (response.status) {
     case 401:
       handle401();
@@ -370,7 +372,10 @@ export async function removeUserInLecture(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
   }
-  return data;
+
+  if (response.status === 204) return {};
+
+  return await response.json();
 }
 
 export async function getUsersInLecture(
