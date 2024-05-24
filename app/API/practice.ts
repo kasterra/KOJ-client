@@ -117,6 +117,9 @@ export async function updatePractice(
       );
       break;
   }
+  if (response.status === 204) {
+    return {};
+  }
   return await response.json();
 }
 
@@ -146,6 +149,9 @@ export async function deletePractice(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
       break;
+  }
+  if (response.status === 204) {
+    return { status: 204 };
   }
   return await response.json();
 }

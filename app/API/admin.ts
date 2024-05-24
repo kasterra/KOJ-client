@@ -27,7 +27,10 @@ export async function setSemester(
       throw new ForbiddenError("관리자만 접근할 수 있는 API 입니다");
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  if (response.status === 204) {
+    return {};
+  }
+  return await response.json();
 }
 
 export async function getSemester(
@@ -52,5 +55,5 @@ export async function getSemester(
       throw new ForbiddenError("관리자만 접근할 수 있는 API 입니다");
       break;
   }
-  return { ...(await response.json()), status: response.status };
+  return await response.json();
 }

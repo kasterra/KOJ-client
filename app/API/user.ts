@@ -121,6 +121,9 @@ export async function changePassword(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
   }
+  if (response.status === 204) {
+    return {} as changePasswordResponse;
+  }
   return await response.json();
 }
 
@@ -155,6 +158,9 @@ export async function resetPassword(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
   }
+  if (response.status === 204) {
+    return {} as changePasswordResponse;
+  }
   return await response.json();
 }
 
@@ -183,6 +189,9 @@ export async function deleteUser(
       throw new InternalServerError(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
+  }
+  if (response.status === 204) {
+    return {} as changePasswordResponse;
   }
   return await response.json();
 }
@@ -221,6 +230,9 @@ export async function addUser(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
   }
+  if (response.status === 204) {
+    return {} as getUserInfoResponse;
+  }
   return await response.json();
 }
 
@@ -250,6 +262,9 @@ export async function searchUser(
       throw new InternalServerError(
         "서버 에러가 발생했습니다. 관리자에게 문의해 주세요"
       );
+  }
+  if (response.status === 204) {
+    return {} as UserSearchResponse;
   }
   return await response.json();
 }
