@@ -205,7 +205,10 @@ const LectureDetail = () => {
       {isImportPracticeModalOpen ? (
         <ImportPracticeModal
           isOpen={isImportPracticeModalOpen}
-          onClose={() => setIsImportPracticeModalOpen(false)}
+          onClose={() => {
+            setIsImportPracticeModalOpen(false);
+            setIsLoading(true);
+          }}
         />
       ) : null}
       <Outlet />

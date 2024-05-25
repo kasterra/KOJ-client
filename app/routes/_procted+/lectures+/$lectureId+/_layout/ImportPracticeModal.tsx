@@ -10,6 +10,9 @@ import inputStyles from "~/components/Input/input.module.css";
 import formStyles from "~/components/common/form.module.css";
 import TextInput from "~/components/Input/TextInput";
 import DateInput from "~/components/Input/DateInput";
+import { useParams } from "@remix-run/react";
+import toast from "react-hot-toast";
+import { createNewPractice } from "~/API/practice";
 
 interface Props {
   isOpen: boolean;
@@ -20,6 +23,7 @@ const ImportPracticeModal = ({ isOpen, onClose }: Props) => {
   const [data, setData] = useState<TreeViewNode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { token, userId } = useAuth();
+  const params = useParams();
 
   useEffect(() => {
     async function getData() {
@@ -60,7 +64,45 @@ const ImportPracticeModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <form className={styles["modal-body"]}>
+      <form
+        className={styles["modal-body"]}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          const lecture_id = parseInt(params.lectureId!, 10);
+          const startTime = formData.get("startTime") as string;
+          const endTime = formData.get("endTime") as string;
+          const targetId = formData.get("import-target") as string;
+          const title = formData.get("title") as string;
+          const start = new Date(startTime);
+          const end = new Date(endTime);
+          if (start > end) {
+            toast.error("종료 시간은 시작 시간보다 이후여야 합니다");
+            return;
+          }
+
+          const start_time = start.toISOString();
+          const end_time = end.toISOString();
+
+          await toast.promise(
+            createNewPractice(
+              lecture_id,
+              start_time,
+              end_time,
+              title,
+              token,
+              parseInt(targetId)
+            ),
+            {
+              loading: "실습 생성중...",
+              success: "성공적으로 실습을 생성하였습니다",
+              error: (error) =>
+                `Error: ${error.message} - ${error.responseMessage}`,
+            }
+          );
+          onClose();
+        }}
+      >
         <div className={inputStyles.wrapper}>
           <span className={inputStyles.title}>가져올 실습</span>
           <TreeView nodes={data} name="import-target" />

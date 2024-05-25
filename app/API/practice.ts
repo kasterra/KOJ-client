@@ -46,7 +46,8 @@ export async function createNewPractice(
   start_time: string,
   end_time: string,
   title: string,
-  token: string
+  token: string,
+  previous_practice_id?: number
 ) {
   if (!title) {
     throw new BadRequestError("제목은 필수 입력 필드입니다");
@@ -57,7 +58,13 @@ export async function createNewPractice(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ lecture_id, start_time, end_time, title }),
+    body: JSON.stringify({
+      lecture_id,
+      start_time,
+      end_time,
+      title,
+      ...(previous_practice_id ? { previous_practice_id } : {}),
+    }),
   });
 
   switch (response.status) {
