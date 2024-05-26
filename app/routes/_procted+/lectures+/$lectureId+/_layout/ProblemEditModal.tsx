@@ -19,7 +19,7 @@ import CodeBlock from "~/components/CodeBlock";
 import BlankPreviewModal from "./BlankPreviewModal";
 import SingleFileInput from "~/components/Input/SingleFileInput";
 import { uploadFile } from "~/API/media";
-import { lanugage } from "~/types";
+import { language } from "~/types";
 import { STATIC_SERVER_URL } from "~/util/constant";
 import { getCodeFileExtension, readFileAsServerFormat } from "~/util";
 import download from "~/assets/download.svg";
@@ -38,7 +38,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
     "blank" | "solving" | "class_implementation"
   >("solving");
   const [prevProblemInfo, setPrevProblemInfo] = useState<SimpleProblemDetail>();
-  const [language, setLanguage] = useState<lanugage>("c");
+  const [language, setLanguage] = useState<language>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [dragFile, setDragFile] = useState<File | null>(null);
@@ -247,7 +247,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                   <select
                     name="language"
                     id="language"
-                    onChange={(e) => setLanguage(e.target.value as lanugage)}
+                    onChange={(e) => setLanguage(e.target.value as language)}
                     defaultValue={language}
                   >
                     <option value="c">C</option>
@@ -292,7 +292,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                   <select
                     name="language"
                     id="language"
-                    onChange={(e) => setLanguage(e.target.value as lanugage)}
+                    onChange={(e) => setLanguage(e.target.value as language)}
                   >
                     <option value="c">C</option>
                     <option value="java">Java</option>

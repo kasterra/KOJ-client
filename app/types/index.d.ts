@@ -22,7 +22,7 @@ export interface studentRow {
   userName: string;
 }
 
-export type lanugage =
+export type language =
   | "plaintext"
   | "python"
   | "java"

@@ -1,5 +1,5 @@
 import { codeHoles } from "~/util/codeHole";
-import { Lecture, ServerSideFile, judgeStatus, lanugage } from ".";
+import { Lecture, ServerSideFile, judgeStatus, language } from ".";
 
 export interface UserEntity {
   id: string;
@@ -103,7 +103,7 @@ export interface SimpleProblemDetail {
   parsed_code_elements: codeHoles;
   prepared_main: {
     code: ServerSideFile;
-    language: lanugage;
+    language: language;
   };
   testcases: {
     id: number;
@@ -164,7 +164,7 @@ export interface Submission {
   created_at: string;
   entrypoint: string;
   id: number;
-  language: lanugage;
+  language: language;
   message: string;
   progress: number;
   status: judgeStatus;

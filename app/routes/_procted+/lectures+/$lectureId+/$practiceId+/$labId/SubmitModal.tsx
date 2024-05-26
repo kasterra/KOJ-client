@@ -6,7 +6,7 @@ import inputStyle from "~/components/Input/input.module.css";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import CodeBlock from "~/components/CodeBlock";
 import MultipleFileInput from "~/components/Input/MultipleFileInput";
-import { lanugage } from "~/types";
+import { language } from "~/types";
 import { submit } from "~/API/submission";
 import { useAuth } from "~/contexts/AuthContext";
 import { useNavigate, useParams } from "@remix-run/react";
@@ -27,7 +27,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [fileList, setFileList] = useState<FileList | null>(null);
-  const [language, setLanguage] = useState<lanugage>("c");
+  const [language, setLanguage] = useState<language>("c");
   const [entryPoint, setEntryPoint] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [problemDetail, setProblemDetail] = useState<SimpleProblemDetail>();
@@ -91,7 +91,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
         </form>
       ) : (
         <form
-          className={styles["modal-body"]}
+          className={styles["modal-section"]}
           onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
@@ -108,64 +108,77 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
             );
           }}
         >
-          <RadioGroup
-            title="프로그래밍 언어"
-            name="language"
-            valueList={["c", "cpp", "java", "python", "plaintext"]}
-            textList={["C", "c++", "Java", "Python", "Text"]}
-            onChange={setLanguage as (value: string) => void}
-          />
-
-          <div className={styles.flex}>
-            {fileList && fileList.length > 1 ? (
-              <RadioGroup
-                title="엔트리 포인트 설정"
-                name="entrypoint"
-                valueList={[...fileList].map((file) => file.name)}
-                textList={[...fileList].map((file) => file.name)}
-                onChange={setEntryPoint as (value: string) => void}
-              />
-            ) : null}
-            <MultipleFileInput
-              title="파일로 제출"
-              name="files"
-              onFileUpload={async (files) => {
-                setFileList(files);
-              }}
+          <div className={styles["modal-body"]}>
+            <RadioGroup
+              title="프로그래밍 언어"
+              name="language"
+              valueList={["c", "cpp", "java", "python", "plaintext"]}
+              textList={["C", "c++", "Java", "Python", "Text"]}
+              onChange={setLanguage as (value: string) => void}
+              defaultValue={problemDetail?.prepared_main?.language || undefined}
             />
-            {!fileList || fileList.length === 0 ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span className={inputStyle.title}>코드로 작성하여 제출</span>
-                <CodeBlock
-                  height={500}
-                  language={language}
-                  value={code}
-                  onChange={setCode}
-                />
-                {language === "c" ? (
-                  <span style={{ color: "red" }}>
-                    void main()은 비표준 입니다. <br />
-                    정상적인 채점 결과를 위해 int main을 사용해 주세요
-                  </span>
-                ) : null}
-                {language === "java" ? (
-                  <span style={{ color: "red" }}>
-                    Java에서 코드 작성 제출의 경우 엔트리 포인트 클래스 이름이
-                    <br />
-                    <strong>Main</strong>이어야 합니다
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
 
-          <button
-            className={formStyles["primary-button"]}
-            type="submit"
-            disabled={!fileList && code.length === 0}
-          >
-            제출
-          </button>
+            <div className={styles.flex}>
+              {fileList && fileList.length > 1 ? (
+                <RadioGroup
+                  title="엔트리 포인트 설정"
+                  name="entrypoint"
+                  valueList={[...fileList].map((file) => file.name)}
+                  textList={[...fileList].map((file) => file.name)}
+                  onChange={setEntryPoint as (value: string) => void}
+                />
+              ) : null}
+              <MultipleFileInput
+                title="파일로 제출"
+                name="files"
+                onFileUpload={async (files) => {
+                  setFileList(files);
+                }}
+              />
+              {!fileList || fileList.length === 0 ? (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span className={inputStyle.title}>코드로 작성하여 제출</span>
+                  <CodeBlock
+                    height={500}
+                    language={language}
+                    value={code}
+                    onChange={setCode}
+                  />
+                  {language === "c" ? (
+                    <span style={{ color: "red" }}>
+                      void main()은 비표준 입니다. <br />
+                      정상적인 채점 결과를 위해 int main을 사용해 주세요
+                    </span>
+                  ) : null}
+                  {language === "java" ? (
+                    <span style={{ color: "red" }}>
+                      Java에서 코드 작성 제출의 경우 엔트리 포인트 클래스 이름이
+                      <br />
+                      <strong>Main</strong>이어야 합니다
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+
+            <button
+              className={formStyles["primary-button"]}
+              type="submit"
+              disabled={!fileList && code.length === 0}
+            >
+              제출
+            </button>
+          </div>
+          <div className={styles["modal-body"]} style={{ minWidth: "500px" }}>
+            <h4>주어진 Main 코드 : {problemDetail!.prepared_main.code.name}</h4>
+            <CodeBlock
+              height={500}
+              language={problemDetail!.prepared_main.language}
+              value={problemDetail!.prepared_main.code.content}
+              onChange={() => null}
+              readOnly
+            />
+          </div>
         </form>
       )}
     </Modal>

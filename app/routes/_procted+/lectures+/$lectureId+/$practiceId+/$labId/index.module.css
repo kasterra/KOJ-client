@@ -1,9 +1,16 @@
 .wrapper {
   max-width: 100vw;
 }
+
+.modal-section {
+  display: flex;
+  gap: 50px;
+}
+
 .modal-body {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 16px;
 }
 

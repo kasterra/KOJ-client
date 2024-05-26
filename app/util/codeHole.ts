@@ -1,7 +1,7 @@
-import { lanugage } from "~/types";
+import { language } from "~/types";
 
 export interface codeHoles {
-  language: lanugage;
+  language: language;
   data: parsedCodeElement[][];
 }
 

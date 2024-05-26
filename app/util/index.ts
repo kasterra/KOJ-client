@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { lanugage } from "~/types";
+import { language } from "~/types";
 
 export function semesterToString(semester: number) {
   switch (semester) {
@@ -141,7 +141,7 @@ export function readFileAsServerFormat(
   });
 }
 
-export function getCodeFileExtension(language: lanugage) {
+export function getCodeFileExtension(language: language) {
   switch (language) {
     case "c":
       return "c";

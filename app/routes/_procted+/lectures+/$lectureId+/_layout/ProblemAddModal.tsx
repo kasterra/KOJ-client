@@ -15,7 +15,7 @@ import {
 } from "~/API/problem";
 import { useAuth } from "~/contexts/AuthContext";
 import BlankPreviewModal from "./BlankPreviewModal";
-import { lanugage } from "~/types";
+import { language } from "~/types";
 import {
   getCodeFileExtension,
   problemTitles,
@@ -40,7 +40,7 @@ const ProblemAddModal = ({
   const [problemType, setProblemType] = useState<
     "blank" | "solving" | "class_implementation"
   >("solving");
-  const [language, setLanguage] = useState<lanugage>("c");
+  const [language, setLanguage] = useState<language>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const auth = useAuth();
@@ -197,7 +197,7 @@ const ProblemAddModal = ({
                 <select
                   name="language"
                   id="language"
-                  onChange={(e) => setLanguage(e.target.value as lanugage)}
+                  onChange={(e) => setLanguage(e.target.value as language)}
                 >
                   <option value="c">C</option>
                   <option value="java">Java</option>
@@ -241,7 +241,7 @@ const ProblemAddModal = ({
                 <select
                   name="language"
                   id="language"
-                  onChange={(e) => setLanguage(e.target.value as lanugage)}
+                  onChange={(e) => setLanguage(e.target.value as language)}
                 >
                   <option value="c">C</option>
                   <option value="java">Java</option>
