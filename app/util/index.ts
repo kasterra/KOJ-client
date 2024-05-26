@@ -122,7 +122,7 @@ export function bytesToSize(bytes: number) {
 
 export const problemTitles: { [key: string]: string } = {
   blank: "빈칸 채우기",
-  solution: "문제 해결",
+  solving: "문제 해결",
   class_implementation: "클래스 구현",
 };
 
