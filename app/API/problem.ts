@@ -214,6 +214,17 @@ export async function updateProblem(
       time_limit,
       title,
       type: problemType,
+      ...(prepared_main
+        ? {
+            prepared_main: {
+              code: {
+                name: prepared_main.name,
+                content: prepared_main.content,
+              },
+              language: prepared_main.language,
+            },
+          }
+        : {}),
     }),
   });
   switch (response.status) {
