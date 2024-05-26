@@ -127,13 +127,7 @@ const ProblemAddModal = ({
                 postClassImplementationProblem(
                   file,
                   memory,
-                  mainFile
-                    ? { ...mainFileObj, language }
-                    : {
-                        content: codeString,
-                        name: `Main.${getCodeFileExtension(language)}`,
-                        language,
-                      },
+                  { ...mainFileObj, language },
                   language,
                   practiceId,
                   time,
@@ -256,10 +250,6 @@ const ProblemAddModal = ({
                   <option value="plaintext">Text</option>
                 </select>
                 <span>언어에 맞는 Main 파일을 준비해 주세요.</span>
-                <span>
-                  직접 입력하거나(이 경우엔 파일 이름은
-                  "Main.언어에_맞는_확장자"로 설정됨) 파일을 업로드 해주세요
-                </span>
                 <SingleFileInput
                   title="Main 파일"
                   name="main"
@@ -267,14 +257,6 @@ const ProblemAddModal = ({
                     setMainFile(file);
                   }}
                 />
-                {!mainFile && (
-                  <CodeBlock
-                    height={500}
-                    language={language}
-                    value={codeString}
-                    onChange={setCodeString}
-                  />
-                )}
               </div>
             ) : null}
           </div>

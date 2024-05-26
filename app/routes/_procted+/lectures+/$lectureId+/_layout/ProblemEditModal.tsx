@@ -174,12 +174,6 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                     undefined,
                     mainFile
                       ? { ...mainFileObj, language }
-                      : codeString
-                      ? {
-                          content: codeString,
-                          name: `Main.${getCodeFileExtension(language)}`,
-                          language,
-                        }
                       : prevProblemInfo!.prepared_main
                       ? {
                           ...prevProblemInfo!.prepared_main.code,
@@ -307,10 +301,6 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                     <option value="plaintext">Text</option>
                   </select>
                   <span>언어에 맞는 Main 파일을 준비해 주세요.</span>
-                  <span>
-                    직접 입력하거나(이 경우엔 파일 이름은
-                    "Main.언어에_맞는_확장자"로 설정됨) 파일을 업로드 해주세요
-                  </span>
                   {prevProblemInfo!.prepared_main && (
                     <>
                       <h4>기존 main 파일</h4>
@@ -345,14 +335,6 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                       setMainFile(file);
                     }}
                   />
-                  {!mainFile && (
-                    <CodeBlock
-                      height={500}
-                      language={language}
-                      value={codeString}
-                      onChange={setCodeString}
-                    />
-                  )}
                 </div>
               ) : null}
             </div>
