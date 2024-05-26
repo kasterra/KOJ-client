@@ -37,6 +37,11 @@
   color: #ebf4f8;
 }
 
+.primary-button:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
 .secondary-button {
   border: none;
   cursor: pointer;
@@ -48,4 +53,9 @@
   border-radius: 6px;
   background-color: #756f86;
   color: #ebf4f8;
+}
+
+.primary-button:disabled {
+  background-color: #a8a8a8;
+  cursor: not-allowed;
 }

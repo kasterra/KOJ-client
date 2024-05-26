@@ -18,8 +18,8 @@ export async function postSolveProblem(
   title: string,
   token: string
 ): Promise<ProblemDetailResponse> {
-  if (0 > memory_limit || memory_limit > 4096) {
-    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+  if (0 > memory_limit || memory_limit > 2048) {
+    throw new BadRequestError("메모리 제한은 0 ~ 2048 사이 값을 넣어야 합니다");
   }
   if (!title) {
     throw new BadRequestError("제목은 필수 입력 필드입니다");
@@ -67,8 +67,8 @@ export async function postBlankProblem(
   title: string,
   token: string
 ): Promise<ProblemDetailResponse> {
-  if (0 > memory_limit || memory_limit > 4096) {
-    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+  if (0 > memory_limit || memory_limit > 2048) {
+    throw new BadRequestError("메모리 제한은 0 ~ 2048 사이 값을 넣어야 합니다");
   }
   if (!title) {
     throw new BadRequestError("제목은 필수 입력 필드입니다");
@@ -118,8 +118,8 @@ export async function updateProblem(
   parsed_code_elements?: parsedCodeElement[][],
   language?: string
 ): Promise<EmptyResponse> {
-  if (0 > memory_limit || memory_limit > 4096) {
-    throw new BadRequestError("메모리 제한은 0 ~ 4096 사이 값을 넣어야 합니다");
+  if (0 > memory_limit || memory_limit > 2048) {
+    throw new BadRequestError("메모리 제한은 0 ~ 2048 사이 값을 넣어야 합니다");
   }
   if (!title) {
     throw new BadRequestError("제목은 필수 입력 필드입니다");

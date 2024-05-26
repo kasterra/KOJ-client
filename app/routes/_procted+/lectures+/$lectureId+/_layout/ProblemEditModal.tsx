@@ -168,7 +168,7 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
               <TextInput
                 title="메모리 제한(MB)"
                 name="memory"
-                placeholder="0~4096 사이의 값"
+                placeholder="0~2048 사이의 값"
                 defaultValue={prevProblemInfo!.memory_limit + ""}
                 required
               />
