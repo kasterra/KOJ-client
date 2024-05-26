@@ -226,7 +226,11 @@ interface DetailProps {
   title: string;
 }
 
-const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
+const PracticeDetail = ({
+  id,
+  setSuperIsLoading,
+  lectureName,
+}: DetailProps) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -273,7 +277,7 @@ const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
       >
         {practiceDetail!.problems.map((problem) => (
           <ProblemDetail
-            lectureName={practiceDetail!.title}
+            lectureName={lectureName}
             key={problem.id}
             superId={id}
             setSuperIsLoading={setLoading}
@@ -310,7 +314,7 @@ const PracticeDetail = ({ id, setSuperIsLoading }: DetailProps) => {
             setIsProblemAddModalOpen(false);
             setLoading(true);
           }}
-          lectureName={practiceDetail!.title}
+          lectureName={lectureName}
           practiceName={practiceDetail!.title}
           practiceId={practiceDetail!.id}
         />
