@@ -169,16 +169,20 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
               제출
             </button>
           </div>
-          <div className={styles["modal-body"]} style={{ minWidth: "500px" }}>
-            <h4>주어진 Main 코드 : {problemDetail!.prepared_main.code.name}</h4>
-            <CodeBlock
-              height={500}
-              language={problemDetail!.prepared_main.language}
-              value={problemDetail!.prepared_main.code.content}
-              onChange={() => null}
-              readOnly
-            />
-          </div>
+          {problemDetail!.type === "class_implementation" ? (
+            <div className={styles["modal-body"]} style={{ minWidth: "500px" }}>
+              <h4>
+                주어진 Main 코드 : {problemDetail!.prepared_main.code.name}
+              </h4>
+              <CodeBlock
+                height={500}
+                language={problemDetail!.prepared_main.language}
+                value={problemDetail!.prepared_main.code.content}
+                onChange={() => null}
+                readOnly
+              />
+            </div>
+          ) : null}
         </form>
       )}
     </Modal>
