@@ -101,12 +101,16 @@ export interface SimpleProblemDetail {
   title: string;
   memory_limit: number;
   parsed_code_elements: codeHoles;
+  prepared_main: {
+    code: ServerSideFile;
+    language: lanugage;
+  };
   testcases: {
     id: number;
     title: string;
   }[];
   time_limit: number;
-  type: "solving" | "blank";
+  type: "solving" | "blank" | "class_implementation";
   start_time: string;
   end_time: string;
   gain_score: number;

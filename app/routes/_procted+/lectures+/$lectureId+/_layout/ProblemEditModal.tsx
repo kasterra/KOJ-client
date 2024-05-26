@@ -1,6 +1,7 @@
 import Modal from "~/components/Modal";
 import styles from "./modal.module.css";
 import formStyles from "~/components/common/form.module.css";
+import judgeStyles from "~/css/judge.module.css";
 import { useEffect, useState } from "react";
 import { getProblemWithProblemId } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
@@ -20,6 +21,10 @@ import SingleFileInput from "~/components/Input/SingleFileInput";
 import { uploadFile } from "~/API/media";
 import { lanugage } from "~/types";
 import { STATIC_SERVER_URL } from "~/util/constant";
+import { getCodeFileExtension, readFileAsServerFormat } from "~/util";
+import download from "~/assets/download.svg";
+import pkg from "file-saver";
+const { saveAs } = pkg;
 
 interface Props {
   isOpen: boolean;
@@ -29,14 +34,15 @@ interface Props {
 
 const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
   const [loading, setLoading] = useState(true);
-  const [problemType, setProblemType] = useState<"blank" | "solving">(
-    "solving"
-  );
+  const [problemType, setProblemType] = useState<
+    "blank" | "solving" | "class_implementation"
+  >("solving");
   const [prevProblemInfo, setPrevProblemInfo] = useState<SimpleProblemDetail>();
   const [language, setLanguage] = useState<lanugage>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [dragFile, setDragFile] = useState<File | null>(null);
+  const [mainFile, setMainFile] = useState<File | null>(null);
   const auth = useAuth();
   useEffect(() => {
     async function getData() {
@@ -145,6 +151,48 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                 );
                 onClose();
                 break;
+              case "class_implementation":
+                let mainFileObj: {
+                  content: string;
+                  name: string;
+                } = {} as { content: string; name: string };
+                if (mainFile) {
+                  mainFileObj = await readFileAsServerFormat(mainFile);
+                }
+                await toast.promise(
+                  updateProblem(
+                    problemType,
+                    editingProblemId,
+                    memory,
+                    time,
+                    name,
+                    auth.token,
+                    newFilePath.length
+                      ? newFilePath
+                      : prevProblemInfo!.file_path,
+                    undefined,
+                    undefined,
+                    mainFile
+                      ? { ...mainFileObj, language }
+                      : codeString
+                      ? {
+                          content: codeString,
+                          name: `Main.${getCodeFileExtension(language)}`,
+                          language,
+                        }
+                      : prevProblemInfo!.prepared_main
+                      ? {
+                          ...prevProblemInfo!.prepared_main.code,
+                          language: prevProblemInfo!.prepared_main.language,
+                        }
+                      : undefined
+                  ),
+                  {
+                    loading: "문제를 수정하는중...",
+                    success: "문제를 성공적으로 수정했습니다!",
+                    error: (e) => `Error: ${e.message} - ${e.responseMessage}`,
+                  }
+                );
             }
           }}
         >
@@ -160,8 +208,8 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
               <RadioGroup
                 title="문제 유형"
                 name="problemType"
-                valueList={["solving", "blank"]}
-                textList={["문제 해결", "빈칸 채우기"]}
+                valueList={["solving", "blank", "class_implementation"]}
+                textList={["문제 해결", "빈칸 채우기", "클래스/함수 구현"]}
                 onChange={setProblemType as (value: string) => void}
                 defaultValue={prevProblemInfo!.type}
               />
@@ -240,6 +288,69 @@ const ProblemEditModal = ({ isOpen, onClose, editingProblemId }: Props) => {
                       onClose={() => setIsPreviewModalOpen(false)}
                       codeString={codeString}
                       language={language}
+                    />
+                  )}
+                </div>
+              ) : null}
+              {problemType === "class_implementation" ? (
+                <div className={styles["blank-section"]}>
+                  <label htmlFor="language">Main 파일 언어</label>
+                  <select
+                    name="language"
+                    id="language"
+                    onChange={(e) => setLanguage(e.target.value as lanugage)}
+                  >
+                    <option value="c">C</option>
+                    <option value="java">Java</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="plaintext">Text</option>
+                  </select>
+                  <span>언어에 맞는 Main 파일을 준비해 주세요.</span>
+                  <span>
+                    직접 입력하거나(이 경우엔 파일 이름은
+                    "Main.언어에_맞는_확장자"로 설정됨) 파일을 업로드 해주세요
+                  </span>
+                  {prevProblemInfo!.prepared_main && (
+                    <>
+                      <h4>기존 main 파일</h4>
+                      <div
+                        className={judgeStyles["file-row"]}
+                        onClick={() => {
+                          saveAs(
+                            new File(
+                              [prevProblemInfo!.prepared_main.code.content],
+                              prevProblemInfo!.prepared_main.code.name
+                            ),
+                            prevProblemInfo!.prepared_main.code.name
+                          );
+                        }}
+                      >
+                        <span className={judgeStyles["file-name"]}>
+                          {prevProblemInfo!.prepared_main.code.name}
+                        </span>
+                        <div className={judgeStyles["icon-area"]}>
+                          <div className={judgeStyles["icon"]}>
+                            <img src={download} alt="download icon" />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <SingleFileInput
+                    title="새 Main 파일"
+                    name="main"
+                    placeholder="주의! 파일을 업로드 하면, 기존 파일은 삭제됩니다!"
+                    onFileUpload={(file) => {
+                      setMainFile(file);
+                    }}
+                  />
+                  {!mainFile && (
+                    <CodeBlock
+                      height={500}
+                      language={language}
+                      value={codeString}
+                      onChange={setCodeString}
                     />
                   )}
                 </div>

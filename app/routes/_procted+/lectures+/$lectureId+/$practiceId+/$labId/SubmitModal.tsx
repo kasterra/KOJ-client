@@ -162,7 +162,7 @@ const SubmitModal = ({ isOpen, onClose }: Props) => {
           <button
             className={formStyles["primary-button"]}
             type="submit"
-            disabled={code.length === 0}
+            disabled={!fileList && code.length === 0}
           >
             제출
           </button>

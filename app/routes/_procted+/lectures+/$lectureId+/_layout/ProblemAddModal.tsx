@@ -8,10 +8,19 @@ import SingleFileInput from "~/components/Input/SingleFileInput";
 import CodeBlock from "~/components/CodeBlock";
 import { codeHole, parsedCodeElement } from "~/util/codeHole";
 import toast from "react-hot-toast";
-import { postBlankProblem, postSolveProblem } from "~/API/problem";
+import {
+  postBlankProblem,
+  postClassImplementationProblem,
+  postSolveProblem,
+} from "~/API/problem";
 import { useAuth } from "~/contexts/AuthContext";
 import BlankPreviewModal from "./BlankPreviewModal";
 import { lanugage } from "~/types";
+import {
+  getCodeFileExtension,
+  problemTitles,
+  readFileAsServerFormat,
+} from "~/util";
 
 interface Props {
   lectureName: string;
@@ -28,19 +37,19 @@ const ProblemAddModal = ({
   isOpen,
   onClose,
 }: Props) => {
-  const [problemType, setProblemType] = useState<"blank" | "solving">(
-    "solving"
-  );
+  const [problemType, setProblemType] = useState<
+    "blank" | "solving" | "class_implementation"
+  >("solving");
   const [language, setLanguage] = useState<lanugage>("c");
   const [codeString, setCodeString] = useState("");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const auth = useAuth();
   const [dragFile, setDragFile] = useState<File | null>(null);
+
+  const [mainFile, setMainFile] = useState<File | null>(null);
   return (
     <Modal
-      title={`문제 추가 - ${
-        problemType === "blank" ? "빈칸 채우기" : "문제 해결"
-      }`}
+      title={`문제 추가 - ${problemTitles[problemType] || "알 수 없음"}`}
       subtitle={`${lectureName} ${practiceName}에 문제를 추가합니다`}
       isOpen={isOpen}
       onClose={onClose}
@@ -106,6 +115,42 @@ const ProblemAddModal = ({
                 }
               );
               break;
+            case "class_implementation":
+              let mainFileObj: {
+                content: string;
+                name: string;
+              } = {} as { content: string; name: string };
+              if (mainFile) {
+                mainFileObj = await readFileAsServerFormat(mainFile);
+              }
+              await toast.promise(
+                postClassImplementationProblem(
+                  file,
+                  memory,
+                  mainFile
+                    ? { ...mainFileObj, language }
+                    : {
+                        content: codeString,
+                        name: `Main.${getCodeFileExtension(language)}`,
+                        language,
+                      },
+                  language,
+                  practiceId,
+                  time,
+                  name,
+                  auth.token
+                ),
+                {
+                  loading: "문제를 추가하는중...",
+                  success: () => {
+                    onClose();
+                    return "문제를 성공적으로 추가했습니다!";
+                  },
+                  error: (err) =>
+                    `Error: ${err.message} - ${err.responseMessage}`,
+                }
+              );
+              break;
           }
         }}
       >
@@ -120,8 +165,8 @@ const ProblemAddModal = ({
             <RadioGroup
               title="문제 유형"
               name="problemType"
-              valueList={["solving", "blank"]}
-              textList={["문제 해결", "빈칸 채우기"]}
+              valueList={["solving", "blank", "class_implementation"]}
+              textList={["문제 해결", "빈칸 채우기", "클래스/함수 구현"]}
               onChange={setProblemType as (value: string) => void}
             />
             <TextInput
@@ -192,6 +237,42 @@ const ProblemAddModal = ({
                     onClose={() => setIsPreviewModalOpen(false)}
                     codeString={codeString}
                     language={language}
+                  />
+                )}
+              </div>
+            ) : null}
+            {problemType === "class_implementation" ? (
+              <div className={styles["blank-section"]}>
+                <label htmlFor="language">Main 파일 언어</label>
+                <select
+                  name="language"
+                  id="language"
+                  onChange={(e) => setLanguage(e.target.value as lanugage)}
+                >
+                  <option value="c">C</option>
+                  <option value="java">Java</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="plaintext">Text</option>
+                </select>
+                <span>언어에 맞는 Main 파일을 준비해 주세요.</span>
+                <span>
+                  직접 입력하거나(이 경우엔 파일 이름은
+                  "Main.언어에_맞는_확장자"로 설정됨) 파일을 업로드 해주세요
+                </span>
+                <SingleFileInput
+                  title="Main 파일"
+                  name="main"
+                  onFileUpload={(file) => {
+                    setMainFile(file);
+                  }}
+                />
+                {!mainFile && (
+                  <CodeBlock
+                    height={500}
+                    language={language}
+                    value={codeString}
+                    onChange={setCodeString}
                   />
                 )}
               </div>

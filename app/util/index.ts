@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { lanugage } from "~/types";
 
 export function semesterToString(semester: number) {
   switch (semester) {
@@ -117,4 +118,44 @@ export function bytesToSize(bytes: number) {
   if (bytes === 0) return "n/a";
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+}
+
+export const problemTitles: { [key: string]: string } = {
+  blank: "빈칸 채우기",
+  solution: "문제 해결",
+  class_implementation: "클래스 구현",
+};
+
+export function readFileAsServerFormat(
+  file: File
+): Promise<{ content: string; name: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () =>
+      resolve({
+        content: reader.result as string,
+        name: file.name,
+      });
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(file);
+  });
+}
+
+export function getCodeFileExtension(language: lanugage) {
+  switch (language) {
+    case "c":
+      return "c";
+    case "java":
+      return "java";
+    case "python":
+      return "py";
+    case "javascript":
+      return "js";
+    case "cpp":
+      return "cpp";
+    case "plaintext":
+      return "txt";
+    default:
+      throw new Error(`Invalid language ${language}`);
+  }
 }

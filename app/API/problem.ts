@@ -107,8 +107,67 @@ export async function postBlankProblem(
   return await response.json();
 }
 
+export async function postClassImplementationProblem(
+  file: File,
+  memory_limit: number,
+  prepared_main: { content: string; name: string; language: string },
+  language: string,
+  practice_id: number,
+  time_limit: number,
+  title: string,
+  token: string
+): Promise<ProblemDetailResponse> {
+  if (0 > memory_limit || memory_limit > 2048) {
+    throw new BadRequestError("메모리 제한은 0 ~ 2048 사이 값을 넣어야 합니다");
+  }
+  if (!title) {
+    throw new BadRequestError("제목은 필수 입력 필드입니다");
+  }
+  if (0 > time_limit || time_limit > 10000) {
+    throw new BadRequestError("시간 제한은 0~10,000 사이의 값을 넣어야 합니다");
+  }
+  if (!prepared_main.content) {
+    throw new BadRequestError("Main 파일은 반드시 있어야 합니다");
+  }
+  const fileUploadResponse = await uploadFile(file, token);
+  const file_path = fileUploadResponse.data.path;
+  const response = await fetch(`${API_SERVER_URL}/problem`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      file_path,
+      memory_limit,
+      prepared_main: {
+        code: {
+          name: prepared_main.name,
+          content: prepared_main.content,
+        },
+        language: prepared_main.language,
+      },
+      practice_id,
+      time_limit,
+      title,
+      type: "class_implementation",
+    }),
+  });
+  switch (response.status) {
+    case 400:
+      throw new BadRequestError("입력값 검증 실패");
+      break;
+    case 401:
+      handle401();
+      break;
+    case 403:
+      throw new ForbiddenError("강의 소유 권한이 없습니다. 다시 확인해 주세요");
+  }
+  return await response.json();
+}
+
 export async function updateProblem(
-  problemType: "solving" | "blank",
+  problemType: "solving" | "blank" | "class_implementation",
   problemId: number,
   memory_limit: number,
   time_limit: number,
@@ -116,7 +175,8 @@ export async function updateProblem(
   token: string,
   file_path: string,
   parsed_code_elements?: parsedCodeElement[][],
-  language?: string
+  language?: string,
+  prepared_main?: { content: string; name: string; language: string }
 ): Promise<EmptyResponse> {
   if (0 > memory_limit || memory_limit > 2048) {
     throw new BadRequestError("메모리 제한은 0 ~ 2048 사이 값을 넣어야 합니다");
@@ -132,7 +192,13 @@ export async function updateProblem(
       throw new BadRequestError("빈칸 문제에는 빈칸정보가 필요합니다");
     }
   }
-  console.log(parsed_code_elements);
+  if (problemType === "class_implementation") {
+    if (!prepared_main) {
+      throw new BadRequestError(
+        "클래스/함수 구현 문제에는 Main 파일이 필요합니다"
+      );
+    }
+  }
   const response = await fetch(`${API_SERVER_URL}/problem/${problemId}`, {
     method: "PUT",
     headers: {
