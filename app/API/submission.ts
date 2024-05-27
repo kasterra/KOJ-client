@@ -13,21 +13,35 @@ import {
   NotFoundError,
   RequestTooLongError,
 } from "~/util/errors";
+import { cp949ToUTF8 } from "~/util/file";
 
 export async function submit(
   token: string,
   problem_id: string,
   formdata: FormData
 ): Promise<SubmissionResponse> {
+  if (formdata.get("language") === "c") {
+    const fileList = formdata.getAll("codes") as File[];
+    if (fileList.length > 0) {
+      formdata.delete("codes");
+      const processedFiles = await Promise.all(
+        fileList.map(async (file) => {
+          return await cp949ToUTF8(file);
+        })
+      );
+      processedFiles.forEach((file) => formdata.append("codes", file));
+    }
+  }
   if (formdata.get("language") === "java") {
     const fileList = formdata.getAll("codes") as File[];
     const code = formdata.get("code") as string;
     if (fileList.length > 0) {
       formdata.delete("codes");
       const processedFiles = await Promise.all(
-        fileList.map(async (file) => await removePackageStatementFromFile(file))
+        fileList.map(async (file) => {
+          return await removePackageStatementFromFile(file);
+        })
       );
-
       processedFiles.forEach((file) => formdata.append("codes", file));
     } else if (code !== "") {
       formdata.delete("code");
