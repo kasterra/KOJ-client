@@ -34,12 +34,14 @@ export default function App() {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="850" />
         <meta http-equiv="Copyright" content="skeep and kasterra" />
+        
 
         <meta
           name="og:description"
           content="경북대에서 만든 교육용 다기능 온라인 저지"
         />
         <script src="/prism.js" />
+        <script defer data-domain="koj.kasterra.dev" src="https://koj-admin.kasterra.dev/js/script.js"/>
         <Meta />
         <Links />
       </head>
