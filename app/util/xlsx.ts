@@ -1,7 +1,9 @@
 import ExcelJS from "exceljs";
 import { studentRow } from "~/types";
 
-export async function parseXlsx(file: File): Promise<studentRow[]> {
+export async function parseLectureMemberXlsx(
+  file: File
+): Promise<studentRow[]> {
   try {
     const workbook = new ExcelJS.Workbook();
     const buffer = await file.arrayBuffer();

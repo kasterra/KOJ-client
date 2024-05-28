@@ -6,7 +6,7 @@ import formStyles from "~/components/common/form.module.css";
 import fileDownloadSVG from "~/assets/fileDownload.svg";
 import SingleFileInput from "~/components/Input/SingleFileInput";
 import TextInput from "~/components/Input/TextInput";
-import { parseXlsx } from "~/util/xlsx";
+import { parseLectureMemberXlsx } from "~/util/xlsx";
 import { addUserInLecture, addUsersInLecture } from "~/API/lecture";
 import { useAuth } from "~/contexts/AuthContext";
 import toast from "react-hot-toast";
@@ -40,7 +40,7 @@ const UserAddModal = ({ isOpen, onClose }: Props) => {
               const formFile = file ? file : (formData.get("file") as File);
               await addUsersInLecture(
                 lectureId,
-                await parseXlsx(formFile),
+                await parseLectureMemberXlsx(formFile),
                 auth.token
               );
               toast.success("성공적으로 추가하였습니다");
