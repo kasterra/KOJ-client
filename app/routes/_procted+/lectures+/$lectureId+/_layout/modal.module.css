@@ -29,13 +29,11 @@
 .circular-button {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
-  background-color: #756f86;
 }
 
 .circular-button img {
-  width: 100%;
-  height: 100%;
+  width: 30px;
+  height: 30px;
 }
 
 .area {
@@ -63,7 +61,7 @@
 
 .file-row {
   display: flex;
-  height: 20px;
+  height: 30px;
   width: 100%;
   justify-content: space-between;
   align-items: center;

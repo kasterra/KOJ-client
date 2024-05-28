@@ -9,8 +9,8 @@ import { postNewTestcase } from "~/API/testCase";
 import { useAuth } from "~/contexts/AuthContext";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import plusW from "~/assets/plus-w.svg";
-import minusW from "~/assets/minus-w.svg";
+import plusW from "~/assets/plus-square.svg";
+import minusW from "~/assets/minus-square.svg";
 
 interface Props {
   isOpen: boolean;

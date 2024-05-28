@@ -15,8 +15,8 @@ import TextInput from "~/components/Input/TextInput";
 import RadioGroup from "~/components/Radio/RadioGroup";
 import TextArea from "~/components/Input/TextArea";
 import toast from "react-hot-toast";
-import plusW from "~/assets/plus-w.svg";
-import minusW from "~/assets/minus-w.svg";
+import plusW from "~/assets/plus-square.svg";
+import minusW from "~/assets/minus-square.svg";
 import trash from "~/assets/trash.svg";
 import download from "~/assets/download.svg";
 import pkg from "file-saver";
@@ -204,20 +204,22 @@ const TestCaseEditModal = ({ isOpen, onClose, testCaseId }: Props) => {
                       className={styles.icon}
                       onClick={async (e) => {
                         e.stopPropagation();
-                        await toast.promise(
-                          deleteFileInputFromTestCase(
-                            testCaseId,
-                            file.name,
-                            auth.token
-                          ),
-                          {
-                            loading: "TC 파일 삭제중...",
-                            success: "TC 파일 삭제완료!",
-                            error: (error) =>
-                              `Error: ${error.message} - ${error.responseMessage}`,
-                          }
-                        );
-                        setIsLoading(true);
+                        if (confirm("TC 파일을 삭제하시겠습니까?")) {
+                          await toast.promise(
+                            deleteFileInputFromTestCase(
+                              testCaseId,
+                              file.name,
+                              auth.token
+                            ),
+                            {
+                              loading: "TC 파일 삭제중...",
+                              success: "TC 파일 삭제완료!",
+                              error: (error) =>
+                                `Error: ${error.message} - ${error.responseMessage}`,
+                            }
+                          );
+                          setIsLoading(true);
+                        }
                       }}
                     >
                       <img src={trash} alt="delete icon" />
