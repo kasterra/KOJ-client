@@ -1,0 +1,81 @@
+.top-container {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 110px;
+}
+
+.form-area {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.text-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #667085;
+  font-size: 16px;
+}
+
+.data-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.file-input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-manage-btns {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn {
+  all: unset;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+}
+
+.btn img {
+  width: 100%;
+  height: 100%;
+}
+
+.white-button {
+  all: unset;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
