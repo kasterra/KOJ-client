@@ -5,9 +5,19 @@ interface Props {
   title: string;
   link: string;
   level?: number;
+  showIcons?: boolean;
+  iconSrcList?: string[];
+  onIconClickList?: (() => void)[];
 }
 
-export const LinkElement = ({ title, link, level }: Props) => {
+export const LinkElement = ({
+  title,
+  link,
+  showIcons = true,
+  iconSrcList = [],
+  onIconClickList = [],
+  level,
+}: Props) => {
   return (
     <div className={styles["element-block"]}>
       <div style={{ marginLeft: level ? level * 12 : undefined }} />
@@ -15,6 +25,25 @@ export const LinkElement = ({ title, link, level }: Props) => {
         <Link to={link}>
           <h3 className={styles["element-title-span"]}>{title}</h3>
         </Link>
+        {showIcons ? (
+          <div className={styles["element-edit-icons-block"]}>
+            {iconSrcList?.map((iconSrc, idx) => (
+              <img
+                key={idx}
+                className={styles["element-icon"]}
+                src={iconSrc}
+                onClick={
+                  onIconClickList[idx]
+                    ? (e) => {
+                        e.stopPropagation();
+                        onIconClickList[idx]();
+                      }
+                    : () => {}
+                }
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );

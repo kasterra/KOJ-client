@@ -39,6 +39,7 @@ import TestCaseEditModal from "./TestCaseEditModal";
 import { deleteProblem } from "~/API/problem";
 import { deleteTestcase } from "~/API/testCase";
 import DownloadMyCodesModal from "./DownloadMyCodesModal";
+import { LinkElement } from "~/components/Aside/LinkElement";
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
@@ -238,6 +239,7 @@ const PracticeDetail = ({
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
   const [isFoldableOpen, setIsFoldableOpen] = useState(false);
+  const { lectureId } = useParams();
   useEffect(() => {
     async function getData() {
       try {
@@ -293,6 +295,11 @@ const PracticeDetail = ({
                 setIsProblemAddModalOpen(true);
               }}
               iconSrcList={[plusSVG]}
+            />
+            <LinkElement
+              title="퀴즈 추가하기"
+              iconSrcList={[plusSVG]}
+              link={`/lectures/quiz/new?lecture_id=${lectureId}&practice_id=${id}`}
             />
           </>
         ) : null}
