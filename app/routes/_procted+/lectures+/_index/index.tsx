@@ -255,9 +255,7 @@ const Lectures = () => {
                         alt="edit icon"
                         className={styles.icon}
                         onClick={(e) => {
-                          console.log(lecture);
                           setEditingLectureInfo(lecture);
-                          console.log(editingLectureInfo);
                           setIsLectureEditModalOpen(true);
                         }}
                       />

@@ -24,7 +24,6 @@ const ProctedRoute = () => {
     }
     getUserInfo(userId, token)
       .then(({ data }) => {
-        console.log(token, userId);
         if (data.is_admin === false) {
           setIsNotAdmin(true);
           return;

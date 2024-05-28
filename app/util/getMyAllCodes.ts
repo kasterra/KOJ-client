@@ -25,8 +25,6 @@ export async function getCodesWithZipFile(
     );
     if (!recentCorrectData) continue;
 
-    console.log(recentCorrectData);
-
     const correctSubmissionResponse = await getSubmissionWithSubmissionId(
       recentCorrectData.id,
       token
@@ -36,7 +34,6 @@ export async function getCodesWithZipFile(
 
     correctSubmissionResponse.data.codes.map((file) => {
       zip.file(`${practiceName}/${problemName}/${file.name}`, file.content);
-      console.log(file.content);
     });
   }
   return zip.generateAsync({ type: "blob", compression: "DEFLATE" });

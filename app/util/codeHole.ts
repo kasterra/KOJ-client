@@ -352,7 +352,6 @@ export function generateFullCode(
   parsedCodes: parsedCodeElement[][],
   blanks: string[]
 ) {
-  console.log(blanks);
   let blankIdx = 0;
   return parsedCodes
     .map((parsedCode) =>

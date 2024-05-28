@@ -100,8 +100,6 @@ const QuizRegister = () => {
               }
               data[studentId][questionId] = value as string;
             }
-
-            console.log(data);
           }}
         >
           <div className={styles["text-area"]}>

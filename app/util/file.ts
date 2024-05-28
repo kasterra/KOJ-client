@@ -13,7 +13,6 @@ export async function cp949ToUTF8(file: File): Promise<File> {
         resolve(file);
       }
       const decoded = iconv.decode(buf, "cp949");
-      console.log(decoded);
       resolve(new File([decoded], file.name, { type: file.type }));
     };
 
