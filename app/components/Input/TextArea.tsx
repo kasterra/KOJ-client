@@ -40,6 +40,12 @@ const TextArea = ({
           width: width ? width : undefined,
           height: height ? height : undefined,
         }}
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            e.preventDefault();
+            (e.currentTarget as HTMLTextAreaElement).value += "\t";
+          }
+        }}
       />
       {description?.length && (
         <span className={styles.description}>{description}</span>
