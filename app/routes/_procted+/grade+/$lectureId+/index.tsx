@@ -188,6 +188,7 @@ const TableHeader = () => {
                         semester ? `?semester=${semester}` : ""
                       }`
                     );
+                    setIsOpen((prev) => !prev);
                   }}
                 >
                   {lecture.title}

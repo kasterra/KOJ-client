@@ -144,6 +144,7 @@ const TableHeader = () => {
                 navigate(
                   `/students/${params.lectureId}/${practice.id}/history`
                 );
+                setIsPracticeListOpen(false);
               }}
             >
               {practice.title}
@@ -163,6 +164,7 @@ const TableHeader = () => {
               onClick={() => {
                 if (problem.id !== -1)
                   setSearchParams({ problemId: problem.id.toString() });
+                setIsProblemListOpen(false);
               }}
             >
               {problem.title}
