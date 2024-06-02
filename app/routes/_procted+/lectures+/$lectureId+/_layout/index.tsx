@@ -334,7 +334,7 @@ const PracticeDetail = ({
             {hasQuiz ? (
               <>
                 <LinkElement
-                  title="퀴즈 수정하기"
+                  title="퀴즈 조회/수정하기"
                   iconSrcList={[pencilSVG]}
                   link={`/lectures/quiz/edit?lecture_id=${lectureId}&practice_id=${id}`}
                 />
