@@ -30,7 +30,13 @@ import trashSVG from "~/assets/trash.svg";
 import NewPracticeModal from "./NewPracticeModal";
 import ImportPracticeModal from "./ImportPracticeModal";
 import PracticeEditModal from "./PracticeEditModal";
-import { deletePractice, getPracticeWithPracticeId } from "~/API/practice";
+import {
+  deletePractice,
+  deleteQuiz,
+  getAllQuizes,
+  getPracticeWithPracticeId,
+  getQuizWithUserId,
+} from "~/API/practice";
 import toast from "react-hot-toast";
 import ProblemAddModal from "./ProblemAddModal";
 import ProblemEditModal from "./ProblemEditModal";
@@ -239,6 +245,7 @@ const PracticeDetail = ({
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
   const [isFoldableOpen, setIsFoldableOpen] = useState(false);
+  const [hasQuiz, setHasQuiz] = useState(false);
   const { lectureId } = useParams();
   useEffect(() => {
     async function getData() {
@@ -253,6 +260,24 @@ const PracticeDetail = ({
     }
     getData();
   }, [isPracticeEditModalOpen, isProblemAddModalOpen, loading]);
+
+  useEffect(() => {
+    async function getData() {
+      if (auth.role === "professor") {
+        const response = await getAllQuizes(id + "", auth.token);
+        setHasQuiz(response.data.length > 0);
+      } else {
+        const response = await getQuizWithUserId(
+          id + "",
+          auth.userId,
+          auth.token
+        );
+        setHasQuiz(response.data.length > 0);
+      }
+    }
+
+    getData();
+  });
 
   return loading ? (
     <h3>loading...</h3>
@@ -296,11 +321,44 @@ const PracticeDetail = ({
               }}
               iconSrcList={[plusSVG]}
             />
-            <LinkElement
-              title="퀴즈 추가하기"
-              iconSrcList={[plusSVG]}
-              link={`/lectures/quiz/new?lecture_id=${lectureId}&practice_id=${id}`}
-            />
+            {hasQuiz ? (
+              <>
+                <LinkElement
+                  title="퀴즈 수정하기"
+                  iconSrcList={[pencilSVG]}
+                  link={`/lectures/quiz/edit?lecture_id=${lectureId}&practice_id=${id}`}
+                />
+                <ButtonElement
+                  title="퀴즈 삭제하기"
+                  onButtonClick={async () => {
+                    if (
+                      confirm(
+                        `정말로 ${
+                          practiceDetail!.title
+                        } 퀴즈을 삭제 하시겠습니까?`
+                      )
+                    ) {
+                      await toast.promise(deleteQuiz(id + "", auth.token), {
+                        loading: "퀴즈 삭제...",
+                        success: () => {
+                          setSuperIsLoading!(true);
+                          return "성공적으로 삭제되었습니다";
+                        },
+                        error: (error) =>
+                          `Error: ${error.message} - ${error.responseMessage}`,
+                      });
+                    }
+                  }}
+                  iconSrcList={[trashSVG]}
+                />
+              </>
+            ) : (
+              <LinkElement
+                title="퀴즈 추가하기"
+                iconSrcList={[plusSVG]}
+                link={`/lectures/quiz/new?lecture_id=${lectureId}&practice_id=${id}`}
+              />
+            )}
           </>
         ) : null}
       </FoldableSuperButtonElement>
