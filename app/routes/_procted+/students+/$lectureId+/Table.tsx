@@ -277,25 +277,27 @@ const Table = () => {
               >
                 암호 초기화
               </button>
-              <button
-                className={tableStyles["out-user"]}
-                onClick={async () => {
-                  if (confirm("정말로 해당 유저를 내보내시겠습니까?")) {
-                    await toast.promise(
-                      removeUserInLecture(lectureId, elem.id, auth.token),
-                      {
-                        loading: "내보내기 요청중...",
-                        success: "성공적으로 유저를 내보냈습니다",
-                        error: (err) =>
-                          `Error: ${err.message} - ${err.responseMessage}`,
-                      }
-                    );
-                    setIsLoading(true);
-                  }
-                }}
-              >
-                회원 삭제하기
-              </button>
+              {(elem as any).lecture_role === "professor" ? null : (
+                <button
+                  className={tableStyles["out-user"]}
+                  onClick={async () => {
+                    if (confirm("정말로 해당 유저를 내보내시겠습니까?")) {
+                      await toast.promise(
+                        removeUserInLecture(lectureId, elem.id, auth.token),
+                        {
+                          loading: "내보내기 요청중...",
+                          success: "성공적으로 유저를 내보냈습니다",
+                          error: (err) =>
+                            `Error: ${err.message} - ${err.responseMessage}`,
+                        }
+                      );
+                      setIsLoading(true);
+                    }
+                  }}
+                >
+                  회원 삭제하기
+                </button>
+              )}
             </>,
           ],
         ])
