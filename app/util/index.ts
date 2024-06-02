@@ -159,3 +159,11 @@ export function getCodeFileExtension(language: language) {
       throw new Error(`Invalid language ${language}`);
   }
 }
+
+export function safeParseInt(input: string) {
+  const parsed = parseInt(input);
+  if (isNaN(parsed)) {
+    throw Error(`Invalid integer ${input}`);
+  }
+  return parsed;
+}

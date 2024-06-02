@@ -1,9 +1,8 @@
-import TextInput from "~/components/Input/TextInput";
 import styles from "../index.module.css";
 import judgeStyles from "~/css/judge.module.css";
 import inputStyles from "~/components/Input/input.module.css";
 import formStyles from "~/components/common/form.module.css";
-import { MetaFunction, useSearchParams } from "@remix-run/react";
+import { MetaFunction, useNavigate, useSearchParams } from "@remix-run/react";
 import { getUsersInLecture } from "~/API/lecture";
 import { ReactNode, useEffect, useState } from "react";
 import { useAuth } from "~/contexts/AuthContext";
@@ -16,6 +15,8 @@ import fileDownloadSVG from "~/assets/fileDownload.svg";
 import { createQuizResultXlsx, parseQuizResultXlsx } from "~/util/xlsx";
 import pkg from "file-saver";
 import toast from "react-hot-toast";
+import { createNewQuiz } from "~/API/practice";
+import { safeParseInt } from "~/util";
 const { saveAs } = pkg;
 
 const QuizRegister = () => {
@@ -30,10 +31,14 @@ const QuizRegister = () => {
     "학생 명",
     "Q1",
   ]);
+  const navigate = useNavigate();
+
+  console.log(tableData);
+
   useEffect(() => {
     async function getData() {
       const { data: users } = await getUsersInLecture(lecture_id, auth.token);
-      setUsers(users);
+      setUsers(users.filter((user: any) => user.lecture_role === "student"));
       setLoading(false);
     }
     getData();
@@ -52,21 +57,21 @@ const QuizRegister = () => {
             className={inputStyles.input}
             required
             placeholder="만점 점수"
-            name="S0-Q1"
+            name="0-1"
           />
         );
         return map;
       })(),
-      ...users.map((user, userIndex) => {
+      ...users.map((user) => {
         const map = new Map<string, ReactNode>();
-        map.set("학생 명", user.name);
+        map.set("학생 명", `${user.name}(${user.id})`);
         map.set(
           "Q1",
           <input
             className={inputStyles.input}
             required
             placeholder="점수 입력"
-            name={`S${userIndex + 1}-Q1`}
+            name={`${user.id}-1`}
           />
         );
         return map;
@@ -85,21 +90,51 @@ const QuizRegister = () => {
         </div>
         <form
           className={styles["form-area"]}
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             const data: {
-              [studentId: string]: { [questionId: string]: string };
-            } = {};
+              max_score: number;
+              scores: { score: number | null; user_id: string }[];
+              title: string;
+            }[] = Array.from({ length: dataHeaders.length - 1 }, (_, idx) => ({
+              max_score: 0,
+              scores: [],
+              title: `Q${idx + 1}`,
+            }));
 
             for (let [key, value] of formData.entries()) {
               if (key === "xlsx") continue;
               const [studentId, questionId] = key.split("-");
-              if (!data[studentId]) {
-                data[studentId] = {};
+              if (studentId == "0") {
+                data[parseInt(questionId) - 1].max_score = parseInt(
+                  value as string
+                );
+                continue;
               }
-              data[studentId][questionId] = value as string;
+              try {
+                data[parseInt(questionId) - 1].scores.push({
+                  score:
+                    (value as string) == "n" || (value as string) == "N"
+                      ? null
+                      : safeParseInt(value as string),
+                  user_id: studentId,
+                });
+              } catch (err: any) {
+                toast.error(err.message);
+              }
             }
+
+            console.log(data);
+
+            await toast.promise(createNewQuiz(practice_id, data, auth.token), {
+              loading: "퀴즈 성적를 저장하는중...",
+              success: () => {
+                navigate(`/lectures/${lecture_id}`);
+                return "퀴즈 성적 저장 완료";
+              },
+              error: (err) => `Error: ${err.message} - ${err.responseMessage}`,
+            });
           }}
         >
           <div className={styles["text-area"]}>
@@ -126,6 +161,17 @@ const QuizRegister = () => {
                     result.map((userScoreRow, userIndex) => {
                       const map = new Map<string, ReactNode>();
                       map.set("학생 명", prev[userIndex].get("학생 명"));
+                      let studentId = "";
+                      let _ = "";
+                      if (typeof prev[userIndex].get("학생 명") !== "string") {
+                        studentId = "0";
+                      } else {
+                        [_, studentId] = (
+                          prev[userIndex].get("학생 명") as string
+                        ).split("(");
+                        studentId = studentId.slice(0, -1);
+                      }
+                      console.log(result);
                       userScoreRow.map((userScore, scoreIdx) => {
                         map.set(
                           `Q${scoreIdx + 1}`,
@@ -136,7 +182,7 @@ const QuizRegister = () => {
                               userIndex == 0 ? "만점 점수" : "점수 입력"
                             }
                             defaultValue={userScore}
-                            name={`S${userIndex}-Q${scoreIdx + 1}`}
+                            name={`${studentId}-${scoreIdx + 1}`}
                           />
                         );
                       });
@@ -184,7 +230,7 @@ const QuizRegister = () => {
                               className={inputStyles.input}
                               required
                               placeholder="만점 점수"
-                              name={`S0-Q${dataHeaders.length}`}
+                              name={`0-${dataHeaders.length}`}
                             ></input>
                           );
                           return data;
@@ -195,7 +241,9 @@ const QuizRegister = () => {
                             className={inputStyles.input}
                             required
                             placeholder="점수 입력"
-                            name={`S${idx}-Q${dataHeaders.length}`}
+                            name={`${(prev[idx].get("학생 명") as string)
+                              .split("(")[1]
+                              .slice(0, -1)}-${dataHeaders.length}`}
                           ></input>
                         );
                         return data;

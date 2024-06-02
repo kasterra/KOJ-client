@@ -84,6 +84,21 @@ export interface BoardResponse {
   data: Board;
 }
 
+export interface QuizsResponse {
+  message: string;
+  data: QuizData[];
+}
+
+export interface QuizRowResponse {
+  message: string;
+  data: {
+    gain_score: number | null;
+    id: number;
+    max_score: number;
+    title: string;
+  }[];
+}
+
 export interface SimplePracticeDetail {
   id: number;
   title: string;
@@ -184,4 +199,15 @@ export interface Board {
     scores: number[];
     total_score: number;
   }[];
+}
+
+export interface QuizData {
+  id: number;
+  max_score: number;
+  scores: {
+    name: string;
+    score: number | null;
+    user_id: string;
+  }[];
+  title: string;
 }
