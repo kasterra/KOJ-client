@@ -46,6 +46,7 @@ import { deleteProblem } from "~/API/problem";
 import { deleteTestcase } from "~/API/testCase";
 import DownloadMyCodesModal from "./DownloadMyCodesModal";
 import { LinkElement } from "~/components/Aside/LinkElement";
+import QuizResultModal from "./QuizResultModal";
 const LectureDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lectures, setLectures] = useState<LectureEntity[]>([]);
@@ -244,6 +245,7 @@ const PracticeDetail = ({
   const [practiceDetail, setPracticeDetail] = useState<SimplePracticeDetail>();
   const [isPracticeEditModalOpen, setIsPracticeEditModalOpen] = useState(false);
   const [isProblemAddModalOpen, setIsProblemAddModalOpen] = useState(false);
+  const [isQuizResultModalOpen, setIsQuizResultModalOpen] = useState(false);
   const [isFoldableOpen, setIsFoldableOpen] = useState(false);
   const [hasQuiz, setHasQuiz] = useState(false);
   const { lectureId } = useParams();
@@ -312,6 +314,14 @@ const PracticeDetail = ({
             title={problem.title}
           />
         ))}
+        {auth.role === "student" && hasQuiz ? (
+          <ButtonElement
+            title="퀴즈 성적 보기"
+            onButtonClick={() => {
+              setIsQuizResultModalOpen(true);
+            }}
+          />
+        ) : null}
         {auth.role === "professor" ? (
           <>
             <ButtonElement
@@ -382,6 +392,12 @@ const PracticeDetail = ({
           lectureName={lectureName}
           practiceName={practiceDetail!.title}
           practiceId={practiceDetail!.id}
+        />
+      ) : null}
+      {isQuizResultModalOpen ? (
+        <QuizResultModal
+          isOpen={isQuizResultModalOpen}
+          onClose={() => setIsQuizResultModalOpen(false)}
         />
       ) : null}
     </>
