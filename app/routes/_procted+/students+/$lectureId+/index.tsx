@@ -4,6 +4,7 @@ import styles from "./index.module.css";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { MetaFunction, useNavigate } from "@remix-run/react";
+import { TickerProvider } from "~/contexts/TickerContext";
 
 const Wrapper = () => {
   const auth = useAuth();
@@ -15,9 +16,11 @@ const Wrapper = () => {
     }
   }, []);
   return (
-    <div className={styles.container}>
-      <Table />
-    </div>
+    <TickerProvider>
+      <div className={styles.container}>
+        <Table />
+      </div>
+    </TickerProvider>
   );
 };
 

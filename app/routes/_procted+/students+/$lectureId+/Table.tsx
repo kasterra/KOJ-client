@@ -25,11 +25,13 @@ import { UserEntity } from "~/types/APIResponse";
 import { resetPassword } from "~/API/user";
 import { mapRoleToString } from "~/util";
 import toast from "react-hot-toast";
+import { useTicker, useTickerDispatch } from "~/contexts/TickerContext";
 
 const TableHeader = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const lectureData = useLectureData();
+  const tickerDispatch = useTickerDispatch();
   const dispatchLectureData = useLectureDataDispatch();
   const [lectureListLoading, setLectureListLoading] = useState(true);
   const [lectureList, setLectureList] = useState<Lecture[]>([]);
@@ -224,6 +226,7 @@ const TableHeader = () => {
         isOpen={isUserAddModalOpen}
         onClose={() => {
           setIsUserAddModalOpen(false);
+          tickerDispatch({ type: "UPDATE_TICKER" });
         }}
       />
     </div>
@@ -231,11 +234,12 @@ const TableHeader = () => {
 };
 
 const Table = () => {
-  const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<UserEntity[]>([]);
   const params = useParams();
   const lectureId = params.lectureId!;
+  const auth = useAuth();
+  const ticker = useTicker();
 
   useEffect(() => {
     async function getData() {
@@ -248,7 +252,7 @@ const Table = () => {
       }
     }
     getData();
-  }, [isLoading, params.lectureId]);
+  }, [isLoading, params.lectureId, ticker]);
 
   function responseDataToMap(res: UserEntity[]) {
     const ret: Map<string, ReactNode>[] = [];
